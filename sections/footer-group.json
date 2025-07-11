@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.footer.name",
   "type": "footer",
@@ -70,18 +79,6 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "newsletter_wT8pfn": {
-          "type": "newsletter",
-          "settings": {
-            "column_factor": 3,
-            "row_factor": 1,
-            "heading": "Newsletter",
-            "text": "<p>Sign up to receive 10% off your first order</p>",
-            "content_position_vertical": "start",
-            "content_alignment": "start",
-            "content_alignment_for_mobile": "center"
-          }
-        },
         "link_list_6FaNjd": {
           "type": "link_list",
           "settings": {
@@ -101,7 +98,7 @@
             "column_factor": 1,
             "row_factor": 1,
             "menu_layout": "vertical",
-            "menu": "pages",
+            "menu": "",
             "title": "Pages",
             "title_url": "",
             "menu_link_opacity": 100,
@@ -114,48 +111,18 @@
             "column_factor": 1,
             "row_factor": 1,
             "menu_layout": "vertical",
-            "menu": "footer-shop",
+            "menu": "",
             "title": "Shop",
             "title_url": "",
             "menu_link_opacity": 100,
             "show_first_menu_on_mobile": true
           }
-        },
-        "brand_TLymXh": {
-          "type": "brand",
-          "settings": {
-            "column_factor": 3,
-            "row_factor": 1,
-            "logo_svg_code": "",
-            "logo_width": 240,
-            "logo_width_mobile": 150,
-            "text": "<p>Release is a premium official Shopify theme designed by DigiFist.</p>",
-            "content_position_vertical": "start",
-            "content_alignment": "start",
-            "content_alignment_for_mobile": "start"
-          }
-        },
-        "social_media_YeVfDQ": {
-          "type": "social_media",
-          "settings": {
-            "column_factor": 3,
-            "row_factor": 1,
-            "icons": true,
-            "social_links_in_new_tab": true,
-            "heading": "",
-            "content_position_vertical": "end",
-            "content_alignment": "start",
-            "content_alignment_for_mobile": "start"
-          }
         }
       },
       "block_order": [
-        "newsletter_wT8pfn",
         "link_list_6FaNjd",
         "link_list_YDgTgy",
-        "link_list_NDtDLY",
-        "brand_TLymXh",
-        "social_media_YeVfDQ"
+        "link_list_NDtDLY"
       ],
       "settings": {
         "spacing_grid": "2",
