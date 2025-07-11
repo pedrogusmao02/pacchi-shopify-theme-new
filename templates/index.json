@@ -132,6 +132,7 @@
             "content_position": "justify-center",
             "content_alignment": "text-center align-center",
             "product_position": "0",
+            "image": "shopify://shop_images/Facetune_27-05-2025-12-10-29.jpg",
             "video_external": "",
             "show_controls_on_video": false,
             "aspect_ratio_mobile": "auto",
@@ -163,6 +164,7 @@
             "content_position": "justify-center",
             "content_alignment": "text-center align-center",
             "product_position": "0",
+            "image": "shopify://shop_images/IMG_1460.jpg",
             "video_external": "",
             "show_controls_on_video": false,
             "aspect_ratio_mobile": "auto",
@@ -227,6 +229,7 @@
         "section_height": "full",
         "content_position": "center",
         "content_alignment": "center",
+        "video": "shopify://files/videos/copy_4FA37C8A-5B6E-4B8F-A118-F0065F329A03.mov",
         "video_external": "",
         "show_controls_on_video": false,
         "aspect_ratio": "auto",
@@ -250,7 +253,7 @@
         "collection_slide_RnfaVr": {
           "type": "collection-slide",
           "settings": {
-            "collection": "hoodies-sweatshirts",
+            "collection": "best-sellers",
             "heading": "Tops",
             "heading_size": "h4",
             "subheading": ""
@@ -259,7 +262,7 @@
         "collection_slide_t4ydXM": {
           "type": "collection-slide",
           "settings": {
-            "collection": "tops",
+            "collection": "bodies",
             "heading": "Accessories",
             "heading_size": "h4",
             "subheading": ""
@@ -268,7 +271,7 @@
         "collection_slide_QyRTDj": {
           "type": "collection-slide",
           "settings": {
-            "collection": "t-shirts",
+            "collection": "colecao-forza",
             "heading": "Bottoms",
             "heading_size": "h4",
             "subheading": ""
@@ -331,6 +334,7 @@
             "content_position": "justify-center",
             "content_alignment": "text-center align-center",
             "product_position": "0",
+            "image": "shopify://shop_images/Facetune_27-05-2025-12-10-29.jpg",
             "video_external": "",
             "show_controls_on_video": false,
             "aspect_ratio_mobile": "auto",
