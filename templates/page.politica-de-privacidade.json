@@ -1,0 +1,33 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "troca_genius_3TpQ8q": {
+      "type": "troca-genius",
+      "settings": {
+        "image": "shopify://shop_images/IMG_1336.jpg",
+        "title": "Política de privacidade",
+        "text": "<p>Nós da Pacchi temos o compromisso de respeitar a privacidade e a segurança dos nossos clientes. Aqui, você tem a certeza de que está navegando em uma estrutura planejada para garantir total segurança e privacidade em cada compra realizada.</p><p>Em todas as formas de pagamento existem ferramentas eficientes para a proteção de seus dados; proporcionando um padrão sólido de segurança. Ou seja, além de grandes ofertas, você conta com um processo de compra muito tranquilo. Você também pode comprovar a nossa eficiência em segurança através dos nossos Certificados, presentes no fim de cada página (rodapé).</p><p><strong>Cookies</strong></p><p>Nosso site instala cookies* no seu computador com o objetivo de possibilitar a identificação do seu browser após a sua primeira visita. Com isso, o atendimento virtual fica mais personalizado. Fique tranquilo, você não terá problemas com a sua privacidade; não existem informações pessoais de segurança nesses cookies. Assim, quando você já fora outra vez cadastrado e acessa o site da Mobile Maníacos mais de uma vez pelo mesmo computador, o seu browser é identificado e automaticamente são buscado os dados já informados, oferecendo a você uma experiência de navegação única e personalizada.</p><p><strong>Computador compartilhado por mais de um usuário: </strong>Se você compartilha o mesmo computador com outra pessoa e ambos são cadastrados em um mesmo site que trabalhe com o mesmo cookie, é natural que o site o identifique com o nome daquela pessoa, quando você acessá-lo. Neste caso, desconecte-se do seu login no site e o faça novamente para obter a identificação correta. Caso tente navegar no site sem efetuar o logout, quando for entrar em páginas seguras serão solicitados o login e senha para confirmação de identidade.</p><p>*Cookie é um arquivo criado para armazenar informações em seu computador e deixar a experiência de navegação mais personalizada. Os cookies podem armazenar informações pessoais para identificá-lo. Quando um cookie é salvo no seu computador, somente o site que o criou poderá lê-lo.</p><p><strong>E-mails</strong></p><p>ATENÇÃO! Nunca solicitamos nenhum tipo de confirmação de dados ou informação no corpo do e-mail, tampouco algum cadastro é realizado através de e-mails. Principalmente alteração ou confirmação de senha, que só podem ser solicitadas pelos próprios clientes que efetuaram o cadastro.</p><p> </p>",
+        "text2": "",
+        "button_text": "",
+        "button_link": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "troca_genius_3TpQ8q"
+  ]
+}
