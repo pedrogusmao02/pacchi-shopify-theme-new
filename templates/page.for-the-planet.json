@@ -1,0 +1,99 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "planet_template_zknpkE": {
+      "type": "planet-template",
+      "blocks": {
+        "planet_image_YXi6Ap": {
+          "type": "planet_image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_1060.jpg"
+          }
+        },
+        "planet_title_PWFFj7": {
+          "type": "planet_title",
+          "settings": {
+            "title": "<strong>Para uma marca ser intitulada sustentável e consciente, deve-se considerar inúmeros fatores. Buscamos aprimorar cada vez mais nossas práticas conforme nosso crescimento financeiro permite.</strong>"
+          }
+        },
+        "planet_title_6p6YwW": {
+          "type": "planet_title",
+          "settings": {
+            "title": "Aqui estão todas as nossas ações para tornar a Pacchi o mais responsável socialmente e ambientalmente possível:"
+          }
+        },
+        "planet_content_XAixQw": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "<strong>1 — 4 Matéria prima</strong>",
+            "content_text": "l. Para o tingimento dos nossos tecidos é utilizado <strong>água de reuso</strong>, e não água potável. Isto foi possível graças a uma parceria do nosso fornecedor com a SABESP (Companhia de Saneamento do Estado de São Paulo), garantindo que a água do seu processo produtivo seja sempre tratada após o uso, retornando posteriormente ao processo em um <strong>sistema contínuo e cíclico.</strong>"
+          }
+        },
+        "planet_content_c9N643": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "",
+            "content_text": "ll. Utilizamos a matéria prima Amni Soul Eco®, o <strong>primeiro fio de poliamida do mundo</strong> com aditivos que acelera a decomposição em aterros sanitários. Ela também <strong>reduz a descarga de microplásticos</strong> gerados em lavandarias que acabam em ambientes marinhos. Ela permite que sua decomposição seja até <strong>10 vezes mais rápida em aterros e cerca de 20 vezes mais rápida nos oceanos</strong>, reduzindo o acúmulo de resíduos têxteis no planeta e diminuindo o impacto ambiental da cadeia têxtil."
+          }
+        },
+        "planet_content_zjiEzz": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "",
+            "content_text": "lll. Graças ao selo de CO2 Control®, os tecidos são produzidos com economia<strong> e redução da emissão de gás carbônico. </strong>Além disso, graças a sua <strong>tecnologia que não amassa</strong>, é evitado o gasto de energia com o ferro de passar."
+          }
+        },
+        "planet_content_WJTKXV": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "<strong>2 — 4 Atemporalidade</strong>",
+            "content_text": "l. Valorizamos peças duráveis e versáteis, que vão de encontro com produtos virais e momentâneos. Prezamos por peças que tenham um longo ciclo de vida no seu armário. Para a atemporalidade de uma peça, consideramos: design, mão de obra qualificada, matéria prima durável e tecnologia."
+          }
+        },
+        "planet_content_gd9kyD": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "<strong>3 — 4 Slow Fashion</strong>",
+            "content_text": "l. Queremos promover um consumo contrário às fast-fashions e às grandes tendências. Nos comprometemos com um <strong>consumo consciente e desacelerado, promovendo qualidade ao invés de quantidade.</strong> Vamos diretamente contra modas passageiras, priorizando peças com design minimalistas e sem estampas. "
+          }
+        },
+        "planet_content_AjYyeK": {
+          "type": "planet_content",
+          "settings": {
+            "content_title": "<strong>4 — 4 Transparência</strong>",
+            "content_text": "l. Para uma marca consciente e transparente, nos certificamos com uma <strong>produção brasileira, ética, regional e qualificada</strong>. Divulgamos em nossas redes todo l nosso time envolvido em toda cadeia de produção das peças."
+          }
+        }
+      },
+      "block_order": [
+        "planet_image_YXi6Ap",
+        "planet_title_PWFFj7",
+        "planet_title_6p6YwW",
+        "planet_content_XAixQw",
+        "planet_content_c9N643",
+        "planet_content_zjiEzz",
+        "planet_content_WJTKXV",
+        "planet_content_gd9kyD",
+        "planet_content_AjYyeK"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "planet_template_zknpkE"
+  ]
+}
