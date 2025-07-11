@@ -24,7 +24,7 @@
     "input_border_radius": "0.8rem",
     "spacing_desktop": 1.2,
     "spacing_mobile": 1.2,
-    "card_corner_radius": 0.8,
+    "card_corner_radius": 0,
     "card_text_alignment": "center",
     "card_media_aspect_ratio": "3/4",
     "product_card_media_aspect_ratio": "1/1",
