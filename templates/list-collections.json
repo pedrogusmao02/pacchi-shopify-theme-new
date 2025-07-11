@@ -1,0 +1,173 @@
+{
+  "sections": {
+    "page_banner_qyj87q": {
+      "type": "page-banner",
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "text": "",
+        "show_default_description": true,
+        "show_on_description": "desktop",
+        "content_position": "center",
+        "content_alignment": "center",
+        "media_position": "background",
+        "page_menu": "",
+        "enable_breadcrumbs": true,
+        "section_height": "33svh",
+        "video_external": "",
+        "show_controls_on_video": false,
+        "section_height_mobile": "50svh",
+        "video_external_mobile": "",
+        "show_controls_on_video_mobile": false,
+        "section_width": "max-w-narrow",
+        "color_scheme": "scheme-1",
+        "color_scheme_for_media": "",
+        "spacing_top": "2",
+        "spacing_bottom": "6"
+      }
+    },
+    "main": {
+      "type": "main-list-collections",
+      "blocks": {
+        "collection_eathwm": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "knitwear",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        },
+        "collection_4bXr8z": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "jackets-coats",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        },
+        "collection_nmMjBb": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "jeans",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        },
+        "collection_gUAdrY": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "pants",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        },
+        "collection_kVKTxN": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "basics",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        },
+        "collection_FDWMjL": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "collection": "tops",
+            "heading": "",
+            "heading_size": "h4",
+            "subheading": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_eathwm",
+        "collection_4bXr8z",
+        "collection_nmMjBb",
+        "collection_gUAdrY",
+        "collection_kVKTxN",
+        "collection_FDWMjL"
+      ],
+      "settings": {
+        "collections_to_show": "selected",
+        "card_title_style": "card-single-text",
+        "collection_product_count": "show",
+        "collections_per_page": 12,
+        "pagination_style": "default",
+        "enable_infinity_scroll": false,
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "0",
+        "spacing_bottom": "6"
+      }
+    },
+    "90f0172d-db82-4963-95c4-6a1724783cd8": {
+      "type": "trust-indicators",
+      "blocks": {
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-0": {
+          "type": "indicator",
+          "settings": {
+            "title": "Fast Global Shipping",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-1": {
+          "type": "indicator",
+          "settings": {
+            "title": "Free Returns",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-2": {
+          "type": "indicator",
+          "settings": {
+            "title": "100% secure payment",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        }
+      },
+      "block_order": [
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-0",
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-1",
+        "template--16809880650043__90f0172d-db82-4963-95c4-6a1724783cd8-16677286337545964d-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "swipe_on_mobile": true,
+        "slideshow_autoplay_interval": 3,
+        "content_direction": "horizontal",
+        "content_alignment": "text-center",
+        "content_size": "h5",
+        "color_scheme_for_blocks": "",
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    }
+  },
+  "order": [
+    "page_banner_qyj87q",
+    "main",
+    "90f0172d-db82-4963-95c4-6a1724783cd8"
+  ]
+}

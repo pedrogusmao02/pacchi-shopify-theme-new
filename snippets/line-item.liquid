@@ -1,0 +1,455 @@
+{% comment %}
+    Renders line item
+    Accepts:
+    - line_item {Object} Liquid line_item object
+    Usage:
+    {%- render 'line-item', line_item: cart.items[0] -%}
+
+    If cart_item is false, this means this snippet is used in the cart drawer.
+
+{% endcomment %}
+
+{%-
+  liquid
+  assign = line_item_index = line_item.index | plus: 1
+  assign cart_item = cart_item | default: false
+-%}
+{% comment %} if product variant set as Continue selling when out of stock, max quantity will set as 99 {% endcomment %}
+{% for variant in line_item.product.variants %}
+  {% if variant.id == line_item.variant_id %}
+    {% assign inventory_policy = variant.inventory_policy %}
+  {% endif %}
+{% endfor %}
+
+{%- assign adjusted_max_quantity = max_quantity -%}
+{%- if inventory_policy == 'continue' -%}
+  {%- assign adjusted_max_quantity = 99 -%}
+{%- endif -%}
+
+{%- if cart_item != true -%}
+
+<div class="cart-item" id="CartItem-{{- line_item_index -}}">
+  <div class="cart-item__media">
+    {%- if line_item.image -%}
+      <a href="{{- line_item.url -}}" class="cart-item__link">
+        <span class="visually-hidden">{{- line_item.title | escape -}}</span>
+        <div class="media">
+          {%- render 'image', image: line_item.image, width: 360, section_index: 2 -%}
+        </div>
+      </a>
+    {%- endif -%}
+  </div>
+
+  <div class="cart-item__details">
+    <div class="cart-item__content">
+      <h3 class="cart-item__title h6 heading-static">
+        <a href="{{- line_item.url -}}" class="full-unstyled-link">
+          {{- line_item.product.title | escape -}}
+        </a>
+      </h3>
+      <div class="cart-item__price">
+        {%- if line_item.variant.compare_at_price > line_item.variant.price -%}
+          <div class="cart-item__discounted-prices">
+            <span class="visually-hidden">
+              {{- 'product.price_sale' | t -}}
+            </span>
+            <ins class="color-red">
+              {{- line_item.variant.price | money -}}
+            </ins>
+            <span class="visually-hidden">
+              {{- 'product.price_regular' | t -}}
+            </span>
+            <del>
+              {{- line_item.variant.compare_at_price | money -}}
+            </del>
+          </div>
+        {%- else -%}
+          {{- line_item.variant.price | money -}}
+        {%- endif -%}
+
+        {%- if line_item.variant.available and line_item.unit_price_measurement -%}
+          <div>
+            <span class="visually-hidden">
+              {{- 'product.price_unit' | t -}}
+            </span>
+            {{- line_item.variant.unit_price | money -}}
+
+            <span aria-hidden="true">/</span>
+
+            {%- if line_item.variant.unit_price_measurement.reference_value != 1 -%}
+              {{- line_item.variant.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+
+            {{ line_item.variant.unit_price_measurement.reference_unit }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if line_item.discounts -%}
+        <ul class="cart-item__discounts list-unstyled" role="list" aria-label="{{- 'customer.order.discount' | t -}}">
+          {%- for discount in line_item.discounts -%}
+            <li>
+              {%- render 'icon', icon_name: 'theme-sale-tag' -%}
+              <span>{{- discount.title | escape -}}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- unless line_item.product.has_only_default_variant -%}
+        <dl>
+          {%- for option in line_item.options_with_values -%}
+            <dd>{{- option.value -}}</dd>
+            {%- unless forloop.last -%}
+              {{- '<span class="option_divider"></span>' -}}
+            {%- endunless -%}
+          {%- endfor -%}
+        </dl>
+      {%- endunless -%}
+
+      {%- if line_item.properties.size != 0 -%}
+        <dl class="cart-item__properties">
+          {%- for property in line_item.properties -%}
+            {%- assign property_first_char = property.first | slice: 0 -%}
+            {%- if property.last != blank and property_first_char != '_' -%}
+              <div>
+                <dd class="cart-item__property">
+                  {%- if property.last contains '/uploads/' -%}
+                    <a href="{{- property.last -}}" class="link" target="_blank">
+                      {{- property.last | split: '<span class="option_divider"></span>' | last -}}
+                    </a>
+                  {%- else -%}
+                    <span class="cart-item__property--title">{{ property.first }}:</span>
+                    <div class="cart-item__property--desc">
+                      {{- property.last -}}
+                    </div><!-- /.cart-item__property--desc -->
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </dl>
+      {%- endif -%}
+
+      {%- if line_item.selling_plan_allocation != nil -%}
+        <p class="cart-item__plan">{{- line_item.selling_plan_allocation.selling_plan.name -}}</p>
+      {%- endif -%}
+      <p class="cart-item__error color-red" role="alert" data-line-item-error data-line="{{- line_item_index -}}"></p>
+    </div>
+
+    {% comment %} max quantity in inventory of selected variant of product {% endcomment %}
+    {% assign max_quantity = line_item.product.variants | where: 'id', line_item.variant_id %}
+    {% assign max_quantity = max_quantity[0].inventory_quantity %}
+
+    <div class="cart-item__actions">
+      <div class="cart-item__actions--top">
+        <div class="cart-item__quantity">
+          {%- render 'quantity-input',
+            product_ref: line_item.product,
+            value: line_item.quantity,
+            name: 'updates[]',
+            min: 0,
+            max: adjusted_max_quantity,
+            index: line_item_index,
+            hide_label: true
+          -%}
+        </div>
+        <cart-remove-button
+          id="Remove-{{- line_item_index -}}"
+          data-index="{{- line_item_index -}}"
+        >
+          <a href="{{- line_item.url_to_remove -}}" title="{{- 'cart.remove' | t -}}">
+            {%- render 'icon', icon_name: 'theme-delete' -%}
+          </a>
+        </cart-remove-button>
+      </div>
+      <div class="cart-item__actions--price">
+        {% liquid
+          if line_item.variant.compare_at_price
+            assign original_line_price = line_item.variant.compare_at_price | times: line_item.quantity
+          else
+            assign original_line_price = line_item.variant.price | times: line_item.quantity
+          endif
+
+          if line_item.final_price and line_item.final_price != line_item.variant.price
+            assign final_line_price = line_item.final_price | times: line_item.quantity
+          else
+            assign final_line_price = line_item.variant.price | times: line_item.quantity
+          endif
+
+          assign original_line_price = line_item.variant.compare_at_price | times: line_item.quantity
+          assign final_line_price = line_item.variant.price | times: line_item.quantity
+        %}
+        {%- if original_line_price > final_line_price -%}
+          <div class="cart-item__discounted-prices cart-item__price">
+            <span class="visually-hidden">
+              {{- 'product.price_sale' | t -}}
+            </span>
+            <ins class="color-red">
+              {{- final_line_price | money -}}
+            </ins>
+            <span class="visually-hidden">
+              {{- 'product.price_regular' | t -}}
+            </span>
+            <del>
+              {{- original_line_price | money -}}
+            </del>
+          </div>
+        {%- elsif line_item.orginal_price != line_item.final_price and line_item.original_line_price != line_item.final_line_price -%}
+          <div class="cart-item__discounted-prices cart-item__price">
+            <span class="visually-hidden">
+              {{ 'product.price_sale' | t }}
+            </span>
+            <ins class="color-red">
+              {{ line_item.final_line_price | money }}
+            </ins>
+            <span class="visually-hidden">
+              {{ 'product.price_regular' | t }}
+            </span>
+            <del>
+              {{- line_item.original_line_price | money -}}
+            </del>
+          </div>
+        {%- else -%}
+          <span class="cart-item__price">{{- final_line_price | money -}}</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%- else -%}
+
+<div class="cart-item" id="CartItem-{{- line_item_index -}}">
+  <div class="cart-item__content-area">
+    <div class="cart-item__media">
+      {%- if line_item.image -%}
+        <a href="{{- line_item.url -}}" class="cart-item__link">
+          <span class="visually-hidden">{{- line_item.title | escape -}}</span>
+          <div class="media">
+            {%- render 'image', image: line_item.image, image_url_width: 550, alt: line_item.image.alt | escape -%}
+          </div>
+        </a>
+      {%- endif -%}
+    </div>
+    <div class="cart-item__content">
+      <h3 class="cart-item__title h6 heading-static">
+        <a href="{{- line_item.url -}}" class="full-unstyled-link">
+          {{- line_item.product.title | escape -}}
+        </a>
+      </h3>
+
+      <div class="cart-item__info">
+        <div class="cart-item__price-content desktop-hide">
+          <div class="cart-item__price">
+            {%- if line_item.variant.compare_at_price > line_item.variant.price -%}
+              <div class="cart-item__discounted-prices">
+                <span class="visually-hidden">
+                  {{- 'product.price_sale' | t -}}
+                </span>
+                <ins class="color-red">
+                  {{- line_item.variant.price | money -}}
+                </ins>
+                <span class="visually-hidden">
+                  {{- 'product.price_regular' | t -}}
+                </span>
+                <del>
+                  {{- line_item.variant.compare_at_price | money -}}
+                </del>
+              </div>
+            {%- else -%}
+              {{- line_item.variant.price | money -}}
+            {%- endif -%}
+
+            {%- if line_item.variant.available and line_item.unit_price_measurement -%}
+              <div>
+                <span class="visually-hidden">
+                  {{- 'product.price_unit' | t -}}
+                </span>
+                {{- line_item.variant.unit_price | money -}}
+
+                <span aria-hidden="true">/</span>
+
+                {%- if line_item.variant.unit_price_measurement.reference_value != 1 -%}
+                  {{- line_item.variant.unit_price_measurement.reference_value -}}
+                {%- endif -%}
+
+                {{ line_item.variant.unit_price_measurement.reference_unit }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- if line_item.discounts -%}
+            <ul class="cart-item__discounts list-unstyled" role="list" aria-label="{{- 'customer.order.discount' | t -}}">
+              {%- for discount in line_item.discounts -%}
+                <li>
+                  {%- render 'icon', icon_name: 'theme-sale-tag' -%}
+                  <span>{{- discount.title | escape -}}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+
+        {%- unless line_item.product.has_only_default_variant -%}
+          <dl>
+            {%- for option in line_item.options_with_values -%}
+
+              <dd>{{- option.value -}}</dd>
+
+              {%- unless forloop.last -%}
+                {{- '<span class="option_divider"></span>' -}}
+              {%- endunless -%}
+            {%- endfor -%}
+          </dl>
+        {%- endunless -%}
+
+        {%- if line_item.properties.size != 0 -%}
+          <dl>
+            {%- for property in line_item.properties -%}
+              {%- assign property_first_char = property.first | slice: 0 -%}
+              {%- if property.last != blank and property_first_char != '_' -%}
+                <div>
+                  <dd>
+                    {%- if property.last contains '/uploads/' -%}
+                      <a href="{{- property.last -}}" class="link" target="_blank">
+                        {{- property.last | split: '<span class="option_divider"></span>' | last -}}
+                      </a>
+                    {%- else -%}
+                      {{- property.last -}}
+                    {%- endif -%}
+                  </dd>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+      </div>
+      {%- if line_item.selling_plan_allocation != nil -%}
+        <p class="cart-item__plan">{{- line_item.selling_plan_allocation.selling_plan.name -}}</p>
+      {%- endif -%}
+      <p class="cart-item__error color-red" role="alert" data-line-item-error data-line="{{- line_item_index -}}"></p>
+    </div>
+  </div>
+
+    <div class="cart-item__price-content small-hide medium-hide">
+      <div class="cart-item__price">
+        {%- if line_item.variant.compare_at_price > line_item.variant.price -%}
+          <div class="cart-item__discounted-prices">
+            <span class="visually-hidden">
+              {{- 'product.price_sale' | t -}}
+            </span>
+            <ins class="color-red">
+              {{- line_item.variant.price | money -}}
+            </ins>
+            <span class="visually-hidden">
+              {{- 'product.price_regular' | t -}}
+            </span>
+            <del>
+              {{- line_item.variant.compare_at_price | money -}}
+            </del>
+          </div>
+        {%- else -%}
+          {{- line_item.variant.price | money -}}
+        {%- endif -%}
+
+        {%- if line_item.variant.available and line_item.unit_price_measurement -%}
+          <div>
+            <span class="visually-hidden">
+              {{- 'product.price_unit' | t -}}
+            </span>
+            {{- line_item.variant.unit_price | money -}}
+
+            <span aria-hidden="true">/</span>
+
+            {%- if line_item.variant.unit_price_measurement.reference_value != 1 -%}
+              {{- line_item.variant.unit_price_measurement.reference_value -}}
+            {%- endif -%}
+
+            {{ line_item.variant.unit_price_measurement.reference_unit }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if line_item.discounts -%}
+        <ul class="cart-item__discounts list-unstyled" role="list" aria-label="{{- 'customer.order.discount' | t -}}">
+          {%- for discount in line_item.discounts -%}
+            <li>
+              {%- render 'icon', icon_name: 'theme-sale-tag' -%}
+              <span>{{- discount.title | escape -}}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {% comment %} max quantity in inventory of selected variant of product {% endcomment %}
+    {% assign max_quantity = line_item.product.variants | where: 'id', line_item.variant_id %}
+    {% assign max_quantity = max_quantity[0].inventory_quantity %}
+
+    <div class="cart-item__actions">
+      <div class="cart-item__quantity">
+        {%- render 'quantity-input',
+          product_ref: line_item.product,
+          value: line_item.quantity,
+          name: 'updates[]',
+          min: 0,
+          max: adjusted_max_quantity,
+          index: line_item_index,
+          hide_label: true,
+          cart_item: cart_item
+        -%}
+      </div>
+
+      <cart-remove-button
+        id="Remove-{{- line_item_index -}}"
+        data-index="{{- line_item_index -}}"
+      >
+        <a href="{{- line_item.url_to_remove -}}" title="{{- 'cart.remove' | t -}}">
+          <span>{{- 'cart.remove' | t -}}</span>
+          {%- render 'icon', icon_name: 'theme-delete' -%}
+        </a>
+      </cart-remove-button>
+    </div>
+
+    <div class="cart-item__total-price">
+      {% liquid
+        assign original_line_price = line_item.variant.compare_at_price | times: line_item.quantity
+        assign final_line_price = line_item.variant.price | times: line_item.quantity
+      %}
+      {% comment %} {{ line_item | json }} {% endcomment %}
+      {%- if original_line_price > final_line_price -%}
+        <div class="cart-item__discounted-prices cart-item__price">
+          <span class="visually-hidden">
+            {{- 'product.price_sale' | t -}}
+          </span>
+          <ins class="color-red">
+            {{- final_line_price | money -}}
+          </ins>
+          <span class="visually-hidden">
+            {{- 'product.price_regular' | t -}}
+          </span>
+          <del>
+            {{- original_line_price | money -}}
+          </del>
+        </div>
+      {%- elsif line_item.orginal_price != line_item.final_price and line_item.original_line_price != line_item.final_line_price -%}
+        <div class="cart-item__discounted-prices cart-item__price">
+          <span class="visually-hidden">
+            {{ 'product.price_sale' | t }}
+          </span>
+          <ins class="color-red">
+            {{ line_item.final_line_price | money }}
+          </ins>
+          <span class="visually-hidden">
+            {{ 'product.price_regular' | t }}
+          </span>
+          <del>
+            {{- line_item.original_line_price | money -}}
+          </del>
+        </div>
+      {%- else -%}
+        <span class="cart-item__price">{{- final_line_price | money -}}</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

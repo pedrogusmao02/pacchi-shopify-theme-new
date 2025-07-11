@@ -1,0 +1,156 @@
+{% comment %}
+    Renders a product feed
+
+    Accepts:
+    - section: {Object} Section object used for default, title and button settings
+    - section_classes: {String} Classes to be added to the section element
+    - element?: {String} Custom element, default is 'card-product-slider'
+    - attr?: {String} Data attributes
+    - products_array: {Array[Objects]} Product objects array
+    - url: {String} URL, if there are recommendations
+
+    Usage:
+    {%- render 'products-feed', products_array: collection.products -%}
+{% endcomment %}
+
+{%- liquid
+  assign element = element | default: 'card-product-slider'
+  assign products_array = products_array | default: nil
+  assign attr = attr | default: ''
+  assign url = url | default: nil
+  assign products_limit = section.settings.max_products | default: 50
+  assign section_name = section_name | default: 'products-feed'
+  assign section_blocks = section_blocks | default: nil
+-%}
+
+{%- if products_array != nil or url -%}
+
+  {%- style -%}
+    #shopify-section-{{ section.id }} > div {
+      padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+      padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+    }
+    .product-feed.section {
+      padding: 0;
+    }
+  {%- endstyle -%}
+
+  {{- 'component-card-product-slider.css' | asset_url | stylesheet_tag -}}
+  {{- 'component-card-product.css' | asset_url | stylesheet_tag -}}
+
+  <script src="{{- 'card-product-slider.js' | asset_url -}}" defer="defer"></script>
+
+  {%- if element == 'recently-viewed-products' -%}
+    <script src="{{- 'recently-viewed-products.js' | asset_url -}}" defer="defer"></script>
+  {%- endif -%}
+
+  {%- assign section_additional_classes = '' -%}
+  {%- if url and recommendations.performed and recommendations.products_count > 0 -%}
+    {%- assign products_array = recommendations.products -%}
+    {%- assign section_additional_classes = section_additional_classes | append: ' hidden' -%}
+  {%- endif -%}
+
+  {%- assign section_button = blank -%}
+  {%- if section.settings.button_label != blank -%}
+    {%- capture section_button -%}
+      {%- render 'button',
+        type: 'link',
+        class: 'button custom_class',
+        button_style: section.settings.button_style,
+        value: section.settings.button_label,
+        href: section.settings.button_link
+      -%}
+    {%- endcapture -%}
+  {%- endif -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="section product-feed overflow-hidden js-animation-fade-in {{ section.settings.layout }} {{ section_additional_classes | strip }}" data-section-id="{{- section.id -}}">
+    <div class="container {{ section.settings.section_width }}">
+
+        {%- if section.settings.heading != blank or section_button != blank -%}
+          <div class="section__head">
+            <div class="section__head-title">
+              {%- if section.settings.subheading != blank -%}
+                <span class="h6 rte">{{- section.settings.subheading -}}</span>
+              {%- endif -%}
+              {%- if section.settings.heading != blank -%}
+                <h2 class="section__heading {{ section.settings.heading_size }}">{{- section.settings.heading -}}</h2>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="section__body">
+
+          {%- capture data_swiper_options -%}
+            {
+              "spaceBetweenDesktop": {{ settings.spacing_desktop | times: 10 | round: 0 }},
+              "spaceBetweenMobile": {{ settings.spacing_mobile | times: 10 | round: 0 }},
+              "slidesPerViewMobile": 1.3,
+              {% if section.settings.show_navigation_arrows %}
+                "navigation": {
+                  "prevEl": ".swiper-button--prev-{{ section.id }}",
+                  "nextEl": ".swiper-button--next-{{ section.id }}"
+                },
+              {% endif %}
+              {% if section.settings.slider_autoplay > 0 %}
+                "autoplay": {
+                  "delay": {{ section.settings.slider_autoplay | times: 1000 }}
+                },
+              {% endif %}
+              "swiperName": "products-feed"
+            }
+          {%- endcapture -%}
+
+          <{{ element }}
+            data-init-quick-cart
+            class="swiper card-product-slider {% if section.settings.enable_slideshow_overflow %}overflow-unset{% endif %}"
+            data-section-id="{{- section.id -}}"
+            data-swiper-options='{{ data_swiper_options | strip_newlines | replace: " ", "" }}'
+            {% if url %}data-url="{{- url -}}"{% endif %}
+            {{ attr }}
+          >
+
+            <div class="swiper-wrapper card-product-slider__wrapper">
+              {%- if products_array -%}
+                {%- unless section.settings.show_unavailable_products -%}
+                  {%- assign products_array = products_array | where: 'available' -%}
+                {%- endunless -%}
+
+                {%- for product in products_array limit: products_limit -%}
+                  <div class="swiper-slide card-product-slider__slide">
+                    {% render 'card-product', product_ref: product, section_id: section.id, image_per_view: 4  %}
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </{{ element }}>
+
+        </div>
+
+        <div class="section__foot">
+          <div class="section__head--buttons">
+            {{ section_button | replace_first: 'custom_class' }}
+            {% if section.settings.show_navigation_arrows %}
+              {% if section.settings.layout == 'layout-2'  %}
+                {%- assign icon_arrow = 'theme-arrow' -%}
+              {% else %}
+                {%- assign icon_arrow = 'theme-chevron' -%}
+              {% endif %}
+
+              <div class="swiper-buttons small-hide card-slider__buttons no-js-hidden">
+                <button class="swiper-button swiper-button--prev-{{ section.id }}" aria-label="{{- 'theme.actions.previous' | t -}}">
+                  {%- render 'icon', icon_name: icon_arrow -%}
+                </button>
+                <button class="swiper-button swiper-button--next-{{ section.id }}" aria-label="{{- 'theme.actions.next' | t -}}">
+                  {%- render 'icon', icon_name: icon_arrow -%}
+                </button>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{%- endif -%}

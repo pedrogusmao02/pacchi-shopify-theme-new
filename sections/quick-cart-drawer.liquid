@@ -1,0 +1,60 @@
+{%- if settings.product_card_enable_quick_add_to_cart_button -%}
+  {{- 'component-card-product.css' | asset_url | stylesheet_tag -}}
+  {{- 'component-quick-cart-drawer.css' | asset_url | stylesheet_tag -}}
+  <script src="{{- 'quick-cart-drawer.js' | asset_url -}}" defer="defer"></script>
+
+  {%- style -%}
+    quick-cart-drawer {
+      --product-media-aspect-ratio: {{ settings.product_card_media_aspect_ratio }};
+    }
+  {%- endstyle -%}
+
+  <quick-cart-drawer>
+    <div class='quick-cart-drawer__blocks slim-scrollbar color-{{ section.settings.color_scheme }}' tabindex="-1">
+      <div class="quick-cart-drawer__header">
+        <h5>{{ 'product.choose_options' | t }}</h5>
+        <button
+          type='button'
+          class='button--close'
+          aria-expanded='false'
+          aria-controls='quick-cart-drawer'
+          aria-label='Close drawer for selected item'
+          tabindex="-1"
+        >
+          {%- render 'icon', icon_name: 'theme-close' -%}
+        </button>
+      </div>
+      <div class="quick-cart-drawer__main">
+        {%- comment -%}dynamically product content will load via js{%- endcomment -%}
+        <div class="quick-cart-drawer__main--empty">
+          <p class="h2">{{ 'product.quick_cart_empty' | t }}</p>
+          <p>{{ 'product.quick_cart_empty_content' | t }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class='quick-cart-drawer__backdrop'></div>
+  </quick-cart-drawer>
+{% endif %}
+{% schema %}
+{
+  "name": "t:sections.quick-cart-drawer.name",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.quick-cart-drawer.settings.paragraph.content"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

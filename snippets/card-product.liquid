@@ -1,0 +1,437 @@
+{% comment %}
+  Renders a product card
+  Accepts:
+  - product_ref: {Object} Product Liquid object
+  - section_id: {String} Section id
+  - block_index: {Number} Block index for unique id
+  Usage:
+  {%- render 'card-product', product_ref: product_ref, section_id: section.id, block_index: block_index  -%}
+{% endcomment %}
+
+{% comment %} Product Media {% endcomment %}
+
+{%- liquid
+  assign image_per_view = image_per_view | default: 3
+  assign is_small = is_small | default: false
+
+  assign search_product = search_product | default: false
+  assign is_in_drawer = is_in_drawer | default: false
+  assign product_images = product_ref.variants | map: 'featured_image' | uniq
+
+  assign variants_display_desktop = settings.product_card_variants_display_desktop
+  assign variants_display_mobile = settings.product_card_variants_display_mobile
+
+  assign variants_display_limit = settings.product_card_variants_display_limit | default: 3
+
+  assign show_variants = show_variants | default: true
+
+  assign product_title_placeholder = 'product.label' | t
+-%}
+
+{%- capture media -%}
+  {% comment %} Variables | Product Media {% endcomment %}
+  {%- assign media_classes = "media product-card__media" -%}
+  {%- if settings.product_card_media_hover and product_ref.gift_card? == false -%}
+    {%- assign media_classes = media_classes | append: ' product-card__media--hoverable' -%}
+  {%- endif -%}
+
+  {% comment %} Styles | Product Media {% endcomment %}
+  <style>
+    .product-card__media {
+      --product-card-media-aspect-ratio: {{ settings.product_card_media_aspect_ratio }};
+      --product-card-media-object-fit: {{ settings.product_card_media_object_fit }};
+    }
+  </style>
+
+  {% comment %} Render | Product Media {% endcomment %}
+  <div
+    class="{{ media_classes }}"
+    data-update-media="{% if product_ref.first_available_variant == product_ref.selected_variant %}true{% else %}false{% endif %}"
+  >
+    {% liquid
+      assign hover_media = product_ref.media[1]
+
+      if hover_media.media_type == 'video' or hover_media.media_type == 'external_video'
+        assign hover_media = product_ref.media[2]
+      endif
+
+      if product_ref.featured_image
+        if product_images.size > 1 and variants_display_desktop != 'none' or variants_display_mobile != 'none'
+          for product_image in product_images
+            if product_image != blank
+              assign data_product_images = ''
+              for variant in product_ref.variants
+                if variant.featured_image == product_image
+                  assign data_product_images = data_product_images | append: variant.id | append: ','
+                endif
+              endfor
+              assign data_product_images = data_product_images | split: ',' | uniq | join: ','
+              if data_product_images != ""
+                assign attr = 'data-product-images="' | append: data_product_images | append: '"'
+              endif
+
+              # check if variant has a featured image or use first image to display default
+              assign image_render_condition = false
+              if product_ref.selected_or_first_available_variant.featured_image and product_ref.selected_or_first_available_variant.featured_image.id == product_image.id
+                assign image_render_condition = true
+              elsif product_ref.selected_or_first_available_variant.featured_image == nil and forloop.first
+                assign image_render_condition = true
+              endif
+
+              assign loading = 'lazy'
+              if product_index and product_index <= image_per_view and forloop.index0 < 1
+                assign loading = 'eager'
+              endif
+
+              if image_render_condition
+                render 'image', image: product_image, attr: attr, image_per_view: image_per_view, loading: loading
+              else
+                render 'image', image: product_image, attr: attr, image_per_view: image_per_view, loading: loading
+              endif
+            endif
+          endfor
+        else
+          render 'image', image: product_ref.featured_image, image_per_view: image_per_view, loading: loading
+        endif
+
+        if settings.product_card_media_hover and product_ref.media.size > 1 and hover_media != nil
+          render 'image', image: hover_media, alt: hover_media.alt | default: product_ref.title, class: 'hover-img', image_per_view: image_per_view
+        endif
+      else
+        echo 'product-1' | placeholder_svg_tag: 'placeholder-svg'
+      endif
+    %}
+  </div>
+{%- endcapture -%}
+
+{% comment %} Product Add-To-Cart Button {% endcomment %}
+{%- capture add_to_cart_button -%}
+  {%- if settings.product_card_enable_quick_add_to_cart_button or settings.product_card_enable_single_add_to_cart_button -%}
+    {% comment %} Variables | Product Add-To-Cart Button {% endcomment %}
+    {%- assign button_classes = 'button product-card__add-to-cart--button color-' | append: settings.product_card_action_buttons_color_scheme | append: ' ' -%}
+    {%- if settings.product_card_add_to_cart_btn_content == 'icon-hover' -%}
+      {%- assign button_classes = button_classes | append: ' product-card__add-to-cart--button-icon-with-hover ' -%}
+    {%- endif -%}
+    {% if is_small %}
+      {% assign button_classes = button_classes | append: 'product-card-small__button ' %}
+    {% endif %}
+    {%- if settings.product_card_add_to_cart_btn_content == 'icon' or settings.product_card_add_to_cart_btn_content == 'icon-hover' -%}
+      {%- assign button_classes = button_classes | append: 'button--icon' -%}
+      {%- if settings.button_border_radius == '0' -%}
+        {%- assign button_classes = button_classes | append: ' button--rounded-0' -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- assign button_classes = button_classes | append: 'button--uppercase button--filled' -%}
+    {%- endif -%}
+
+    {%- capture button_content -%}
+      {%- assign button_label = '' -%}
+      {%- if product_ref.metafields.theme.preorder.value -%}
+        {%- assign button_label = 'product.preorder' | t  -%}
+      {%- else -%}
+        {%- if product_ref.variants.size == 1 -%}
+          {%- assign button_label = 'theme.actions.add_to_cart' | t  -%}
+        {%- elsif product_ref.variants.size > 1  -%}
+          {%- assign button_label = 'product.choose_options' | t  -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- if is_in_drawer -%}
+        {%- assign button_label = 'product.select_size' | t  -%}
+      {%- endif -%}
+      {%- if settings.product_card_add_to_cart_btn_content contains 'icon' -%}
+        {% render 'icon', icon_name: 'theme-plus' %}
+      {%- endif -%}
+      {%- if settings.product_card_add_to_cart_btn_content contains 'hover' -%}
+        <span class="product-card__add-to-cart--text">{{- settings.product_card_add_to_cart_icon_hover_text -}}</span>
+      {%- endif -%}
+      {%- if settings.product_card_add_to_cart_btn_content contains 'text' -%}
+        <span>{{- button_label -}}</span>
+      {%- else -%}
+        <span class="visually-hidden">{{- button_label -}}</span>
+      {%- endif -%}
+    {%- endcapture -%}
+
+    {% comment %} Render | Product Add-To-Cart Button {% endcomment %}
+    {%- if product_ref.variants.size == 1 and settings.product_card_enable_single_add_to_cart_button -%}
+      <button
+        type="submit"
+        class="{{ button_classes }}"
+        {%- unless product_ref.available -%}disabled{%- endunless -%}
+      >
+        {{- button_content -}}
+      </button>
+    {%- endif -%}
+    {%- if product_ref.variants.size > 1 and settings.product_card_enable_quick_add_to_cart_button -%}
+      <button
+        type="button"
+        class="quick-cart-drawer__trigger {{ button_classes }}"
+        tabindex="{% if is_in_drawer == true %}-1{% else %}0{% endif %}"
+        aria-expanded="false"
+        aria-controls="quick-cart-drawer"
+        data-product-url="{{- product_ref.handle | prepend: '/products/'  -}}"
+        {%- unless product_ref.available -%}disabled{%- endunless -%}
+      >
+        {{- button_content -}}
+        <div class="quick-cart-drawer__trigger--loading">
+          {%- render 'loading-spinner' -%}
+        </div>
+      </button>
+    {%- endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{% comment %} Product Add-To-Cart Form {% endcomment %}
+{%- capture add_to_cart -%}
+  {%- if product_ref.available -%}
+    {%- capture variant_id_input -%}
+      <input type='hidden' name='id' value='{{- product_ref.selected_or_first_available_variant.id -}}'>
+    {%- endcapture -%}
+
+    {%- if product_ref.variants.size == 1 and settings.product_card_enable_single_add_to_cart_button -%}
+      {% comment %} Render | Product Add-To-Cart Form {% endcomment %}
+      <form class="product-card__add-to-cart--form">
+        {{ variant_id_input }}
+        <input type='hidden' name='quantity' value='1'>
+        {{ add_to_cart_button }}
+      </form>
+    {%- else -%}
+      {{ variant_id_input }}
+    {%- endif -%}
+    {%- if product_ref.variants.size > 1 and settings.product_card_enable_quick_add_to_cart_button -%}
+      {{ add_to_cart_button }}
+    {%- endif -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{% comment %} Product Variants || Options || Swatches {% endcomment %}
+{%- capture product_variants -%}
+  {%- if product_ref.available and variants_display_desktop != 'none' or variants_display_mobile != 'none' -%}
+    {% comment %} Variables | Product Swatches {% endcomment %}
+    {%- assign swatch_options = settings.swatches_option | split: ',' -%}
+    {%- assign current_swatch_options = '' -%}
+    {%- for swatch_opt in swatch_options -%}
+      {%- assign swatch_opt_striped = swatch_opt | strip -%}
+      {%- assign swatch_option = product_ref.options_by_name[swatch_opt_striped].values | join: ',' -%}
+      {%- assign current_swatch_options = current_swatch_options | append: swatch_option | append: ',' -%}
+    {%- endfor -%}
+    {%- assign current_swatch_options = current_swatch_options | split: ','-%}
+
+    {% comment %} Check for variant priorty  {% endcomment %}
+    {% assign swatches_option_array = settings.swatches_option | split: ',' %}
+
+    {%- liquid
+      assign variants_available_arr = product_ref.variants | map: 'available'
+      assign variants_option_first_arr = product_ref.variants | map: 'option1'
+      assign variants_option_second_arr = product_ref.variants | map: 'option2'
+      assign variants_option_third_arr = product_ref.variants | map: 'option3'
+    -%}
+
+    {% comment %} Render | Product Variants & Swatches {% endcomment %}
+    <div class="product-card__variants">
+      {%- capture swatch_info_class -%}
+        {%- if variants_display_desktop == 'info' and variants_display_mobile != 'info'  -%}
+          small-hide
+        {%- elsif variants_display_mobile == 'info' and variants_display_desktop != 'info' -%}
+          small-up-hide
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- if variants_display_desktop == 'info' or variants_display_mobile == 'info' -%}
+        <span class="product-card__variants--info {{ swatch_info_class }}">
+        {%- liquid
+          if product_ref.options_with_values.size > 1
+            assign options_count_and_name = ''
+            assign option_last_count_and_name = ''
+            for option_with_value in product_ref.options_with_values
+              if forloop.last == false
+                assign options_count_and_name = options_count_and_name | append: option_with_value.values.size | append: ' ' | append: option_with_value.name | append: ', '
+              else
+                assign option_last_count_and_name = option_with_value.values.size | append: ' ' | append: option_with_value.name
+              endif
+            endfor
+            assign options_count_and_name = options_count_and_name | replace_last: ', ', '' | downcase
+            assign option_last_count_and_name = option_last_count_and_name | downcase
+            echo 'product.variant_info_multiple_options' | t: options_count_and_name: options_count_and_name, option_last_count_and_name: option_last_count_and_name
+          else
+            for option_with_value in product_ref.options_with_values
+              assign option_count_and_name = option_with_value.values.size | append: ' ' | append: option_with_value.name
+              assign option_count_and_name = option_count_and_name | downcase
+              echo 'product.variant_info_one_option' | t: option_count_and_name: option_count_and_name
+            endfor
+          endif
+        -%}
+        </span>
+      {%- endif -%}
+      <ul class="product-card__variants--list product-card__variants--list--{{ settings.product_card_product_options_position }}">
+        {%- comment -%}digifist-note -- this part is a need max variant setting{%- endcomment -%}
+        {%- for opts in (1..3) -%}
+          {%- assign options = blank -%}
+          {%- if opts == 1 -%}
+            {%- assign options = product_ref.options_with_values[0] -%}
+          {%- elsif opts == 2 -%}
+            {%- assign options = product_ref.options_with_values[1] -%}
+          {%- elsif opts == 3 -%}
+            {%- assign options = product_ref.options_with_values[2] -%}
+          {%- endif -%}
+          {%- if options.values != blank -%}
+            {%- if options.values.size > 1 -%}
+              {%- capture swatch_button_class -%}
+                {%- unless swatches_option_array contains options.name -%}
+                  hidden
+                {%- else -%}
+                  {%- if variants_display_desktop != 'button' and variants_display_mobile == 'button' -%}
+                    small-up-hide
+                  {%- elsif variants_display_mobile != 'button' and variants_display_desktop == 'button' -%}
+                    small-hide
+                  {%- elsif variants_display_desktop != 'button' and variants_display_mobile != 'button' -%}
+                    hidden
+                  {%- endif -%}
+                {%- endunless -%}
+              {%- endcapture -%}
+              <li class="{{ swatch_button_class }}">
+                <fieldset class="product__variant-options js-product-card-options" role="radiogroup">
+                  {%- for opt in options.values -%}
+
+                    {%- liquid
+                      # unique element id for js actions
+                      assign section_id = section.id | default: 'section'
+                      assign block_id = block.id | default: 'block'
+                      assign variant_id = section_id | append: '-' | append: product_ref.id | append: '-variant-option-' | append: opts | append: '-' | append: forloop.index | append: '-' | append: block_id
+
+                      assign color_option_values = product_ref.options_by_name[settings.swatches_option].values
+                      assign selected_variant = product_ref.selected_or_first_available_variant
+                      assign selected_variant_color = blank
+
+                      for option_value in selected_variant.options
+                        if color_option_values contains option_value
+                          assign selected_variant_color = option_value
+                        endif
+                      endfor
+
+                      assign option_disabled = true
+                      for option1_name in variants_option_first_arr
+                        case opts
+                          when 1
+                            if variants_option_first_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                              assign option_disabled = false
+                            endif
+                          when 2
+                            if option1_name == product.selected_or_first_available_variant.option1 and variants_option_second_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                              assign option_disabled = false
+                            endif
+                          when 3
+                            if option1_name == product.selected_or_first_available_variant.option1 and variants_option_second_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option_third_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                              assign option_disabled = false
+                            endif
+                        endcase
+                      endfor
+
+                      # product swatch check
+                      assign opt_swatch = false
+
+                      assign variant_is_checked = false
+                      for selected_variant_option in selected_variant.options
+                        if selected_variant_option == opt
+                          assign variant_is_checked = true
+                        endif
+                      endfor
+
+                      assign input_is_checked = false
+                      if variant_is_checked
+                        assign input_is_checked = true
+                      endif
+
+                      assign option_disabled = false
+                      assign all_variants = product_ref.variants
+                      for each_variant in all_variants
+                        for each_variant_option in each_variant.options
+                          if each_variant_option == opt and each_variant.available == false
+                            assign option_disabled = true
+                          endif
+                        endfor
+                      endfor
+
+                      assign input_is_disabled = false
+                      if option_disabled
+                        assign input_is_disabled = true
+                      endif
+
+                      assign input_name = product_ref.id | append: '-option[' | append: opts | append: ']'
+                    -%}
+
+                    <div class="button--variant{% if opt_swatch %} button--swatch{% if settings.swatches_shape == 'circle' %} button--swatch-rounded{% endif %}{% endif %}" tabindex="0">
+                      {%- render 'product-option', id: variant_id, name: input_name, value: opt, swatch_value: opt.swatch, checked: input_is_checked, class: 'hidden variant-option-radio-input', visually_hidden: true, block: block, product: product_ref, option: options, where: 'card-product' -%}
+                    </div>
+                    {%- if forloop.index == variants_display_limit -%}
+                      {%- assign more_variants_size = options.values.size | minus: variants_display_limit -%}
+                      {%- unless more_variants_size == 0 -%}
+                        <li class="product-card__variants--more">{{- "+" | append: more_variants_size -}}</li>
+                      {%- endunless -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </fieldset>
+              </li>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  <script data-product-variants-json type="application/json">
+    {{- product_ref.variants | json -}}
+  </script>
+{%- endcapture -%}
+
+{%- assign product_link_with_variant = product_ref.url | append: '?variant=' | append: product_ref.selected_or_first_available_variant.id -%}
+
+{%- if search_product -%}
+  {%- assign product_link_with_variant = product_ref.url -%}
+{%- endif -%}
+
+<product-card class="product-card{% if is_small %} product-card--small{% endif %}{% unless product_ref.available %} product-card__sold-out{% endunless %}">
+  <div class="product-card__actions">
+    <a href="{{ product_link_with_variant }}" tabindex="-1" class="product-card__link" data-product-link title="{{ 'product.go_to_title' | t : title: product_ref.title }}">
+      {{ media }}
+    </a>
+    {% if is_small == false %}
+      {{ add_to_cart }}
+    {% endif %}
+  </div>
+  <div class="product-card__content">
+    {%- liquid
+      assign product_card_info_classes = 'product-card__info'
+      if settings.product_card_badge_position == 'start'
+        assign product_card_info_classes = product_card_info_classes | append: ' product-card__badge--on-start'
+      endif
+      if settings.product_card_price_position == 'inline'
+        assign product_card_info_classes = product_card_info_classes | append: ' product-card__price--inline'
+      endif
+    -%}
+    <div class="{{ product_card_info_classes }}">
+      {%- if settings.show_product_card_vendor -%}
+        <span class="product-card__vendor">
+          {{ product_ref.vendor | link_to_vendor }}
+        </span>
+      {%- endif -%}
+      <h3 class="product-card__title">
+        <a href="{{ product_link_with_variant }}" class="product-card__link" tabindex="{% if is_in_drawer == true %}-1{% else %}0{% endif %}" data-product-link title="{{ 'product.go_to_title' | t : title: product_ref.title }}">
+          <span>{{ product_ref.title | default: product_title_placeholder }}</span>
+        </a>
+        {% render 'product-badges', product: product_ref %}
+      </h3>
+      <span class="product-card__price">
+        {%- render 'price', product: product_ref -%}
+      </span>
+    </div>
+    <div class="product-card__options product-card__options--{{ settings.product_card_product_options_position }}">
+      {% if settings.show_product_groups_on_product_card %}
+        {% render 'product-groups', product: product_ref, on: 'card' %}
+      {% endif %}
+      {{ product_variants }}
+    </div>
+    {% if is_in_drawer %}
+      {{ add_to_cart }}
+    {% endif %}
+  </div>
+</product-card>

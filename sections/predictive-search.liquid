@@ -1,0 +1,108 @@
+{%- if predictive_search.performed -%}
+  {{- 'component-card-product.css' | asset_url | stylesheet_tag -}}
+  <div class="predictive-search__results" id="predictive-search-results">
+    {%- if predictive_search.resources.pages == blank and predictive_search.resources.products == blank and predictive_search.resources.queries.size == 0 and predictive_search.resources.collections.size == 0 and predictive_search.resources.pages.size == 0 and predictive_search.resources.articles.size == 0 -%}
+      <div class="predictive-search__message">
+        <p>
+          {{- 'search.no_results_with_terms' | t: terms: predictive_search.terms | append: " " -}}
+          {{- 'search.change_terms' | t -}}
+        </p>
+      </div>
+    {%- endif -%}
+
+    {%- if predictive_search.resources.queries.size > 0 or predictive_search.resources.collections.size > 0 or predictive_search.resources.pages.size > 0 or predictive_search.resources.articles.size > 0 -%}
+    <div class="predictive-search__col">
+    {%- if predictive_search.resources.queries.size > 0 or predictive_search.resources.pages.size > 0 or predictive_search.resources.articles.size > 0 -%}
+      <div class="predictive-search__row">
+        <h6 class="search-drawer__title">
+          {{- 'search.popular_searches' | t -}}
+        </h6>
+        <ul class="predictive-search__links list-unstyled">
+          {%- for query in predictive_search.resources.queries limit: 3 -%}
+            <li class="predictive-search__links-item">
+              <a href="{{- query.url -}}" class="predictive-search__links-link">
+                <span aria-label="{{ query.text }}">{{ query.styled_text }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+          {%- for page in predictive_search.resources.pages limit: 3 -%}
+            <li class="predictive-search__links-item">
+              <a href="{{- page.url -}}" class="predictive-search__links-link">
+                {{- page.title -}}
+              </a>
+            </li>
+          {%- endfor -%}
+          {%- for article in predictive_search.resources.articles limit: 3 -%}
+            <li class="predictive-search__links-item">
+              <a href="{{- article.url -}}" class="predictive-search__links-link">
+                {{- article.title -}}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if predictive_search.resources.collections.size > 0 -%}
+      <div class="predictive-search__row">
+        <h6 class="search-drawer__title">
+          {{- 'search.collections' | t -}}
+        </h6>
+
+        <ul class="predictive-search__links predictive-search__collections list-unstyled">
+          {%- for collection in predictive_search.resources.collections limit: 2 -%}
+            <li class="predictive-search__links-item">
+              <a href="{{- collection.url -}}" class="predictive-search__collections-box">
+                <div class="predictive-search__collections-img">
+                  <div class="media">
+                    {%- if collection.featured_image -%}
+                      {%- render 'image', image: collection.featured_image -%}
+                    {%- else -%}
+                      {{ 'collection-1' | placeholder_svg_tag }}
+                    {%- endif -%}
+                  </div>
+                </div>
+                <div class="predictive-search__collections-title">
+                  <span>{{- collection.title -}}<small>{{- collection.all_products_count -}}</small></span>
+                </div>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+    </div>
+    {%- endif -%}
+
+    <div class="predictive-search__col predictive-search__col-product">
+      {%- if predictive_search.resources.products.size > 0 -%}
+        <div class="predictive-search__row">
+          <h6 class="search-drawer__title">
+            {{- 'search.products' | t -}}
+          </h6>
+
+          {% style %}
+            .predictive-search__grid {
+              column-gap: var(--grid-spacing);
+            }
+          {% endstyle %}
+
+          <div class="predictive-search__grid">
+            {%- for product in predictive_search.resources.products limit: 3 -%}
+              {%- render 'card-product', product_ref: product, section_id: section.id, search_product: true -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+    {%- unless predictive_search.resources.pages == blank and predictive_search.resources.products == blank and predictive_search.resources.queries.size == 0 and predictive_search.resources.collections.size == 0 and predictive_search.resources.pages.size == 0 and predictive_search.resources.articles.size == 0 -%}
+      <div class="predictive-search__col">
+        <div class="predictive-search__row">
+          <button type="submit" class="button button--text predictive-search__link">
+            {{- 'search.view_results_with_terms' | t: terms: predictive_search.terms -}}
+          </button>
+        </div>
+      </div>
+    {%- endunless -%}
+  </div>
+{%- endif -%}

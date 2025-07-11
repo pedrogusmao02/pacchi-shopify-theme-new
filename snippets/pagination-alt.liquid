@@ -1,0 +1,45 @@
+{% comment %}
+  Renders a set of links for paginated results. Must be used within paginate tags.
+
+  Usage:
+  {% paginate results by 2 %}
+    {% render 'pagination', paginate: paginate, anchor: '#yourID' %}
+  {% endpaginate %}
+
+  Accepts:
+  - paginate: {Object}
+  - anchor: {String} (optional) This can be added so that on page reload it takes you to wherever you've placed your anchor tag.
+  - class: {String} Class to be applied to the pagination container
+{% endcomment %}
+
+{%- if paginate.parts.size > 0 -%}
+  {{- 'component-pagination-alt.css' | asset_url | stylesheet_tag -}}
+
+  <nav class="pagination-alt text-navigation-button {{ class }}" aria-label="{{- 'theme.pagination.label' | t -}}">
+    <ul class="list-unstyled">
+      <li>
+        <a class="pagination-alt__prev-next"
+          href="{{ paginate.previous.url }}{{ anchor }}"
+          title="{{- 'theme.actions.previous' | t -}}"
+          {% unless paginate.previous %}disabled tabindex="-1" aria-hidden="true"{% endunless %}
+        >
+          {%- render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' -%}
+        </a>
+      </li>
+      <li>
+        <span>
+          {{- 'theme.pagination.page_of' | t: current_page: paginate.current_page, max_pages: paginate.pages -}}
+        </span>
+      </li>
+      <li>
+        <a class="pagination-alt__prev-next"
+          href="{{ paginate.next.url }}{{ anchor }}"
+          title="{{- 'theme.actions.next' | t -}}"
+          {% unless paginate.next %}disabled tabindex="-1" aria-hidden="true"{% endunless %}
+        >
+          {%- render 'icon', icon_name: 'theme-chevron', class: 'icon' -%}
+        </a>
+      </li>
+    </ul>
+  </nav>
+{%- endif -%}

@@ -1,0 +1,241 @@
+<header-drawer class="drawer drawer--start header__drawer{% unless section.settings.layout == 'header--nav-drawer' %} mobile-drawer large-up-hide{% endunless %}">
+  <details id="Navigation-drawer-{{- append_id -}}" class="drawer__container">
+    <summary
+      class="drawer__button"
+      id="Navigation-drawer-button-{{- append_id -}}"
+      aria-label="{{- 'theme.actions.open_menu' | t -}}"
+    >
+      {%- render 'icon', icon_name: 'theme-menu' -%}
+      {%- render 'icon', icon_name: 'theme-close-small' -%}
+
+      <noscript>
+        {%- render 'icon', icon_name: 'theme-arrow' -%}
+      </noscript>
+    </summary>
+
+    <div class="drawer__content drawer__content--nav js-drawer color-{{ section.settings.color_scheme_for_drawer }} gradient" id="Navigation-menu-drawer-{{- append_id -}}" tabindex="-1">
+      <button
+        class="drawer__button-close header-drawer__button-close button-reset small-hide medium-hide no-js-hidden js-btn-close-drawer"
+        aria-label="{{- 'theme.actions.close' | t -}}"
+      >
+        {%- render 'icon', icon_name: 'theme-arrow' -%}
+      </button>
+
+      <nav class="slide-out-menu">
+        <div class="menu-panels">
+          <div class="primary-menu-panel">
+            <ul>
+              {% for link in menu.links %}
+                {% liquid
+                  assign link_handle = link.title | handleize
+                  assign count_of_cards = 0
+                  assign count_of_items = 0
+
+                  for block in section.blocks
+                    assign block_link_handle = block.settings.menu_link_title | handleize
+
+                    if link_handle != block_link_handle
+                      continue
+                    endif
+
+                    if block.settings.title != blank or block.settings.subtitle != blank or block.settings.image != blank
+                      assign count_of_cards = count_of_cards | plus: 1
+                    endif
+                  endfor
+
+                  assign count_of_items = count_of_items | plus: link.links.size | plus: count_of_cards
+                %}
+                <li>
+                  {%- if count_of_items > 0 -%}
+                    <button type="button" class="menu-link h4" data-ref="{{ link_handle }}">
+                      {{ link.title }}
+                      {% render 'icon', icon_name: 'theme-chevron', class: 'icon' %}
+                    </button>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="h4" {% if link.current %}aria-current="page"{% endif %}>
+                      {{ link.title | escape }}
+                    </a>
+                  {%- endif -%}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% for link in menu.links %}
+            {% liquid
+              assign link_handle = link.title | handleize
+              assign count_of_cards = 0
+              assign count_of_items = 0
+
+              for block in section.blocks
+                assign block_link_handle = block.settings.menu_link_title | handleize
+
+                if link_handle != block_link_handle
+                  continue
+                endif
+
+                if block.settings.title != blank or block.settings.subtitle != blank or block.settings.image != blank
+                  assign count_of_cards = count_of_cards | plus: 1
+                endif
+              endfor
+
+              assign count_of_items = count_of_items | plus: link.links.size | plus: count_of_cards
+            %}
+            {% if count_of_items == 0 %}
+              {% continue %}
+            {% endif %}
+            <div class="menu-panel" data-menu="{{ link_handle }}">
+              <button type="button" class="menu-link menu-header">
+                {% render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' %}
+                {{ link.title }}
+              </button>
+              <ul>
+                {% for child_link in link.links %}
+                  <li class="menu-link-group">
+                    {%- if child_link.links.size > 0 -%}
+                      <button type="button" class="menu-link h4" data-ref="{{ link_handle | append: '-' | append: child_link.title | handle }}">
+                        {{ child_link.title }}
+                        {% render 'icon', icon_name: 'theme-chevron', class: 'icon' %}
+                      </button>
+                    {%- else -%}
+                      <a href="{{ child_link.url }}" class="h4" {% if child_link.current %}aria-current="page"{% endif %}>
+                        {{ child_link.title | escape }}
+                      </a>
+                    {%- endif -%}
+                  </li>
+                {% endfor %}
+
+                {% if count_of_cards > 0 %}
+                  {%- style -%}
+                    .menu-card-group {
+                      --header-nav-group-card-gap: calc(var(--spacing-unit-size) * {{ section.settings.spacing_between_cards }});
+                    }
+                  {%- endstyle -%}
+                  <li class="menu-card-group">
+                    {% for block in section.blocks %}
+                      {%- liquid
+                        assign link_handle = link.title | handleize
+                        assign block_link_handle = block.settings.menu_link_title | handleize
+                        assign show_on_class = block.settings.show_on
+                        if show_on_class == 'mobile'
+                          assign show_on_class = 'large-up-hide'
+                        elsif show_on_class == 'desktop'
+                          assign show_on_class = 'small-hide medium-hide'
+                        else
+                          assign show_on_class = ''
+                        endif
+                      -%}
+                      {%- if block_link_handle == link_handle -%}
+                        <div class="card header__card header__card-text color-{{ block.settings.color_scheme }} block-{{ block.id }} {{ show_on_class }}">
+                          {%- if block.settings.image != blank -%}
+                            <div class="media media--overlay card__media media--{{ block.settings.card_media_aspect_ratio }}">
+                              {%- render 'image', image: block.settings.image, alt: block.settings.image.alt | escape -%}
+                            </div>
+                          {%- endif -%}
+
+                          {%- if block.settings.title != blank or block.settings.subtitle != blank -%}
+                            <div class="card__content {{ block.settings.content_position_horizontal }} {{ block.settings.content_position_vertical }}">
+                              {%- if block.settings.subtitle != blank -%}
+                                <span class="card__subtitle">
+                                  {{- block.settings.subtitle -}}
+                                </span>
+                              {%- endif -%}
+
+                              {%- if block.settings.title != blank -%}
+                                <h6 class="card__title h4">
+                                  {{- block.settings.title -}}
+                                </h6>
+                              {%- endif -%}
+                            </div>
+                          {%- endif -%}
+                          {%- if block.settings.link -%}
+                            <a href="{{- block.settings.link -}}" class="card__link">
+                              <span class="visually-hidden">{{- block.settings.title -}}</span>
+                            </a>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    {% endfor %}
+                  </li>
+                {% endif %}
+
+
+              </ul>
+            </div>
+            {% for child_link in link.links %}
+              {% if child_link.links.size == 0 %}
+                {% continue %}
+              {% endif %}
+              <div class="menu-panel" data-menu="{{ link_handle | append: '-' | append: child_link.title | handle }}" data-menu-nested>
+                <button type="button" class="menu-link menu-header" data-ref="{{ link_handle }}">
+                  {% render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' %}
+                  {{ child_link.title }}
+                </button>
+                <ul>
+                  {% for grand_child_link in child_link.links %}
+                    <li>
+                      <a href="{{ grand_child_link.url }}" class="h4" {% if grand_child_link.current %}aria-current="page"{% endif %}>
+                        {{ grand_child_link.title | escape }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </nav>
+
+      {%- if submenu != blank -%}
+        <div class="drawer__row">
+          <nav class="drawer__subnav">
+            <ul class="list-unstyled">
+              {%- for link in submenu.links -%}
+                <li class="drawer__subnav-item">
+                  <a
+                    href="{{- link.url -}}"
+                    class="drawer__subnav-link h6{% if link.current %} is-current{% endif %}"
+                    {% if link.current %}aria-current="page"{% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        </div>
+      {%- endif -%}
+
+      <div class="drawer__row drawer__row--bottom">
+        <nav class="drawer__subs">
+          <ul class="drawer__subs-items list-unstyled">
+            <li class="drawer__subs-item">
+              <a
+                href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+                class="drawer__subs-link"
+                title="{%- if customer -%}{{ 'customer.account.label' | t }}{%- else -%}{{ 'theme.actions.log_in' | t }}{%- endif -%}"
+              >
+                {{- 'customer.account.label' | t -}}
+              </a>
+            </li>
+            {%- if section.settings.country_drawer_navigation_menu -%}
+              <li class="drawer__subs-item">
+                <menu-drawer class="drawer">
+                  {%- render 'country-drawer',
+                    button_class: ' drawer__subs-link',
+                    section: section,
+                    append_id: 'header-drawer-' | append: section.id
+                  -%}
+                </menu-drawer>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+        <div class="drawer__social">
+          <ul class="drawer__social-list list-unstyled">
+            {% render 'social-media', item_tag: 'li', in_new_tab: true, item_icon: true %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </details>
+</header-drawer>

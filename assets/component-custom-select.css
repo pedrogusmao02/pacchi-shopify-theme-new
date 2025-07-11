@@ -1,0 +1,90 @@
+custom-select {
+  display: block;
+}
+
+.custom-select__wrapper {
+  --btn-padding: 1.45rem 1.5rem;
+
+  position: relative;
+  color: rgb(var(--color-heading-text));
+  font-size: var(--font-size-static-sm);
+  line-height: var(--line-height-static-md);
+}
+
+.custom-select.is-expanded .custom-select__btn {
+  border-color: rgba(var(--color-border), var(--alpha-border));
+  border-block-end-color: transparent;
+}
+
+.custom-select.is-expanded .custom-select__dropdown {
+  transition-duration: 0s, var(--duration-short);
+  visibility: inherit;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.custom-select__btn {
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 4;
+  color: rgb(var(--color-foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  /* min-width: max-content; diginote: problematic code */
+  background-color: rgb(var(--color-background));
+  padding: var(--btn-padding);
+  border: .1rem solid rgba(var(--color-border), var(--alpha-border));
+  transition: color var(--duration-default), background-color var(--duration-default), border-color var(--duration-default);
+}
+
+.facets__actions-button svg,
+.custom-select__btn svg {
+  margin-inline-start: var(--spacing-2);
+}
+
+.custom-select__btn:disabled {
+  pointer-events: none;
+  border-color: var(--color-heading-text);
+  background-color: rgba(var(--color-border), var(--alpha-border));
+}
+
+.custom-select__dropdown {
+  position: absolute;
+  z-index: 3;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  min-width: 100%;
+  /* min-width: max-content; diginote: problematic code */
+  border: .1rem solid rgba(var(--color-border), var(--alpha-border));
+  border-block-start: none;
+  background-color: rgb(var(--color-background));
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility var(--duration-short), opacity var(--duration-short);
+}
+
+.custom-select__option {
+  -webkit-user-select: none;
+  user-select: none;
+  display: block;
+  width: 100%;
+  padding: var(--btn-padding);
+}
+
+.custom-select__option.is-selected {
+  background-color: rgba(var(--color-border), 0.25);
+}
+
+@media (hover: hover) {
+  .custom-select__btn:hover {
+    color: currentColor;
+    border-color: transparent;
+  }
+
+  .custom-select__option:hover {
+    background-color: rgba(var(--color-border), 0.5);
+  }
+}

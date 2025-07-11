@@ -1,0 +1,94 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "breadcrumbs": true,
+        "show_page_title": true,
+        "info_title": "",
+        "info_content": "",
+        "section_width": "max-w-narrower",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "store_locator_V8hHiz": {
+      "type": "store-locator",
+      "blocks": {
+        "pin_8wMgw8": {
+          "type": "pin",
+          "settings": {
+            "store_title": "<h3><em>Antwerp</em><br/>Belgium</h3>",
+            "store_address": "Ellermanstraat 14",
+            "store_opening_hours": "<p>Mon-Sat: 10am-8pm<br/>Sunday</p>",
+            "store_latitude": "48.85850418716008",
+            "store_longitude": "2.294803163425021",
+            "coordinate_title": "",
+            "button_style": "button--outlined",
+            "store_tel": "+01 234 567 8900",
+            "store_pin": "Directions",
+            "store_pin_link": "",
+            "color_scheme": "scheme-1"
+          }
+        },
+        "pin_g3VPYj": {
+          "type": "pin",
+          "settings": {
+            "store_title": "<h3><em>Paris</em><br/>France</h3>",
+            "store_address": "Champ de Mars, 5 Av. Anatole",
+            "store_opening_hours": "<p>Mon-Sat: 10am-8pm<br/>Sunday</p>",
+            "store_latitude": "41.902331905731444",
+            "store_longitude": "12.45445667605574",
+            "coordinate_title": "",
+            "button_style": "button--outlined",
+            "store_tel": "+01 234 567 8900",
+            "store_pin": "Directions",
+            "store_pin_link": "",
+            "color_scheme": ""
+          }
+        },
+        "pin_wk3MrQ": {
+          "type": "pin",
+          "settings": {
+            "store_title": "<h3><em>Rome </em></h3><h3>Italy</h3>",
+            "store_address": "Piazza del Colosseo, 1",
+            "store_opening_hours": "",
+            "store_latitude": "",
+            "store_longitude": "",
+            "coordinate_title": "",
+            "button_style": "button--outlined",
+            "store_tel": "",
+            "store_pin": "",
+            "store_pin_link": "",
+            "color_scheme": "scheme-1"
+          }
+        }
+      },
+      "block_order": [
+        "pin_8wMgw8",
+        "pin_g3VPYj",
+        "pin_wk3MrQ"
+      ],
+      "settings": {
+        "heading": "Our <em>flagship stores</em>",
+        "layout": "map",
+        "image_grid_columns": "auto",
+        "cards_height": 80,
+        "cards_height_mobile": 60,
+        "api_key": "AIzaSyCiRMr5xuVSyPUqZJgruIeFe4U5vrV0Cjc",
+        "zoom_level": 4,
+        "card_background_style": "solid",
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "4",
+        "spacing_bottom": "6"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "store_locator_V8hHiz"
+  ]
+}

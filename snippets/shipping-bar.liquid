@@ -1,0 +1,45 @@
+{% comment %}
+    Renders shipping bar
+    Accepts:
+    - class {String} Additional classes
+    Usage:
+    {%- render 'shipping-bar', class: 'additional_classes' -%}
+{% endcomment %}
+
+{%- liquid
+  assign threshold = settings.shipping_notification_threshold | times: 100
+  assign threshold_percentage = cart.total_price | times: 100.0 | divided_by: threshold
+
+  if threshold_percentage < 0
+    assign threshold_percentage = 0
+  elsif threshold_percentage > 100
+    assign threshold_percentage = 100
+  endif
+-%}
+
+
+
+{%- style -%}
+  {%- if cart == empty -%}
+    .shipping-bar {
+      visibility: hidden;
+    }
+  {%- endif -%}
+{%- endstyle -%}
+
+{%- if settings.enable_shipping_notification and threshold > 0 -%}
+  <shipping-bar
+    data-cart-total="{{ cart.total_price }}"
+    data-shipping-threshold="{{ threshold }}"
+    data-progress="calc({{ threshold_percentage }}% + 2px)"
+    class="shipping-bar progress-bar {{ class }}"
+  >
+    <div class="progress-bar__top">
+      {%- render 'icon', icon_name: 'theme-package-check' -%}
+      <p class="progress-bar__text"></p>
+    </div>
+    <div class="progress-bar__progress">
+      <span data-progress-line class="progress-bar__progress-inner" style="width: 0%"></span>
+    </div>
+  </shipping-bar>
+{%- endif -%}

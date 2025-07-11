@@ -1,0 +1,63 @@
+<a href="{{- product_ref.url -}}" class="card-product-small">
+  <div class="media card-product-small-media">
+    {%- render 'image', image: product_ref.featured_image, alt: product_ref.featured_image.alt | escape -%}
+  </div>
+  {% liquid
+    assign button_class = 'quick-cart-drawer__trigger quick-cart-drawer__trigger--recommendations button '
+    if button_style != blank
+      assign button_style = button_style
+    else
+      assign button_style = 'button--filled'
+    endif
+    assign button_class = button_class | append: button_style
+    assign button_label = button_label
+    if button_label == blank
+      assign button_label = "cart.quick_add" | t
+    endif
+  %}
+  <div class="card-product-small-details">
+    <h6 class="card-product-small-title">
+      {{- product_ref.title | escape -}}
+    </h6>
+
+    <p class="card-product-small-price">
+      {%- if product_ref.compare_at_price_min > product_ref.price_min -%}
+        <span class="visually-hidden">
+          {{- 'product.price_regular' | t -}}
+        </span>
+        <del>
+          {{- product_ref.compare_at_price_min | money -}}
+        </del>
+
+        <span class="visually-hidden">
+          {{- 'product.price_sale' | t -}}
+        </span>
+        <ins>
+          {{- product_ref.price_min | money -}}
+        </ins>
+      {%- else -%}
+        <span class="visually-hidden">
+          {{- 'product.price_regular' | t -}}
+        </span>
+        {{- product_ref.price_min | money -}}
+      {%- endif -%}
+
+    </p>
+
+    {%- if settings.product_card_enable_quick_add_to_cart_button -%}
+      <button
+        type="button"
+        class="{{button_class}}"
+        aria-expanded="false"
+        onclick="preventDefault(event)"
+        aria-controls="quick-cart-drawer"
+        data-product-url="{{- product_ref.handle | prepend: '/products/'  -}}"
+      >
+        {{ button_label }}
+        <div class="quick-cart-drawer__trigger--loading">
+          {%- render 'loading-spinner' -%}
+        </div>
+      </button>
+    {%- endif -%}
+  </div>
+</a>

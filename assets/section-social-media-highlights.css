@@ -1,0 +1,81 @@
+/* Social media highlight - Section */
+.social-media-highlights__content-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3.6rem;
+  aspect-ratio: 1 / 1;
+  padding: 4rem;
+}
+
+.social-media-highlights__content-card {
+  border-radius: var(--card-corner-radius);
+}
+
+.social-media-highlights__content-card p,
+.section--social-media-highlights h2 p {
+  margin: 0;
+}
+
+.section--social-media-highlights h2,
+.social-media-highlights__subheading {
+  text-align: center;
+}
+.section--social-media-highlights .section-stacked .section__heading {
+  padding-block: 0;
+  margin-block-end: calc(var(--spacing-6) + var(--spacing-1));
+}
+.section--social-media-highlights .button {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 749px) {
+  social-media-highlights-slider {
+    display: block;
+    padding: 0 0 calc(var(--spacing-6) + var(--spacing-1));
+  }
+  .section--social-media-highlights .section-default .section__heading {
+    padding-block-start: 0;
+    padding-block-end: calc(var(--spacing-6) + var(--spacing-1));
+  }
+}
+
+.swiper-smh .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+/* stacked layout */
+@media screen and (min-width: 750px) {
+  .social-media-highlights__subheading {
+    margin-block-start: 0;
+    margin-block-end: var(--spacing-5);
+    text-transform: uppercase;
+  }
+  .section--social-media-highlights .section-stacked .button {
+    margin-block-start: var(--spacing-8);
+  }
+  .section--social-media-highlights .section-stacked .section__heading {
+    margin-block-end: var(--spacing-8);
+  }
+}
+
+.swiper-smh .swiper-button {
+  padding: 1rem;
+  border-radius: var(--button-action-border-radius, 0.6rem);
+  background-color: rgb(var(--color-background));
+}
+
+.swiper-smh .swiper-button svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.swiper-smh .swiper-button.swiper-button-disabled {
+  visibility: hidden;
+}

@@ -1,0 +1,65 @@
+{% liquid
+  assign social_links_array = blank
+  assign class = class | default: false
+  # if settings.share_twitter
+    assign social_links_array = social_links_array | append: ',Twitter'
+  # endif
+
+  # if settings.share_pinterest
+    assign social_links_array = social_links_array | append: ',Pinterest'
+  # endif
+
+  # if settings.share_linkedin
+    assign social_links_array = social_links_array | append: ',LinkedIn'
+  # endif
+
+  # if settings.share_instagram and settings.social_instagram_link != blank
+    assign social_links_array = social_links_array | append: ',Instagram'
+  # endif
+
+  # if settings.share_facebook
+    assign social_links_array = social_links_array | append: ',Facebook'
+  # endif
+%}
+
+{%- if social_links_array != blank -%}
+
+  {%- assign social_links_array = social_links_array | remove_first: ',' | split: ',' -%}
+  {%- assign class = class | default: '' -%}
+
+  <ul class="social-sharing list-unstyled {% if class %} {{ class }}{% endif %}">
+    {%- assign share_title = page_title | default: shop.name -%}
+    {%- assign share_url = canonical_url | default: shop.url -%}
+
+    {%- for social_link in social_links_array -%}
+      {%- assign social_link_downcase = social_link | downcase -%}
+      {%- assign social_link_icon_name = 'brand-' | append: social_link_downcase -%}
+
+      {%- assign anchor_tag_label = 'theme.actions.share_on' | t: name: social_link -%}
+
+      {%- capture social_link_url -%}
+        {%- case social_link_downcase -%}
+          {%- when 'twitter' -%}
+            //twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ share_url }}
+          {%- when 'pinterest' -%}
+            //pinterest.com/pin/create/button/?url={{ share_url }}&amp;media=https:{{ page_image | image_url: width: 1024, height: 1024 }}&amp;description={{ share_title | url_param_escape }}
+          {%- when 'linkedin' -%}
+            //www.linkedin.com/shareArticle?mini=true&url={{ share_url }}
+          {%- when 'facebook' -%}
+            //www.facebook.com/sharer.php?u={{ share_url }}
+        {%- endcase -%}
+      {%- endcapture -%}
+
+      {%- assign social_link_url = social_link_url | strip -%}
+
+      {%- if social_link_url != '' -%}
+        <li class="social-sharing__item">
+          <a target="_blank" href="{{- social_link_url -}}" class="social-sharing__link" aria-label="{{- anchor_tag_label -}}">
+            {%- render 'icon', icon_name: social_link_icon_name -%}
+          </a>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+

@@ -1,0 +1,159 @@
+{%-
+  liquid
+  assign default_address_query = shop.address.address1 | append: ',' | append: shop.address.city | append: ' ' | append: shop.address.province
+  assign address = section.settings.address_query | default: default_address_query
+-%}
+
+{% style %}
+  .map__wrapper iframe {
+    border-radius: {{ section.settings.border_radius | divided_by: 10 }}rem;
+  }
+{% endstyle %}
+
+{%- if section.settings.api_key != blank -%}
+  {{- 'section-map.css' | asset_url | stylesheet_tag -}}
+
+    {%- style -%}
+    #shopify-section-{{ section.id }} > div {
+      padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+      padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+    }
+  {%- endstyle -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="map container {{ section.settings.section_width }}">
+      <div class="map__wrapper">
+        <iframe
+          width="auto"
+          height="auto"
+          style="border:0"
+          loading="lazy"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps/embed/v1/place?key={{- section.settings.api_key -}}&q={{- address | url_encode -}}&zoom={{- section.settings.zoom_level -}}">
+        </iframe>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.map.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "api_key",
+      "label": "t:sections.map.settings.api_key.label",
+      "info": "t:sections.map.settings.api_key.info"
+    },
+    {
+      "type": "text",
+      "id": "address_query",
+      "label": "t:sections.map.settings.address.label",
+      "info": "t:sections.map.settings.address.info"
+    },
+    {
+      "type": "range",
+      "id": "zoom_level",
+      "min": 0,
+      "max": 21,
+      "step": 1,
+      "label": "t:sections.map.settings.zoom_level.label",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-narrower",
+          "label": "t:sections.global.settings.section_width.options__5.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        },
+        {
+          "value": "max-w-full",
+          "label": "t:sections.global.settings.section_width.options__3.label"
+        }
+      ],
+      "default": "max-w-full",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.settings.spacing.settings.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.settings.spacing.settings.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ]
+}
+{% endschema %}

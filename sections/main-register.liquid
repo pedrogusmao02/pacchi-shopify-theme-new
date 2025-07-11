@@ -1,0 +1,179 @@
+{{- 'customer.css' | asset_url | stylesheet_tag -}}
+
+<script src="{{- 'form-validate.js' | asset_url -}}" defer></script>
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="account container {{ section.settings.section_width }}">
+    {%- if section.settings.image_aside != blank -%}
+      <div class="account__col small-hide medium-hide">
+        <div class="account__image media">
+          {%- render 'image', image: section.settings.image_aside, alt: section.settings.image_aside.alt | escape, section_index: section.index -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="account__col{% if section.settings.image_aside == blank %} account__col--center{% endif %}">
+      <div class="form-customer form-customer--register">
+        <div class="container max-w-narrow">
+          <div class="form-customer__head">
+            <h1 class="h3 form-customer__title">
+              {{- 'customer.register.title' | t -}}
+            </h1>
+          </div>
+
+          <div class="form-customer__body">
+            <form-validate>
+              {%- form 'create_customer' -%}
+                {%- if form.errors -%}
+                  <div class="color-red">
+                    {{- form.errors | default_errors -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="form-row form-row--double">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.first_name' | t | append: '*'
+                    assign placeholder = 'theme.form.first_name_placeholder' | t
+                    assign attr = 'autocomplete="given-name"'
+                    assign value = ''
+                    if form.first_name
+                      assign value = form.first_name
+                    endif
+                    render 'text-input', id: 'RegisterForm-FirstName', label: label, type: 'text', name: 'customer[first_name]', placeholder: placeholder, attr: attr, value: value, required: true
+                    assign label = 'theme.form.last_name' | t | append: '*'
+                    assign placeholder = 'theme.form.last_name_placeholder' | t
+                    assign attr = 'autocomplete="family-name"'
+                    assign value = ''
+                    if form.last_name
+                      assign value = form.last_name
+                    endif
+                    render 'text-input', id: 'RegisterForm-LastName', label: label, type: 'text', name: 'customer[last_name]', placeholder: placeholder, attr: attr, value: value, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign value = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.email' | t | append: '*'
+                    assign placeholder = 'theme.form.email_placeholder' | t
+                    assign error = ''
+                    assign has_error = false
+                    capture attr
+                      echo 'spellcheck="false"'
+                      echo 'autocapitalize="off"'
+                      echo 'autocomplete="email"'
+                      echo 'aria-required="true"'
+                    endcapture
+                    assign value = ''
+                    if form.email
+                      assign value = form.email
+                    endif
+                    if form.errors contains 'email'
+                      assign error = form.errors.translated_fields['email'] | capitalize | append: ' ' | append: form.errors.messages['email']
+                      assign has_error = true
+                    endif
+                    render 'text-input', id: 'RegisterForm-email', label: label, type: 'email', name: 'customer[email]', placeholder: placeholder, attr: attr, value: value, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign value = nil
+                    assign error = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.password' | t | append: '*'
+                    assign placeholder = 'theme.form.password_placeholder' | t
+                    assign attr = 'aria-required="true"'
+                    assign error = ''
+                    assign has_error = false
+                    if form.errors contains 'password'
+                      assign error = form.errors.translated_fields['password'] | capitalize | append: ' ' | append: form.errors.messages['password']
+                      assign has_error = true
+                    endif
+                    render 'text-input', id: 'RegisterForm-password', label: label, type: 'password', name: 'customer[password]', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign error = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  <div>
+                    {%- assign value = 'customer.register.submit' | t -%}
+                    {%- render 'button', type: 'submit', value: value, style: 'solid', class: 'button' -%}
+                    {%- assign value = nil -%}
+                  </div>
+                </div>
+                <div class="form-customer__callout">
+                  <h2 class="form-customer__callout-title heading-static h4">
+                    {{- 'customer.register.have_account' | t -}}
+                  </h2>
+                  <div>
+                    {% assign value = 'theme.actions.log_in' | t -%}
+                    {%- render 'button', type: 'link', class: 'button button--outlined', value: value, href: routes.account_login_url -%}
+                    {%- assign value = nil -%}
+                  </div>
+                </div>
+              {%- endform -%}
+            </form-validate>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-register.name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_aside",
+      "label": "t:sections.main-register.settings.image_aside.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        },
+        {
+          "value": "max-w-full",
+          "label": "t:sections.global.settings.section_width.options__3.label"
+        }
+      ],
+      "default": "max-w-full",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,479 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    --card-article-media-aspect-ratio: {{ section.settings.card_media_aspect_ratio }};
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+
+  #shopify-section-{{ section.id }} .card-article__content {
+    padding-inline: var(--spacing-{{ section.settings.spacing_inner }});
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .card-collection__media {
+      aspect-ratio: var(--card-media-aspect-ratio);
+    }
+    {%- if section.settings.section_width == 'page-width' -%}
+      #shopify-section-{{ section.id }} .card-slider__slide {
+        max-width: calc(var(--page-width) / 3);
+      }
+    {%- endif -%}
+  }
+
+  {% if section.blocks.size == 1 %}
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .card-slider .card-slider__slide {
+        width: 100% !important;
+      }
+    }
+  {% endif %}
+{%- endstyle -%}
+
+
+
+{{- 'component-card-slider.css' | asset_url | stylesheet_tag -}}
+{{- 'component-card-article.css' | asset_url | stylesheet_tag -}}
+
+<script src="{{- 'card-slider.js' | asset_url -}}" defer="defer"></script>
+
+{%- assign blog = section.settings.blog | default: blogs['blog'] -%}
+
+{%- liquid
+  capture section_button
+    render 'button', type: 'link', class: 'button button--auto custom_class', button_style: section.settings.button_style, value: section.settings.button_text, href: blog.url
+  endcapture
+-%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="section-{{ section.settings.layout }} overflow-hidden js-animation-fade-in">
+      <div class="container {{ section.settings.section_width }}">
+
+        <div class="section__head">
+          <div class="section__head--in">
+            <div class="section__head-title">
+              {%- if section.settings.heading != blank -%}
+                <h2 class="{{ section.settings.heading_size }}">
+                  {{- section.settings.heading | default: blog.title -}}
+                </h2>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+
+        {% liquid
+          assign slides_per_view_desktop = section.blocks.size | default: '3'
+          if slides_per_view_desktop > 3
+            assign slides_per_view_desktop = 3
+          endif
+
+          assign spacing_desktop = section.settings.spacing_grid | times: settings.spacing_desktop | times: 10 | round: 0
+          assign spacing_mobile = section.settings.spacing_grid | times: settings.spacing_mobile | times: 10 | round: 0
+
+          assign disabled_on_mobile = false
+          if section.settings.layout == 'layout-1'
+            assign disabled_on_mobile = true
+          endif
+        %}
+
+        <div class="section__body">
+          <card-slider
+            class="swiper card-slider card-slider--articles js-articles"
+            data-swiper-options='{
+              "sectionId": "{{ section.id }}",
+              "disabled_on_mobile": {{ disabled_on_mobile }},
+              "spaceBetweenDesktop": {{ spacing_desktop }},
+              "spaceBetweenMobile": {{ spacing_mobile }},
+              "slidesPerViewDesktop": {{ slides_per_view_desktop | default: '3' }},
+              "navigation": {
+                "prevEl": ".swiper-button--prev-{{ section.id }}",
+                "nextEl": ".swiper-button--next-{{ section.id }}"
+              }
+            }'
+          >
+            <div class="swiper-wrapper card-slider__wrapper">
+              {% if section.blocks.size > 0 %}
+                {%- for block in section.blocks -%}
+                  {% liquid
+                    assign card_article_class = 'card-article--entry-2'
+
+                    if section.settings.layout == 'layout-1' and forloop.index == 1
+                      assign card_article_class = card_article_class | append: ' card-article--cover'
+                    endif
+                  %}
+                  <div class="swiper-slide card-slider__slide">
+                    {%- render 'card-article', article: block.settings.article, class: card_article_class, show_date: section.settings.show_date, show_author: section.settings.show_author, show_excerpt: section.settings.show_excerpt, show_read_more: section.settings.show_read_more, content_alignment: section.settings.content_alignment -%}
+                  </div>
+                {%- endfor -%}
+              {% elsif section.settings.blog != blank and section.settings.blog.articles_count > 0 -%}
+                {%- for article in blog.articles -%}
+                  {% liquid
+                    assign card_article_class = 'card-article--entry-2'
+
+                    if section.settings.layout == 'layout-1' and forloop.index == 1
+                      assign card_article_class = card_article_class | append: ' card-article--cover'
+                    endif
+                  %}
+                  <div class="swiper-slide card-slider__slide">
+                    {%- render 'card-article', article: article, class: card_article_class, show_date: section.settings.show_date, show_author: section.settings.show_author, show_excerpt: section.settings.show_excerpt, show_read_more: section.settings.show_read_more, content_alignment: section.settings.content_alignment -%}
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                {%- for i in (1..3) -%}
+                  {% liquid
+                    assign card_article_class = 'card-article--entry-2'
+                    if section.settings.layout == 'layout-1' and forloop.index == 1
+                      assign card_article_class = card_article_class | append: ' card-article--cover'
+                    endif
+                  %}
+                  <div class="swiper-slide card-slider__slide">
+                    {%- render 'card-article', class: card_article_class, show_date: section.settings.show_date, show_author: section.settings.show_author, show_excerpt: section.settings.show_excerpt, show_read_more: section.settings.show_read_more, content_alignment: section.settings.content_alignment -%}
+                  </div>
+                {%- endfor -%}
+              {%- endif -%}
+
+            </div>
+          </card-slider>
+        </div>
+
+        <div class="section__foot">
+          <div class="section__head--buttons">
+            {{ section_button | replace_first: 'custom_class' }}
+            <div class="swiper-buttons small-hide card-slider__buttons no-js-hidden {{ section.settings.button_style }}">
+              <button class="swiper-button swiper-button--prev-{{ section.id }}"
+                aria-label="{{- 'theme.actions.previous' | t -}}">
+                {%- render 'icon', icon_name: 'theme-chevron' -%}
+              </button>
+              <button class="swiper-button swiper-button--next-{{ section.id }}"
+                aria-label="{{- 'theme.actions.next' | t -}}">
+                {%- render 'icon', icon_name: 'theme-chevron' -%}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% schema %}
+{
+  "name": "t:sections.blog-articles.name",
+  "tag": "section",
+  "class": "section-blog-articles",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Featured <em>Articles</em>"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "t:sections.global.element.blog.label"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "t:sections.global.element.button_label.label",
+      "default": "Visit Blog"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.layout.content"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:sections.global.settings.layout.label",
+      "options": [
+        {
+          "value": "layout-1",
+          "label": "t:sections.global.settings.layout.options.layout_1.label"
+        },
+        {
+          "value": "layout-2",
+          "label": "t:sections.global.settings.layout.options.layout_2.label"
+        }
+      ],
+      "default": "layout-1"
+    },
+    {
+      "type": "select",
+      "id": "card_media_aspect_ratio",
+      "label": "t:settings_schema.cards.settings.card_media_aspect_ratio.label",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "1:1"
+        },
+        {
+          "value": "3/2",
+          "label": "2:3"
+        },
+        {
+          "value": "2/3",
+          "label": "3:2"
+        },
+        {
+          "value": "4/3",
+          "label": "3:4"
+        },
+        {
+          "value": "3/4",
+          "label": "4:3"
+        }
+      ],
+      "default": "3/4"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_excerpt.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_author.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_more",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_read_more.label"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.global.content.alignment.label",
+      "options": [
+        {
+          "value": "text-start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "text-center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "text-end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "text-center"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "button--text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "button--text"
+    },
+    {
+      "type": "select",
+      "id": "spacing_inner",
+      "label": "t:sections.global.spacing.spacing_inner.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "2",
+          "label": "S"
+        },
+        {
+          "value": "3",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "5",
+          "label": "XL"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section_width.label",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section_width.options.page.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section_width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-page"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "spacing_grid",
+      "label": "t:sections.global.spacing.spacing_grid.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "article",
+      "name": "t:sections.blog-articles.blocks.article.name",
+      "settings": [
+        {
+          "type": "article",
+          "id": "article",
+          "label": "t:sections.global.element.article.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.blog-articles.name"
+    }
+  ]
+}
+{% endschema %}

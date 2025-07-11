@@ -1,0 +1,244 @@
+{{- 'section-vendor-list.css' | asset_url | stylesheet_tag -}}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign vendor_group = ''
+
+  assign section_metaobject = metaobjects[section.settings.metaobject_for_section]
+  for metaobject in section_metaobject.values
+    assign first_letter = metaobject.name.value | slice: 0, 1 | upcase
+    unless vendor_group contains first_letter
+      assign vendor_group = vendor_group | append: first_letter | append: ','
+    endunless
+  endfor
+
+
+  assign vendor_group = vendor_group | split: ',' | sort
+
+  assign navigation_on_class = section.settings.show_navigation
+  if navigation_on_class == 'mobile'
+    assign navigation_on_class = 'large-up-hide'
+  elsif navigation_on_class == 'desktop'
+    assign navigation_on_class = 'small-hide medium-hide'
+  else
+    assign navigation_on_class = ''
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="container {{ section.settings.section_width }} js-animation-fade-inx">
+    <div class="grid">
+      {% if section.settings.show_navigation %}
+        <div class="section-vendor-list__navigation {{ navigation_on_class }}">
+          {% for letter in vendor_group %}
+            {% if letter != '' %}
+              <div class="button button--outlined" data-scroll-to="{{ letter }}">{{ letter | strip }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% for letter in vendor_group %}
+        {% if letter != '' %}
+          <div id="vendor-{{ letter }}" class="section-vendor-list__card align-{{ section.settings.content_alignment }} color-{{ section.settings.color_scheme_for_cards }}">
+            <h2 class="h3">{{ letter }}</h2>
+            <div class="section-vendor-list__list align-{{ section.settings.content_alignment }}">
+              {% for metaobject in shop.metaobjects.vendor.values %}
+                {% assign first_letter = metaobject.name.value | slice: 0, 1 | upcase %}
+                {% if first_letter == letter %}
+                  <a href="/collections/vendors?q={{ metaobject.name.value | url_encode }}">
+                    {% if section.settings.show_vendor_logo %}
+                      {% if metaobject.logo.value == blank %}
+                        <span>{{ metaobject.name.value }}</span>
+                      {% else %}
+                        <div class="section-vendor-list__logo">{{ metaobject.logo.value }}</div>
+                      {% endif %}
+                    {% else %}
+                      <span>{{ metaobject.name.value }}</span>
+                    {% endif %}
+                  </a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.section-vendor-list__navigation > div').forEach(letter => {
+    letter.addEventListener('click', function () {
+      const targetId = this.getAttribute('data-scroll-to');
+      const targetElement = document.getElementById(`vendor-${targetId}`);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.vendor-list.name",
+  "class": "section-vendor-list",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor_logo",
+      "label": "t:sections.vendor-list.settings.show_vendor_logo.label",
+      "info": "t:sections.vendor-list.settings.show_vendor_logo.info",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "show_navigation",
+      "label": "t:sections.vendor-list.settings.show_navigation.label",
+      "options": [
+        {
+          "value": "desktop",
+          "label": "t:sections.global.settings.show_on.options.desktop.label"
+        },
+        {
+          "value": "mobile",
+          "label": "t:sections.global.settings.show_on.options.mobile.label"
+        },
+        {
+          "value": "both",
+          "label": "t:sections.global.settings.show_on.options.both.label"
+        }
+      ],
+      "default": "both"
+    },
+    {
+      "type": "text",
+      "id": "metaobject_for_section",
+      "label": "t:sections.vendor-list.settings.metaobject_for_section.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_for_cards",
+      "label": "t:sections.global.color_scheme.for__cards.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.global.content.alignment.label",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section.width.label_alt",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section.width.options.page.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section.width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-page"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.vendor-list.name",
+      "blocks": []
+    }
+  ],
+  "enabled_on": {
+    "templates": ["page"]
+  }
+}
+{% endschema %}

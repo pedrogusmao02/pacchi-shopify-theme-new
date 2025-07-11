@@ -1,0 +1,128 @@
+.gift-card,
+.gift-card__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gift-card__header {
+  padding-block: 2.4rem;
+}
+
+.gift-card__logo {
+  display: inline-block;
+}
+
+.gift-card__image {
+  width: 40rem;
+  margin: 0 auto;
+}
+
+.gift-card__main {
+  background-color: rgba(var(--color-border), var(--alpha-border));
+}
+
+.gift-card__inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-radius: 0 0 var(--card-corner-radius) var(--card-corner-radius);
+  overflow: hidden;
+  background-color: rgb(var(--color-background));
+}
+
+.gift-card__inner>* {
+  flex: 1 0 100%;
+}
+
+.gift-card__cover {
+  padding: 6.4rem 4rem;
+
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+}
+
+.gift-card__content {
+  padding: 3.6rem 2.4rem 6.4rem;
+}
+
+.gift-card__image-wrapper img {
+  width: 100%;
+}
+
+.gift-card__price {
+  margin: 0;
+}
+
+.gift-card__subtext>p {
+  margin-block: 1.6rem;
+}
+
+.gift-text-code {
+  margin-block-end: 3.2rem;
+}
+
+.gift-card__qr-code {
+  margin-block: 4.8rem;
+}
+
+.gift-card__qr-code canvas,
+.gift-card__qr-code img {
+  width: 8.8rem;
+}
+
+.gift-card__information {
+  margin-block-start: 3.2rem;
+}
+
+.gift-card__number {
+  max-width: 36.8rem;
+  margin-inline: auto;
+  border: 0.1rem dashed rgba(var(--color-border), var(--alpha-border));
+  border-radius: 0;
+  font-size: var(--font-size-static-lg);
+  letter-spacing: 0.6rem;
+}
+
+.gift-card__qr-code img {
+  margin-inline: auto;
+}
+
+.gift-card__buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.gift-card__buttons> :last-child {
+  margin-block-start: 0;
+}
+
+.gift-card__buttons>* {
+  flex: 1;
+}
+
+@media screen and (min-width: 990px) {
+  .gift-card__main {
+    justify-content: center;
+  }
+
+  .gift-card__inner {
+    flex-direction: row;
+    max-width: calc(var(--page-width) * 0.6111);
+    border-radius: var(--card-corner-radius);
+    margin-block: 6.4rem;
+  }
+
+  .gift-card__inner>* {
+    flex: 1 0 50%;
+  }
+
+  .gift-card__content {
+    padding: 6.4rem 3.6rem;
+  }
+
+  .gift-card__number {
+    letter-spacing: 0.8rem;
+  }
+}

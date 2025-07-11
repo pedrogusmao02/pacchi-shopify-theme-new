@@ -1,0 +1,203 @@
+age-verification-popup {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: calc(var(--z-header) + 1);
+  width: 100%;
+  height: 100%;
+  padding-inline: calc(var(--page-gutter) * 1.5);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block-start: 4rem;
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  will-change: visibility, background-color, opacity, transform;
+  transition: visibility var(--duration-default), background-color var(--duration-default), opacity var(--duration-default), transform var(--duration-default);
+}
+
+age-verification-popup[data-open-in-design-mode] {
+  visibility: visible;
+  opacity: 1;
+}
+
+age-verification-popup[open] {
+  background-color: transparent;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+age-verification-popup[open]::before{
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* backdrop filter doesn't effect from a nested element  */
+body.age-verification-popup-is-open::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(1.2rem);
+  z-index: 1000;
+}
+
+body.age-verification-popup-is-open .section-age-verification-popup {
+  z-index: 1001;
+}
+
+body.age-verification-popup-is-open age-verification-popup[open]::before {
+  display: none;
+}
+
+age-verification-popup[open] .age-verification-popup__wrapper {
+  transform: translateY(0);
+}
+
+age-verification-popup p {
+  margin: 0 0 1rem;
+}
+
+age-verification-popup p:last-child {
+  margin-block-end: 0;
+}
+
+.age-verification-popup__wrapper {
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  max-height: 100%;
+  position: relative;
+  width: 100%;
+  transform: translateY(100%);
+  transition: -webkit-transform var(--duration-default);
+  transition: transform var(--duration-default);
+  transition: transform var(--duration-default), -webkit-transform var(--duration-default);
+
+  background-color: rgb(var(--color-background));
+
+  border-radius: var(--button-action-border-radius, 0.6rem);
+}
+
+.age-verification-popup__media {
+  flex: 1 0 auto;
+  height: 16rem;
+  border-radius: unset;
+}
+
+.age-verification-popup__content {
+  display: flex;
+  flex: 1 0 auto;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding: calc(var(--section-spacing-unit-size) * 3) calc(var(--section-spacing-unit-size) * 2.5);
+}
+
+.age-verification-popup__content > * {
+  text-align: var(--section-content-alignment);
+  justify-content: var(--section-content-alignment);
+}
+
+.age-verification-popup__wrapper:not(:has(.age-verification-popup__media)) {
+  max-width: 52rem;
+}
+.age-verification-popup__wrapper:not(:has(.age-verification-popup__media)) .age-verification-popup__content {
+  flex: 1;
+  padding: 4.8rem 4.8rem;
+}
+@media screen and (min-width: 750px) {
+  .age-verification-popup__wrapper:not(:has(.age-verification-popup__media)) .age-verification-popup__content {
+    padding: 4.8rem 8.8rem;
+  }
+}
+
+
+.age-verification-popup__title {
+  margin-block-end: calc(var(--section-spacing-unit-size) * 1);
+}
+
+.age-verification-popup__entry {
+  color: rgb(var(--color-foreground));
+  margin-block-end: calc(var(--section-spacing-unit-size) * 1.75);
+}
+
+.age-verification-popup__entry a {
+  text-decoration: underline;
+  text-underline-offset: 1px;
+}
+
+.age-verification-popup__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4rem;
+}
+
+.age-verification-popup__actions button,
+.age-verification-popup__actions a {
+  pointer-events: all;
+}
+
+.age-verification-popup__actions .button {
+  width: 100%;
+  font-size: var(--font-size-static-sm);
+}
+.age-verification-popup__actions .button--text {
+  width: fit-content;
+  text-transform: none;
+  letter-spacing: 0.028rem;
+  font-size: var(--font-size-static-md);
+  padding: 0;
+}
+
+@media screen and (min-width: 750px) {
+  age-verification-popup {
+    padding: 4rem;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+  }
+
+  age-verification-popup[open] .age-verification-popup__wrapper {
+    transform: none;
+  }
+
+  .age-verification-popup__wrapper {
+    flex-direction: row;
+    max-width: 68rem;
+    transform: none;
+  }
+
+  .age-verification-popup__media {
+    flex: 1 0 35%;
+    height: auto;
+  }
+  .age-verification-popup__content {
+    flex: 1 0 65%;
+  }
+
+  .age-verification-popup__actions {
+    flex-direction: row;
+  }
+
+  .age-verification-popup__actions .button {
+    flex-direction: row;
+    width: 50%;
+    gap: 2.4rem;
+  }
+  .age-verification-popup__actions .button--text {
+    width: fit-content;
+  }
+}

@@ -1,0 +1,456 @@
+{{- 'form-contact.css' | asset_url | stylesheet_tag -}}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="form-contact">
+    <div class="container {{ section.settings.section_width }}">
+      {%- form 'contact', id: 'ContactForm', class: 'contact-form grid' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="form-contact__message--success h4 col-span-6" tabindex="-1" autofocus>{{- 'contact.success_message' | t -}}</p>
+        {%- elsif form.errors -%}
+          <div class="color-red">
+            {{- form.errors | default_errors -}}
+          </div>
+        {%- endif -%}
+
+        {%- assign field_type_list = '' -%}
+        {% for block in section.blocks %}
+          {%- assign field_type_list = field_type_list | append: block.settings.type | append: ',' -%}
+
+          <div class="col-span-{{ block.settings.column_factor }}" {{ block.shopify_attributes }}>
+
+            {% liquid
+              assign label_default = 'field-' | append: forloop.index
+              assign label = block.settings.heading | default: label_default
+              assign label_handle = label | handle
+              assign id = 'ContactForm-' | append: label_handle
+              assign name = 'contact[' | append: label_handle | replace: '-', '_' | append: ']'
+              assign placeholder = block.settings.placeholder | default: false
+              assign required = block.settings.required | default: false
+
+              case block.settings.type
+
+                when 'email'
+                  capture attr
+                    echo 'autocomplete="email"'
+                    echo 'spellcheck="false"'
+                    echo 'autocapitalize="off"'
+                  endcapture
+
+                  # overwrite: generated name from label: email field is single/uniqu field and needs static pre-defined name
+                  assign name = 'contact[email]'
+
+                  if form.email
+                    assign value = form.email
+                  elsif customer
+                    assign value = customer.email
+                  else
+                    assign value = ''
+                  endif
+
+                  if form.errors contains 'email'
+                    assign error = form.errors.translated_fields['email'] | capitalize | append: ' ' | append: form.errors.messages['email']
+                    assign has_error = true
+                  endif
+
+                  render 'text-input', type: 'email', id: id, label: label, name: name, placeholder: placeholder, required: required, attr: attr, value: value, has_error: has_error, message: error
+
+                when 'tel'
+                  capture attr
+                    echo 'autocomplete="tel"'
+                  endcapture
+                  if form.phone
+                    assign value = form.phone
+                  elsif customer
+                    assign value = customer.phone
+                  else
+                    assign value = ''
+                  endif
+                  render 'text-input', type: 'tel', id: id, label: label, name: name, placeholder: placeholder, required: required, attr: attr, value: value, has_error: has_error, message: error
+
+                when 'checkbox'
+                  assign label = block.settings.label_description | default: label
+                  assign required = ''
+                  if block.settings.required
+                    assign required = ' required'
+                  endif
+                  echo '<div class="flex checkbox">'
+                    echo '<label class="field__label" for="' | append: id | append: '">' | append: label | append: '</label>'
+                    echo '<div class="field__options">'
+                    for i in (1..4)
+                      assign checked = ''
+                      if forloop.first and block.settings.checked
+                        assign checked = ' checked'
+                      endif
+                      assign option_name = 'option_' | append: i
+                      assign option = block.settings[option_name]
+                      if option != blank
+                        echo '<div class="field__option"><input type="checkbox" name="' | append: name | append: '" value="' | append: option | append: '" id="' | append: id | append: '-' | append: option | append: '"' | append: required | append: checked | append: '><label for="' | append: id | append: '-' | append: option | append: '">' | append: option | append: '</label></div>'
+                      endif
+                    endfor
+                    echo '</div>'
+                  echo '</div>'
+
+                when 'radio'
+                  assign label = block.settings.label_description | default: label
+                  assign required = ''
+                  if block.settings.required
+                    assign required = ' required'
+                  endif
+                  echo '<div class="flex checkbox">'
+                    echo '<label class="field__label" for="' | append: id | append: '">' | append: label | append: '</label>'
+                    echo '<div class="field__options">'
+                    for i in (1..4)
+                      assign checked = ''
+                      if forloop.first and block.settings.checked
+                        assign checked = ' checked'
+                      endif
+                      assign option_name = 'option_' | append: i
+                      assign option = block.settings[option_name]
+                      if option != blank
+                        echo '<div class="field__option"><input type="radio" name="' | append: name | append: '" value="' | append: option | append: '" id="' | append: id | append: '-' | append: option | append: '"' | append: required | append: checked | append: '><label for="' | append: id | append: '-' | append: option | append: '">' | append: option | append: '</label></div>'
+                      endif
+                    endfor
+                    echo '</div>'
+                  echo '</div>'
+
+                else
+
+                  if block.settings.binding != 'custom'
+                    if form[label_handle]
+                      assign value = form[label_handle]
+                    elsif customer
+                      case block.settings.binding
+                        when 'email'
+                          assign value = customer.email
+                        when 'name'
+                          assign value = customer.name
+                        when 'first_name'
+                          assign value = customer.first_name
+                        when 'last_name'
+                          assign value = customer.last_name
+                        when 'id'
+                          assign value = customer.id
+                        when 'phone'
+                          assign value = customer.phone
+                        when 'last_order'
+                          assign customer_last_order = customer.orders | last
+                          assign value = customer_last_order.order_number
+                      endcase
+                    else
+                      assign value = ''
+                    endif
+                  endif
+
+                  render 'text-input', type: 'text', id: id, label: label, name: name, placeholder: placeholder, required: required, value: value, has_error: has_error, message: error
+              endcase
+
+            %}
+          </div>
+
+        {% endfor %}
+
+        {%- assign field_type_list = field_type_list | split: ',' | uniq -%}
+        {% unless field_type_list contains 'email' %}
+          <div class="col-span-6">
+            {% liquid
+              assign label = 'theme.form.email' | t
+              assign placeholder = 'theme.form.email_placeholder' | t
+              assign id = 'ContactForm-' | append: 'email'
+              assign name = 'contact[' | append: 'email' | append: ']'
+              capture attr
+                echo 'autocomplete="email"'
+                echo 'spellcheck="false"'
+                echo 'autocapitalize="off"'
+              endcapture
+              if form.email
+                assign value = form.email
+              elsif customer
+                assign value = customer.email
+              else
+                assign value = ''
+              endif
+              if form.errors contains 'email'
+                assign error = form.errors.translated_fields['email'] | capitalize | append: ' ' | append: form.errors.messages['email']
+                assign has_error = true
+              endif
+              render 'text-input', type: 'email', id: id, label: label, name: name, placeholder: placeholder, attr: attr, value: value, has_error: has_error, message: error, required: true
+            %}
+          </div>
+        {% endunless %}
+
+        <div class="col-span-6">
+          {%-
+            liquid
+            assign label = 'contact.message' | t
+            assign placeholder = 'contact.message_placeholder' | t
+            render 'textarea-input', id: 'ContactForm-body', label: label, name: 'contact[message]', placeholder: placeholder, body: form.body
+          -%}
+        </div>
+
+        <div class="form-row form-row--actions col-span-6">
+          {%- assign value = 'contact.submit' | t -%}
+          {%- render 'button', type: 'submit', style: 'solid', value: value, class: 'button' -%}
+          {%- assign value = nil -%}
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.form-contact.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-narrower",
+          "label": "t:sections.global.settings.section_width.options__5.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        }
+      ],
+      "default": "max-w-narrower",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.settings.spacing.settings.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.settings.spacing.settings.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "field",
+      "name": "t:sections.global.settings.form.field.name",
+      "settings": [
+        {
+          "type": "select",
+          "id": "column_factor",
+          "options": [
+            {
+              "value": "6",
+              "label": "t:sections.global.settings.column_factor.options__6.label"
+            },
+            {
+              "value": "3",
+              "label": "t:sections.global.settings.column_factor.options__3.label_text"
+            }
+          ],
+          "default": "6",
+          "label": "t:sections.global.settings.column_factor.label"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.global.settings.form.heading.label",
+          "info": "t:sections.global.settings.form.heading.info",
+          "default": "Label"
+        },
+        {
+          "type": "select",
+          "id": "type",
+          "label": "t:sections.global.settings.form.type.label",
+          "options": [
+            {
+              "value": "text",
+              "label": "t:sections.global.settings.form.type.options.text.label",
+              "group": "t:sections.global.settings.form.type.groups.group__1.label"
+            },
+            {
+              "value": "email",
+              "label": "t:sections.global.settings.form.type.options.email.label",
+              "group": "t:sections.global.settings.form.type.groups.group__1.label"
+            },
+            {
+              "value": "tel",
+              "label": "t:sections.global.settings.form.type.options.tel.label",
+              "group": "t:sections.global.settings.form.type.groups.group__1.label"
+            },
+            {
+              "value": "checkbox",
+              "label": "t:sections.global.settings.form.type.options.checkbox.label",
+              "group": "t:sections.global.settings.form.type.groups.group__2.label"
+            },
+            {
+              "value": "radio",
+              "label": "t:sections.global.settings.form.type.options.radio.label",
+              "group": "t:sections.global.settings.form.type.groups.group__2.label"
+            }
+          ],
+          "default": "text"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "t:sections.global.settings.form.settings.required.label",
+          "info": "t:sections.global.settings.form.settings.required.info",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "checked",
+          "label": "t:sections.global.settings.form.settings.checked.label",
+          "info": "t:sections.global.settings.form.settings.checked.info",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "t:sections.global.settings.form.placeholder.label"
+        },
+        {
+          "type": "select",
+          "id": "binding",
+          "label": "t:sections.global.settings.form.binding.label",
+          "info": "t:sections.global.settings.form.binding.info",
+          "options": [
+            {
+              "value": "custom",
+              "label": "t:sections.global.settings.form.binding.options.custom.label"
+            },
+            {
+              "value": "email",
+              "label": "t:sections.global.settings.form.binding.options.email.label"
+            },
+            {
+              "value": "name",
+              "label": "t:sections.global.settings.form.binding.options.name.label"
+            },
+            {
+              "value": "first_name",
+              "label": "t:sections.global.settings.form.binding.options.first_name.label"
+            },
+            {
+              "value": "last_name",
+              "label": "t:sections.global.settings.form.binding.options.last_name.label"
+            },
+            {
+              "value": "id",
+              "label": "t:sections.global.settings.form.binding.options.id.label"
+            },
+            {
+              "value": "phone",
+              "label": "t:sections.global.settings.form.binding.options.phone.label"
+            },
+            {
+              "value": "last_order",
+              "label": "t:sections.global.settings.form.binding.options.last_order.label"
+            }
+          ],
+          "default": "custom"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.header.options.for__form.content",
+          "info": "t:sections.global.header.options.for__form.info"
+        },
+        {
+          "type": "text",
+          "id": "label_description",
+          "label": "t:sections.global.settings.form.label_description.label",
+          "info": "t:sections.global.settings.form.label_description.info"
+        },
+        {
+          "type": "text",
+          "id": "option_1",
+          "label": "t:sections.global.settings.form.option_1.label"
+        },
+        {
+          "type": "text",
+          "id": "option_2",
+          "label": "t:sections.global.settings.form.option_2.label"
+        },
+        {
+          "type": "text",
+          "id": "option_3",
+          "label": "t:sections.global.settings.form.option_3.label"
+        },
+        {
+          "type": "text",
+          "id": "option_4",
+          "label": "t:sections.global.settings.form.option_4.label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

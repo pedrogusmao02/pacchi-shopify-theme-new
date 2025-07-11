@@ -1,0 +1,240 @@
+{%- liquid
+  assign product_image_width = 64
+  if type_on == 'card'
+    assign product_image_width = 24
+  endif
+
+  assign product_groups_metaobject = metaobjects[settings.metaobject_for_product_groups]
+  assign product_options_type_values_metaobject = metaobjects[settings.metaobject_for_product_options_type_values]
+  # echo product_groups_metaobject.values | json
+  # echo '<br>'
+  assign groups_has_this_product = ''
+  assign product_groups_count = product_groups_metaobject.values.count | times: 1
+
+  paginate product_groups_metaobject.values by product_groups_count
+  for product_group in product_groups_metaobject.values
+    # echo product_group.name | append: '<br>'
+    assign product_group_product_count = product_group.group.value.count | times: 1
+    paginate product_group.group.value by product_group_product_count
+      for product_group_product in product_group.group.value
+        if product_group_product.id == product.id
+          assign groups_has_this_product = groups_has_this_product | append: product_group.system.handle | append: ','
+        endif
+      endfor
+    endpaginate
+  endfor
+  endpaginate
+
+  assign groups_has_this_product_arr = groups_has_this_product | split: ','
+-%}
+
+<div class="product__product-groups">
+  {%- for group_has_this_product in groups_has_this_product_arr -%}
+    {%- assign group_metaobject = metaobjects['product_groups'][group_has_this_product] -%}
+    <fieldset class="product__product-group product__variant-options">
+      {% if on != 'card' %}
+        {%- liquid
+          assign type_on_card = group_metaobject.type_on_card | handleize
+          assign type_on_page = group_metaobject.type_on_page | handleize
+
+          assign custom_label = ''
+          assign custom_label_on_page = false
+          if group_metaobject.custom_label_on_page.value and group_metaobject.custom_label_on_page.value == true
+            assign custom_label_on_page = true
+          endif
+
+          if custom_label_on_page
+            assign product_title = product.title | downcase
+            if type_on_page == 'swatch'
+              assign sorted_colors_by_length_of_label = metaobjects['shopify--color-pattern'].values | sort: 'label.size' | reverse
+              for product_option_type_value in sorted_colors_by_length_of_label
+                assign product_option_type_value_text = product_option_type_value.label | strip | downcase
+                if product_title contains product_option_type_value_text
+                  assign custom_label = product_option_type_value_text
+                  break
+                endif
+              endfor
+            elsif type_on_card == 'swatch'
+              assign sorted_colors_by_length_of_label = metaobjects['shopify--color-pattern'].values | sort: 'label.size' | reverse
+              for product_option_type_value in sorted_colors_by_length_of_label
+                assign product_option_type_value_text = product_option_type_value.label | strip | downcase
+                if product_title contains product_option_type_value_text
+                  assign custom_label = product_option_type_value_text
+                  break
+                endif
+              endfor
+            else
+              for product_option_type_value in product_options_type_values_metaobject.values
+                assign product_option_type_value_text = product_option_type_value.text | default: product_option_type_value.name | strip | downcase
+                if product_title contains product_option_type_value_text
+                  assign custom_label = product_option_type_value_text
+                  break
+                endif
+              endfor
+            endif
+          endif
+
+          if custom_label == ''
+            assign custom_label_on_page = false
+          endif
+        -%}
+        <legend class="form__label">
+          {{ group_metaobject.group_by_option }}
+          <span data-current-product>
+            {%- if custom_label_on_page -%}
+              {{ custom_label }}
+            {%- else -%}
+              {{ product.title }}
+            {%- endif -%}
+          </span>
+        </legend>
+      {% endif %}
+
+      {%- if on == 'card' -%}
+        {%- assign type = group_metaobject.type_on_card | handleize -%}
+        {%- for group_metaobject_product in group_metaobject.group.value -%}
+          {%- assign group_metaobject_product_current = '' -%}
+          {%- if group_metaobject_product.id == product.id -%}
+            {%- assign group_metaobject_product_current = 'active' -%}
+          {%- endif -%}
+          {% if type == 'image' %}
+            <label class="product-option__label product-option__label--image{% if settings.swatches_shape == 'circle' %} product-option__label--circle{% endif %} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-option__swatch product-option__swatch--{{ settings.swatches_shape }} product-swatch__inner-border--{{ settings.swatches_inner_border_color }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  for product_option_type_value in product_options_type_values_metaobject.values
+                    assign product_option_type_value_text = product_option_type_value.text | default: product_option_type_value.name | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      if product_option_type_value.image
+                        assign product_option_type_value_image = product_option_type_value.image
+                      else
+                        assign product_option_type_value_image = group_metaobject_product.featured_image
+                      endif
+                      render 'image', image: product_option_type_value_image, width: '128'
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% elsif type == 'swatch' %}
+            <label class="product-option__label product-option__label--{{ settings.swatches_shape }} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-option__swatch product-option__swatch--{{ settings.swatches_shape }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  assign sorted_colors_by_length_of_label = metaobjects['shopify--color-pattern'].values | sort: 'label.size' | reverse
+                  for product_option_type_value in sorted_colors_by_length_of_label
+                    assign product_option_type_value_text = product_option_type_value.label | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      if product_option_type_value.image
+                        assign product_option_type_value_image = product_option_type_value.image
+                        echo product_option_type_value_image | metafield_tag
+                      else
+                        echo '<span class="product-option__swatch-color" style="background-color: ' | append: product_option_type_value.color | append: '"></span>'
+                      endif
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% elsif type == 'text' %}
+            <label class="product-option__label {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link product-option__only-text product-option__swatch--{{ settings.swatches_shape }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  for product_option_type_value in product_options_type_values_metaobject.values
+                    assign product_option_type_value_text = product_option_type_value.text | default: product_option_type_value.name | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      echo product_option_type_value_text
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% else %}
+            <label class="product-option__label product-option__label--image {% if settings.swatches_shape == 'circle' %} product-option__label--circle{% endif %} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-swatch__inner-border--{{ settings.swatches_inner_border_color }}" title="{{ group_metaobject_product.title }}">
+                {% if group_metaobject_product.featured_image %}
+                  {% render 'image', image: group_metaobject_product.featured_image, width: '128' %}
+                {% endif %}
+              </a>
+            </label>
+          {% endif %}
+        {%- endfor -%}
+      {%- elsif on == 'page' -%}
+        {%- assign type = group_metaobject.type_on_page | handleize -%}
+        {%- for group_metaobject_product in group_metaobject.group.value -%}
+          {%- assign group_metaobject_product_current = '' -%}
+          {%- if group_metaobject_product.id == product.id -%}
+            {%- assign group_metaobject_product_current = 'active' -%}
+          {%- endif -%}
+          {% if type == 'image' %}
+            <label class="product-option__label product-option__label--image{% if settings.swatches_shape == 'circle' %} product-option__label--circle{% endif %} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-option__swatch product-option__swatch--{{ settings.swatches_shape }} product-swatch__inner-border--{{ settings.swatches_inner_border_color }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  for product_option_type_value in product_options_type_values_metaobject.values
+                    assign product_option_type_value_text = product_option_type_value.text | default: product_option_type_value.name | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      if product_option_type_value.image
+                        assign product_option_type_value_image = product_option_type_value.image
+                      else
+                        assign product_option_type_value_image = group_metaobject_product.featured_image
+                      endif
+                      render 'image', image: product_option_type_value_image, width: '128'
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% elsif type == 'swatch' %}
+            <label class="product-option__label product-option__label--{{ settings.swatches_shape }} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-option__swatch product-option__swatch--{{ settings.swatches_shape }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  assign sorted_colors_by_length_of_label = metaobjects['shopify--color-pattern'].values | sort: 'label.size' | reverse
+                  for product_option_type_value in sorted_colors_by_length_of_label
+                    assign product_option_type_value_text = product_option_type_value.label | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      if product_option_type_value.image
+                        assign product_option_type_value_image = product_option_type_value.image
+                        echo product_option_type_value_image | metafield_tag
+                      else
+                        echo '<span class="product-option__swatch-color" style="background-color: ' | append: product_option_type_value.color | append: '"></span>'
+                      endif
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% elsif type == 'text' %}
+            <label class="product-option__label {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link product-option__only-text product-option__swatch--{{ settings.swatches_shape }}" title="{{ group_metaobject_product.title }}">
+                {%- liquid
+                  assign product_title = group_metaobject_product.title | downcase
+                  for product_option_type_value in product_options_type_values_metaobject.values
+                    assign product_option_type_value_text = product_option_type_value.text | default: product_option_type_value.name | strip | downcase
+                    if product_title contains product_option_type_value_text
+                      echo product_option_type_value_text
+                      break
+                    endif
+                  endfor
+                -%}
+              </a>
+            </label>
+          {% else %}
+            <label class="product-option__label product-option__label--image {% if settings.swatches_shape == 'circle' %} product-option__label--circle{% endif %} {{ group_metaobject_product_current }}">
+              <a href="{{ group_metaobject_product.url }}" class="product-option__link media product-swatch__inner-border--{{ settings.swatches_inner_border_color }}" title="{{ group_metaobject_product.title }}">
+                {% render 'image', image: group_metaobject_product.featured_image, width: '128' %}
+              </a>
+            </label>
+          {% endif %}
+        {%- endfor -%}
+      {%- endif -%}
+    </fieldset>
+  {%- endfor -%}
+</div>

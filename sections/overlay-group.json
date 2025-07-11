@@ -1,0 +1,55 @@
+ 
+{
+  "name": "t:sections.overlay.name",
+  "type": "custom.overlay",
+  "sections": {
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "settings": {
+        "card_media_aspect_ratio": "3/4",
+      }
+    },
+    "quick-cart-drawer": {
+      "type": "quick-cart-drawer",
+      "settings": {
+        "color_scheme": ""
+      }
+    },
+    "age-verification-popup": {
+      "type": "age-verification-popup",
+      "disabled": true,
+      "settings": {
+        "heading": "Verify your age",
+        "heading_size": "h5",
+        "text": "<p>By accepting, you also agree to our Cookie Policy & Privacy Policy. Make sure to only accept if your legal age is above 18 years.</p>",
+        "content_alignment": "start",
+        "show_blurred_backdrop": false,
+        "button_confirm": "Yes, I'm over 21",
+        "button_confirm_style": "button--filled",
+        "button_decline": "No, get me out of here",
+        "button_decline_url": "https://www.google.com",
+        "button_decline_style": "button--text",
+        "show_popup_on_customizer": false,
+        "color_scheme": ""
+      }
+    },
+    "newsletter-popup": {
+      "type": "newsletter-popup",
+      "settings": {
+        "delay": 10,
+        "heading": "<em>Sign up</em> for our newsletter",
+        "heading_size": "h3",
+        "text": "<p>Stay informed about new collections and discounts</p>",
+        "button_close_text": "No thanks",
+        "show_popup_on_customizer": false,
+        "color_scheme": ""
+      }
+    }
+  },
+  "order": [
+    "cart-drawer",
+    "quick-cart-drawer",
+    "age-verification-popup",
+    "newsletter-popup"
+  ]
+}

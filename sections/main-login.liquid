@@ -1,0 +1,240 @@
+{{- 'customer.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'form-validate.js' | asset_url -}}" defer></script>
+
+{%- if section.settings.enable_shop_login_button -%}
+  {%- assign hide_shop_login_button = true -%}
+{%- endif -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="account container {{ section.settings.section_width }}">
+    {%- if section.settings.image_aside != blank -%}
+      <div class="account__col small-hide medium-hide">
+        <div class="account__image media">
+          {%- render 'image', image: section.settings.image_aside, alt: section.settings.image_aside.alt | escape, section_index: section.index -%}
+        </div>
+      </div>
+    {%- endif -%}
+    {% if section.settings.image_aside == blank %}
+      {%- style -%}
+        .account .form-customer {
+          margin-inline-start: 0;
+        }
+      {%- endstyle -%}
+    {%- endif -%}
+    <div class="account__col{% if section.settings.image_aside == blank %} account__col--center{% endif %}">
+      <div class="form-customer form-customer--recover" id="recover">
+        <div class="container max-w-narrow">
+          <div class="form-customer__head">
+            <h1 class="h3 form-customer__title">
+              {{- 'customer.recover_password.title' | t -}}
+            </h1>
+          </div>
+
+          <div class="form-customer__body">
+            <form-validate>
+              {%- form 'recover_customer_password' -%}
+                {%- assign recover_success = form.posted_successfully? -%}
+
+                <div class="form-row">
+                  {%- liquid
+                    assign label = 'theme.form.email' | t
+                    assign placeholder = 'theme.form.email_placeholder' | t
+                    assign error = false
+                    assign has_error = false
+                    capture attr
+                      echo 'autocorrect="off"'
+                      echo 'autocapitalize="off"'
+                      echo 'autocomplete="email"'
+                      if form.errors
+                        assign error = form.errors.messages['form']
+                        assign has_error = true
+                        echo 'autofocus'
+                      endif
+                    endcapture
+                    render 'text-input', id: 'RecoverEmail', label: label, type: 'email', name: 'email', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign error = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  <div>
+                    {%- assign value = 'customer.recover_password.submit' | t -%}
+                    {%- render 'button', type: 'submit', value: value, style: 'solid', class: 'button' -%}
+                    {%- assign value = nil -%}
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div><a href="#login" class="link">{{- 'customer.recover_password.back_to_login' | t -}}</a></div>
+                </div>
+              {%- endform -%}
+            </form-validate>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-customer form-customer--login" id="login">
+        <div class="container max-w-narrow">
+          <div class="form-customer__head">
+            <h1 class="h3 form-customer__title">
+              {{- 'customer.login.title' | t -}}
+            </h1>
+            {%- if recover_success == true -%}
+              <p class="form-customer__subtitle" tabindex="-1" autofocus>
+                {{- 'customer.recover_password.success' | t -}}
+              </p>
+            {%- endif -%}
+          </div>
+
+          <div class="form-customer__body">
+            <form-validate>
+              {%- form 'customer_login' -%}
+                {%- if form.errors -%}
+                  <div class="color-red">
+                    {{- form.errors | default_errors -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="form-row">
+                  {%- if shop.features.login_with_shop_classic_customer_accounts? -%}
+                  <section name="sign-in-with-shop-provider" class="sign-in-with-shop-provider">
+                    {{ shop | login_button: hide_button: hide_shop_login_button }}
+                    {%- unless hide_shop_login_button -%}
+                      <p>{{ 'customer.login.alternate_provider_separator' | t }}</p>
+                    {%- endunless -%}
+                  </section>
+                  {%- endif -%}
+                </div>
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.email' | t | append: '*'
+                    assign placeholder = 'theme.form.email_placeholder' | t
+                    assign error = false
+                    assign has_error = false
+                    capture attr
+                      echo 'autocorrect="off"'
+                      echo 'autocapitalize="off"'
+                      echo 'autocomplete="email"'
+                      if form.errors contains 'form'
+                        assign error = form.errors.messages['form']
+                        assign has_error = true
+                      endif
+                    endcapture
+                    render 'text-input', id: 'CustomerEmail', label: label, type: 'email', name: 'customer[email]', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.password' | t | append: '*'
+                    assign placeholder = 'theme.form.password_placeholder' | t
+                    assign error = false
+                    assign has_error = false
+                    capture attr
+                      echo 'autocomplete="current-password"'
+                      if form.errors contains 'form'
+                        assign error = form.errors.messages['form']
+                        assign has_error = true
+                      endif
+                    endcapture
+                    render 'text-input', id: 'CustomerPassword', label: label, type: 'password', name: 'customer[password]', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  <div>
+                    {%- assign value = 'customer.login.submit' | t -%}
+                    {%- render 'button', type: 'submit', value: value, style: 'solid', class: 'button' -%}
+                    {%- assign value = nil -%}
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div>
+                    <a href="#recover" class="recover-link button button--text">{{- 'customer.login.forgot_password' | t -}}</a>
+                  </div>
+                </div>
+
+                <div class="form-customer__callout">
+                  <h2 class="form-customer__callout-title heading-static h4">
+                    {{- 'customer.login.no_account' | t -}}
+                  </h2>
+                  <div>
+                    {% assign value = 'customer.login.create_account' | t -%}
+                    {%- render 'button', type: 'link', class: 'button', value: value, href: routes.account_register_url -%}
+                    {%- assign value = nil -%}
+                  </div>
+                </div>
+              {%- endform -%}
+            </form-validate>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-login.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_aside",
+      "label": "t:sections.main-login.settings.image_aside.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shop_login_button",
+      "label": "t:sections.main-login.settings.enable_shop_login_button.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        },
+        {
+          "value": "max-w-full",
+          "label": "t:sections.global.settings.section_width.options__3.label"
+        }
+      ],
+      "default": "max-w-full",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    }
+  ]
+}
+{% endschema %}

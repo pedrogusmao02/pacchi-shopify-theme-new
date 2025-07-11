@@ -1,0 +1,466 @@
+{{- 'account-dashboard.css' | asset_url | stylesheet_tag -}}
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+
+    position: relative;
+  }
+{%- endstyle -%}
+
+{%- if template.name == 'addresses' -%}
+  {%- assign address_forms_html = '' -%}
+  <script src="{{- 'shopify.js' | asset_url -}}" defer="defer"></script>
+  <script src="{{- 'addresses.js' | asset_url -}}" defer="defer"></script>
+{%- endif -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="account-dashboard">
+    {%- if settings.enable_breadcrumbs_on_other_pages -%}
+      <div class="small-hide">
+        {%- render 'breadcrumbs', alignment: 'center' -%}
+      </div>
+    {%- endif -%}
+    <div class="container {{ section.settings.section_width }}">
+
+      <header class="account-dashboard__head">
+        <h1 class="account-dashboard__title h3">
+          {{- 'customer.account.title' | t: first_name: customer.first_name -}}
+        </h1>
+      </header>
+
+      <div class="account-dashboard__container">
+        <nav class="account-dashboard__nav">
+          <input class="account-dashboard__dropdown-menu" type="checkbox" id="account-dashboard__dropdown-menu" />
+          <label class="account-dashboard__dropdown-menu-label" for="account-dashboard__dropdown-menu">
+            <span class="account-dashboard__dropdown-menu-text h6">Menu</span>
+            <div class="accordion__icon">
+              {%- render 'icon', icon_name: 'theme-chevron', class: 'icon--rotate-90' -%}
+            </div>
+          </label>
+          <ul class="menu list-unstyled">
+            <li>
+              <a href="{{- routes.account_url -}}" class="h6">
+                {{- 'customer.account.overview' | t -}}
+                <div data-ignore-fill>
+                  {%- render 'icon', icon_name: 'theme-chevron', class: 'icon' -%}
+                </div>
+              </a>
+            </li>
+            <li>
+              {%- assign href_value = routes.account_url | append: '?view=orders' -%}
+              <a href="{{ href_value }}" class="h6">
+                {{- 'customer.order.order_history' | t -}}
+                <div data-ignore-fill>
+                  {%- render 'icon', icon_name: 'theme-chevron', class: 'icon' -%}
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="{{- routes.account_addresses_url -}}" class="h6">
+                {{- 'customer.account.addresses' | t -}}
+                <div data-ignore-fill>
+                  {%- render 'icon', icon_name: 'theme-chevron', class: 'icon' -%}
+                </div>
+              </a>
+            </li>
+            <li class="logout-list-item">
+              <a href="{{- routes.account_logout_url -}}" class="logout-link link">
+                {{- 'theme.actions.log_out' | t -}}
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+
+        <div class="account-dashboard__main">
+          <div class="account-dashboard__main-inner"{% if template.name == 'addresses' %} data-addresses-wrapper{% endif %}>
+            <div class="account-dashboard__main-head">
+              {%- if template.name == 'order' -%}
+                <div class="account-dashboard__breadcrumbs">
+                  <a href="{{- routes.account_url -}}?view=orders" class="link link--back">
+                    {%- render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' -%}
+                    {{- 'customer.order.back_to_orders' | t -}}
+                  </a>
+                </div>
+              {%- endif -%}
+              <h2 class="account-dashboard__main-title h5">
+                {%- if template.name == 'account' and template.suffix != 'orders' -%}
+                  {{- 'customer.account.details' | t -}}
+                {%- elsif template.name == 'account' and template.suffix == 'orders' -%}
+                  {{- 'customer.order.order_history' | t -}}
+                {%- elsif template.name == 'order' -%}
+                  {{- 'customer.order.title' | t: name: order.name -}}
+                {%- elsif template.name == 'addresses' -%}
+                  {{- 'customer.addresses.title' | t -}}
+                {%- endif -%}
+              </h2>
+              {%- if template.name == 'addresses' -%}
+                {%-
+                liquid
+                  assign value = 'customer.addresses.add_address' | t
+                  render 'button', value: value, attr: 'data-form-id="AddAddress"', class: 'button'
+                  assign value = nil
+                -%}
+              {%- elsif template.name == 'order' -%}
+                <p class="account-dashboard__main-subtitle">
+                  {%- assign order_date_at_time = order.created_at | time_tag: format: 'date_at_time' -%}
+                  {{- 'customer.order.created_on_html' | t: date: order_date_at_time -}}
+                  {%- if order.cancelled -%}
+                    <br>
+                    {%- assign order_cancelled_date = order.cancelled_at | time_tag: format: 'date_at_time' -%}
+                    {{- 'customer.order.cancelled_on_html' | t: date: order_cancelled_date -}}
+                    <br>
+                    {{- 'customer.order.cancelled_reason' | t: reason: order.cancel_reason_label -}}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+            </div>
+            <div class="account-dashboard__body">
+              {%- if template.suffix != 'orders' and template.name != 'order' -%}
+                <div class="account-dashboard__col">
+                  {%- liquid
+                    assign customer_last_order = customer.orders | last
+                    if template.name == 'account'
+                      if customer.orders.size > 0
+                        render 'card-order', order_ref: customer_last_order
+                      else
+                        echo 'customer.order.no_orders' | t
+                      endif
+                    else
+                      if customer.default_address
+                        render 'card-address', address_ref: customer.default_address, action_type: 'multiple'
+                      else
+                        echo 'customer.addresses.no_addresses' | t
+                      endif
+                    endif
+                  -%}
+                </div>
+                <div class="account-dashboard__col">
+                  {%-
+                    liquid
+                    if template.name == 'account'
+                      if customer.default_address
+                        assign card_address_title = 'customer.addresses.address_details' | t
+                        render 'card-address', address_ref: customer.default_address, title: card_address_title, action_type: 'single'
+                      else
+                        echo 'customer.addresses.no_addresses' | t
+                      endif
+                    else
+                      paginate customer.addresses by 2
+                        for address in customer.addresses
+                          if forloop.first and forloop.last and address == customer.default_address
+                            continue
+                          endif
+                          assign card_address_title = false
+                          if forloop.first
+                            assign card_address_title = 'customer.addresses.additional_address' | t
+                          endif
+                          render 'card-address', address_ref: address, title: card_address_title, action_type: 'multiple'
+                          if address == customer.default_address
+                            continue
+                          endif
+                          capture address_forms_html
+                            echo address_forms_html
+                            render 'address-form', address: address
+                          endcapture
+                        endfor
+                        capture pagination_html
+                          render 'pagination', paginate: paginate
+                        endcapture
+                        assign pagination_html = pagination_html | strip
+                        echo pagination_html
+                      endpaginate
+                    endif
+                  -%}
+                </div>
+              {%- elsif template.name == 'account' and template.suffix == 'orders' -%}
+                <div class="account-dashboard__col">
+                  {%- if customer.orders.size > 0 -%}
+                    {% paginate customer.orders by 5 %}
+                      <div class="account-dashboard__table-wrapper small-hide">
+                        <table class="account-dashboard__table">
+                          <thead>
+                            <tr>
+                              <th>{{- 'customer.order.label' | t -}}</th>
+                              <th>{{- 'customer.order.date' | t -}}</th>
+                              <th>{{- 'customer.order.payment_status' | t -}}</th>
+                              <th>{{- 'customer.order.fulfillment_status' | t -}}</th>
+                              <th>{{- 'customer.order.total' | t -}}</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {%- for order_ref in customer.orders -%}
+                              <tr>
+                                <td>
+                                  <a href="{{- order_ref.customer_url -}}">{{- order_ref.name -}}</a>
+                                </td>
+                                <td>{{- order_ref.created_at | date: format: 'short' -}}</td>
+                                <td>{{- order_ref.financial_status_label -}}</td>
+                                <td>{{- order_ref.fulfillment_status_label -}}</td>
+                                <td>{{- order_ref.total_price | money -}}</td>
+                                <td>
+                                  <a href="{{- order_ref.customer_url -}}">
+                                    {{- 'customer.order.view' | t -}}
+                                  </a>
+                                </td>
+                              </tr>
+                            {%- endfor -%}
+                          </tbody>
+                        </table>
+                      </div>
+                      {% for order_ref in customer.orders %}
+                        {% render 'card-order', order_ref: order_ref, class: 'small-up-hide', hide_title: true %}
+                      {% endfor %}
+                      {%- render 'pagination', paginate: paginate -%}
+                    {% endpaginate %}
+                  {%- else -%}
+                    {{- 'customer.order.no_orders' | t -}}
+                  {%- endif -%}
+                </div>
+              {%- elsif template.name == 'order' -%}
+                <div class="account-dashboard__col">
+                  <table class="account-dashboard__table account-dashboard__table--column-mobile">
+                    <thead>
+                      <tr>
+                        <th>{{- 'customer.order.product' | t -}}</th>
+                        <th>{{- 'customer.order.sku' | t -}}</th>
+                        <th>{{- 'customer.order.price' | t -}}</th>
+                        <th>{{- 'customer.order.quantity' | t -}}</th>
+                        <th>{{- 'customer.order.total' | t -}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {%- for line_item in order.line_items -%}
+                        <tr>
+                          <td data-heading="{{- 'customer.order.product' | t -}}">
+                            <div class="account-dashboard__table-title">
+                              {%- if line_item.url != blank -%}
+                                <a href="{{- line_item.url -}}">{{- line_item.product.title | escape -}}</a>
+                              {%- else -%}
+                                {{- line_item.product.title | escape -}}
+                              {%- endif -%}
+                            </div>
+                            {%- unless line_item.selling_plan_allocation == nil and line_item.properties.size == 0 -%}
+                              <div class="font-size-s">
+                                {%- unless line_item.product.has_only_default_variant -%}
+                                  <div class="account-dashboard__table-info">
+                                    {{- line_item.variant.title -}}
+                                  </div>
+                                {%- endunless -%}
+                                {%- unless line_item.selling_plan_allocation == nil -%}
+                                  <div class="account-dashboard__table-info">
+                                    {{- line_item.selling_plan_allocation.selling_plan.name -}}
+                                  </div>
+                                {%- endunless -%}
+                                {%- if line_item.properties.size != 0 -%}
+                                  {%- for property in line_item.properties -%}
+                                    {%- assign property_first_char = property.first | slice: 0 -%}
+                                    {%- if property.last != blank and property_first_char != '_' -%}
+                                      <div class="account-dashboard__table-info">
+                                        {{- property.first -}}:&nbsp;
+                                        {%- if property.last contains '/uploads/' -%}
+                                          <a href="{{- property.last -}}">{{- property.last | split: '/' | last -}}</a>
+                                        {%- else -%}
+                                          {{- property.last -}}
+                                        {%- endif -%}
+                                      </div>
+                                    {%- endif -%}
+                                  {%- endfor -%}
+                                {%- endif -%}
+                              </div>
+                            {%- endunless -%}
+                            {%- if line_item.line_level_discount_allocations != blank -%}
+                              <ul role="list" aria-label="{{ 'customer.order.discount' | t }}" class="account-dashboard__table-info list-unstyled font-size-s">
+                                {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                                  <li>
+                                    {%- render 'icon', icon_name: 'theme-sale-tag' -%}
+                                    {{- discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money -}})
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+                            {%- endif -%}
+                            {%- if line_item.fulfillment -%}
+                              <div class="account-dashboard__table-info font-size-s">
+                                {%- assign created_at = line_item.fulfillment.created_at | time_tag: format: 'date' -%}
+                                <span>{{- 'customer.order.fulfilled_on_html' | t: date: created_at -}}</span>
+                                {%- if line_item.fulfillment.tracking_url -%}
+                                  <br>
+                                  <a href="{{- line_item.fulfillment.tracking_url -}}">
+                                    {{- 'customer.order.track_shipment' | t -}}
+                                  </a>
+                                  <br>
+                                {%- endif -%}
+                                <span>
+                                  {{- line_item.fulfillment.tracking_company }} {% if line_item.fulfillment.tracking_number %} #{{ line_item.fulfillment.tracking_number }} {%- endif -%}
+                                </span>
+                              </div>
+                            {%- endif -%}
+                          </td>
+                          <td class="cell__fixed-width" data-heading="{{- 'customer.order.sku' | t -}}">{{- line_item.sku -}}</td>
+                          <td class="cell__fixed-width" data-heading="{{- 'customer.order.price' | t -}}">
+                            {%- if line_item.original_price != line_item.final_price or line_item.unit_price_measurement -%}
+                              <dl>
+                                {%- if line_item.original_price != line_item.final_price -%}
+                                  <dt><span class="visually-hidden">{{- 'product.price_regular' | t -}}</span></dt>
+                                  <dd><s>{{- line_item.original_price | money -}}</s></dd>
+                                  <dt><span class="visually-hidden">{{- 'product.price_sale' | t -}}</span></dt>
+                                  <dd><span>{{- line_item.final_price | money -}}</span></dd>
+                                {%- else -%}
+                                  <dt><span class="visually-hidden">{{- 'product.price_regular' | t -}}</span></dt>
+                                  <dd>{{- line_item.original_price | money -}}</dd>
+                                {%- endif -%}
+                                {%- if line_item.unit_price_measurement -%}
+                                  <dt>
+                                    <span class="visually-hidden">{{- 'product.price_unit' | t -}}</span>
+                                  </dt>
+                                  <dd>
+                                    <span>
+                                      {%- if settings.show_currency_codes -%}
+                                        {{- line_item.unit_price | money_with_currency -}}
+                                      {%- else -%}
+                                        {{- line_item.unit_price | money -}}
+                                      {%- endif -%}
+                                      <span aria-hidden="true">/</span>
+                                      {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                                        {{- line_item.unit_price_measurement.reference_value -}}
+                                      {%- endif -%}
+                                      {{- line_item.unit_price_measurement.reference_unit -}}
+                                    </span>
+                                  </dd>
+                                {%- endif -%}
+                              </dl>
+                            {%- else -%}
+                              {{- line_item.final_price | money -}}
+                            {%- endif -%}
+                          </td>
+                          <td class="cell__fixed-width" data-heading="{{- 'customer.order.quantity' | t -}}">{{- line_item.quantity -}}</td>
+                          <td class="cell__total-width" data-heading="{{- 'customer.order.total' | t -}}">
+                            {%- if line_item.original_line_price != line_item.final_line_price -%}
+                              <dl>
+                                <dt><span class="visually-hidden">{{- 'product.price_regular' | t -}}</span></dt>
+                                <dd><s>{{- line_item.original_line_price | money -}}</s></dd>
+                                <dt><span class="visually-hidden">{{- 'product.price_sale' | t -}}</span></dt>
+                                <dd><span>{{- line_item.final_line_price | money -}}</span></dd>
+                              </dl>
+                            {%- else -%}
+                              {{- line_item.original_line_price | money -}}
+                            {%- endif -%}
+                          </td>
+                        </tr>
+                      {%- endfor -%}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{- 'customer.order.subtotal' | t -}}</td>
+                        <td>{{- order.line_items_subtotal_price | money -}}</td>
+                      </tr>
+                      {%- if order.cart_level_discount_applications != blank -%}
+                        <tr>
+                          {%- for discount_application in order.cart_level_discount_applications -%}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                              {{ 'customer.order.discount' | t }}
+                              <span>
+                                {{- discount_application.title -}}
+                              </span>
+                            </td>
+                            <td>
+                              -{{- discount_application.total_allocated_amount | money -}}
+                            </td>
+                          {%- endfor -%}
+                        </tr>
+                      {%- endif -%}
+                      {%- for shipping_method in order.shipping_methods -%}
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>{{ 'customer.order.shipping' | t }} ({{- shipping_method.title -}})</td>
+                          <td><span>{{- shipping_method.price | money -}}</span></td>
+                        </tr>
+                      {%- endfor -%}
+                      {%- for tax_line in order.tax_lines -%}
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            {{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)
+                          </td>
+                          <td>{{- tax_line.price | money -}}</td>
+                        </tr>
+                      {%- endfor -%}
+                      {%- if order.total_duties -%}
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>{{- 'customer.order.total_duties' | t -}}</td>
+                          <td>{{- order.total_duties | money -}}</td>
+                        </tr>
+                      {%- endif -%}
+                      <tr class="font-bold">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{- 'customer.order.total' | t -}}</td>
+                        <td>{{- order.total_price | money -}}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- if template.name == 'addresses' -%}
+            {%- render 'address-form' -%}
+            {%- if customer.default_address -%}
+              {%- render 'address-form', address: customer.default_address -%}
+            {%- endif -%}
+            {{- address_forms_html -}}
+          {%- elsif template.name == 'order' -%}
+            <div class="account-dashboard__foot">
+              <div class="account-dashboard__foot-col">
+                {%- assign billing_address_title = 'customer.order.billing_address' | t -%}
+                {%- render 'card-address', address_ref: order.billing_address, title: billing_address_title -%}
+              </div>
+              <div class="account-dashboard__foot-col">
+                {%- assign shipping_address_title = 'customer.order.shipping_address' | t -%}
+                {%- render 'card-address', address_ref: order.shipping_address, title: shipping_address_title -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- if template.name == 'addresses' -%}
+  <script>
+    window.onload = () => {
+      typeof CustomerAddresses !== 'undefined' && new CustomerAddresses();
+    }
+  </script>
+{%- endif -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector(`.menu a[href="${document.location.pathname}${document.location.search.includes('view') ? document.location.search : ''}"]`).classList.add('active');
+    const activeLink = document.querySelector('.menu a.active');
+    if (activeLink) {
+      const menuText = document.querySelector('.account-dashboard__dropdown-menu-text');
+      menuText.textContent = activeLink.textContent;
+      const activeLinkParent = activeLink.parentElement;
+      if (activeLinkParent && window.innerWidth < 750) {
+        activeLinkParent.style.display = 'none';
+      }
+    }
+  });
+</script>

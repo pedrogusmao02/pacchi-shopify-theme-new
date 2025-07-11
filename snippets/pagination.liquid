@@ -1,0 +1,48 @@
+{% comment %}
+    Renders a set of links for paginated results. Must be used within paginate tags.
+
+    Usage:
+    {% paginate results by 2 %}
+      {% render 'pagination', paginate: paginate, anchor: '#yourID' %}
+    {% endpaginate %}
+
+    Accepts:
+    - paginate: {Object}
+    - anchor: {String} (optional) This can be added so that on page reload it takes you to wherever you've placed your anchor tag.
+{% endcomment %}
+
+{%- if paginate.parts.size > 0 -%}
+  {{- 'component-pagination.css' | asset_url | stylesheet_tag -}}
+
+  <nav class="pagination" aria-label="{{- 'theme.pagination.label' | t -}}">
+    <ul class="list-unstyled">
+      {%- if paginate.previous -%}
+        <li><a class="pagination__prev-next" href="{{ paginate.previous.url }}{{ anchor }}" title="{{- 'theme.pagination.previous' | t -}}">{%- render 'icon', icon_name: 'theme-arrow', class: 'icon icon--rotate-180' -%}</a></li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}{{ anchor }}" title="{{- 'theme.pagination.page_part' | t: page: part.title -}}">
+              {{- part.title -}}
+            </a>
+          {%- else -%}
+            <span
+              {% if part.title == paginate.current_page %}
+                aria-current="page"
+                aria-label="{{- 'theme.pagination.page_part' | t: page: part.title -}}"
+                class="pagination__current"
+              {% endif %}
+            >
+              {{- part.title -}}
+            </span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li><a class="pagination__prev-next" href="{{ paginate.next.url }}{{ anchor }}" title="{{- 'theme.pagination.next' | t -}}">{%- render 'icon', icon_name: 'theme-arrow', class: 'icon' -%}</a></li>
+      {%- endif -%}
+    </ul>
+  </nav>
+{%- endif -%}

@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-register",
+      "settings": {
+        "section_width": "max-w-full",
+        "color_scheme": ""
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

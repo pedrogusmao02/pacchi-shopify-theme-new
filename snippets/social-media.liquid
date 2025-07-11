@@ -1,0 +1,51 @@
+{%- comment -%}
+  renders social media links based on the settings in the theme editor.
+
+  usage:
+  {% render 'social-media', item_tag: 'li', in_new_tab: true, item_icon: true %}
+
+  mandatory parameters:
+  - item_tag: the tag to wrap the social media link in. // 'li', 'div', 'span', etc. (default: 'li')
+  - in_new_tab: whether the links should open in a new tab. // true or false (default: false)
+  - item_icon: whether the links should have an icon. // true or false (default: true)
+
+  optional parameters:
+  - none
+{%- endcomment -%}
+
+{%- liquid
+  assign item_tag = item_tag | default: 'li'
+  assign in_new_tab = in_new_tab | default: false
+  assign item_icon = item_icon
+
+  assign social_media_items = 'Facebook,Instagram,YouTube,TikTok,X,Linkedin,Twitter,Pinterest,Snapchat,Vimeo' | split: ','
+
+  for item in social_media_items
+    assign item_handle = item | handleize
+    assign item_settings_handle = 'social_' | append: item_handle | append: '_link'
+    assign item_icon_name = 'brand-' | append: item_handle
+
+    if settings[item_settings_handle] == blank
+      continue
+    endif
+
+    assign item_url = settings[item_settings_handle]
+
+    if in_new_tab
+      assign item_target = ' target="_blank" rel="noopener noreferrer"'
+    else
+      assign item_target = ''
+    endif
+
+    echo '<' | append: item_tag | append: '>'
+    echo '<a href="' | append: item_url | append: '" title="' | append: item | append: '" ' | append: item_target | append: '>'
+      if item_icon
+        render 'icon', icon_name: item_icon_name
+      else
+        echo item
+      endif
+    echo '</a>'
+    echo '</' | append: item_tag | append: '>'
+
+  endfor
+-%}

@@ -1,0 +1,45 @@
+{% comment %}
+  Renders address card
+  Accepts:
+  - address_ref: {Object} Liquid address object
+  - title: {String} Title of the address
+  - action_type: {String} Type of actions. Accepts: 'single' or 'multiple'
+{% endcomment %}
+
+{%- assign address_ref = address_ref -%}
+{%- assign title = title | default: false -%}
+{%- assign action_type = action_type | default: false -%}
+
+<div class="account-card">
+  <h3 class="account-card__title h6">
+    {%- if title -%}
+      {{- title -}}
+    {%- elsif address_ref == customer.default_address -%}
+      {{- 'customer.addresses.default' | t -}}
+    {%- endif -%}
+  </h3>
+
+  <div class="account-card__row">
+    {{- address_ref | format_address | replace: '<p', '<p class="account-card__text"' -}}
+  </div>
+
+  {%- if action_type -%}
+    <div class="account-card__actions">
+      {%- if action_type == 'single' -%}
+        {% liquid
+          assign value = 'customer.addresses.view_addresses' | t: count: customer.addresses_count
+          render 'button', type: 'link', href: routes.account_addresses_url, value: value, class: 'button button--outlined'
+          assign value = nil
+        %}
+      {%- elsif action_type == 'multiple' -%}
+        <button class="link" data-form-id="EditAddress_{{- address_ref.id -}}">
+          {{- 'customer.addresses.edit_address' | t -}}
+        </button>
+
+        <button class="link" data-target="{{- address_ref.url -}}" data-confirm-message="{{- 'customer.addresses.delete_confirm' | t | escape -}}">
+          {{- 'customer.addresses.delete' | t -}}
+        </button>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>

@@ -1,0 +1,196 @@
+{%- comment -%}
+  Renders cart drawer
+
+  Usage:
+  {%- render 'cart-drawer' -%}
+{%- endcomment -%}
+
+{{- 'component-cart-drawer.css' | asset_url | stylesheet_tag -}}
+{{- 'component-cart.css' | asset_url | stylesheet_tag -}}
+
+{% if template.name != 'cart' %}
+  <script src="{{- 'cart.js' | asset_url -}}" defer="defer"></script>
+{% endif %}
+<script src="{{- 'cart-info-bar-slider.js' | asset_url -}}" defer="defer"></script>
+
+{%- style -%}
+  cart-drawer .cart-item .media {
+    aspect-ratio: {{ section.settings.card_media_aspect_ratio }};
+  }
+{%- endstyle -%}
+
+<cart-drawer>
+  <div class="color-{{ settings.color_scheme_for_drawers }} gradient">
+    <div class="cart-drawer" id="{{- section.id -}}">
+
+      <div class="cart-drawer__inner"
+        role="dialog"
+        aria-modal="true"
+        aria-label="{{- 'cart.title' | t -}}"
+        tabindex="-1"
+      >
+        {%- if section.blocks.size > 0 -%}
+        <cart-drawer-info-slider class="cart-drawer__information-bar">
+          <div class="swiper cart-drawer__swiper">
+            <div class="swiper-wrapper">
+              {%- for block in section.blocks -%}
+                {% if block.settings.title != blank %}
+                <div class="swiper-slide">
+                  <div class="cart-drawer__information-bar-content">
+                    {%- if block.settings.icon != blank or block.settings.custom_icon != blank -%}
+                      <div class="cart-drawer__info-icon icon">
+                      {% liquid
+                        assign icon_alt = block.settings.title | default: nil
+                        if block.settings.custom_icon
+                          echo block.settings.custom_icon | image_url: width: 24 | image_tag: alt: icon_alt
+                        elsif block.settings.icon != blank
+                          render 'icon', icon_name: block.settings.icon
+                        endif
+                      %}
+                      </div>
+                    {%- endif -%}
+                    {%- if block.settings.title -%}
+                      <p>{{ block.settings.title }}</p>
+                    {%- endif -%}
+                  </div>
+                </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        </cart-drawer-info-slider>
+        {%- endif -%}
+        <div class="cart-drawer__head">
+          <p class="cart-drawer__title h4">
+            {{- 'cart.title' | t -}}
+            <span class="cart-drawer__title-counter">{{- cart.item_count -}}</span>
+          </p>
+          <button class="cart-drawer__close" type="button" onclick="this.closest('cart-drawer').close()" aria-label="{{- 'theme.actions.close' | t -}}" data-drawer-close>{%- render 'icon', icon_name: 'theme-close' -%}</button>
+        </div>
+        <div class="cart-drawer__top">
+          {%- render 'shipping-bar', class: 'cart-drawer__bar' -%}
+        </div>
+        <div class="cart-drawer__body" id="CartDrawer-Body" data-cart-body>
+          {%- if cart == empty -%}
+            {%- liquid
+              assign cart_empty_title = "cart.empty_title_html" | t
+              assign cart_empty_subtitle = "cart.empty_subtitle" | t
+              assign cart_empty_button_label = "cart.empty_button_label" | t
+             -%}
+            <div class="cart-drawer__empty">
+                <h2 class="cart-drawer__empty-text">
+                  {{- cart_empty_title -}}
+                </h2>
+                <span class="cart-drawer__empty-desc">{{ cart_empty_subtitle }}</span>
+              {%- liquid
+                if section.settings.button_url != blank
+                  assign value = cart_empty_button_label
+                  render 'button', type: 'link', href: section.settings.button_url, value: value, style: 'solid', fullwidth: false, class: 'button', button_style: 'button--outlined'
+                  assign value = nil
+                endif
+              -%}
+            </div>
+          {%- else -%}
+            <div class="cart-drawer__main">
+              <cart-drawer-items class="cart-drawer-items {% if recommendations.products_count == 0 %}cart-drawer-items__full{% endif %}">
+                <div class="cart-drawer__spinner">
+                  {%- render 'loading-spinner' -%}
+                </div>
+                <form
+                  action="{{- routes.cart_url -}}"
+                  id="CartDrawer-Form"
+                  class="cart-drawer__form"
+                  method="post"
+                >
+                  <div class="cart-drawer__contents" id="CartDrawer-CartItems">
+                    <div class="cart-drawer__items">
+                      {%- for line_item in cart.items -%}
+                        {%- render 'line-item', line_item: line_item -%}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                </form>
+              </cart-drawer-items>
+              {%- if settings.enable_cart_upsell -%}
+                {%- render 'product-recommendations', area: 'cart-drawer', class: 'cart-drawer__recommendations', product_id: cart.items[0].product_id -%}
+              {%- endif -%}
+            </div>
+
+            <div class="cart-drawer__bottom">
+              <div class="cart-drawer__summary">
+                <form
+                  action="{{- routes.cart_url -}}"
+                  id="CartDrawer-FormSummary"
+                  class="cart-drawer__form-summary"
+                  method="post"
+                >
+                  <div id="cart-summary">
+                    <div class="cart-drawer__summary-total h4">
+                      <div class="cart-drawer__summary-content">
+                        <span>
+                          {{- 'customer.order.subtotal' | t -}}
+                        </span>
+                        {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+                          <p class="cart__summary-tax">
+                            {%- if cart.duties_included and cart.taxes_included -%}
+                              {{ 'product.duties_and_taxes_included' | t }}
+                            {%- elsif cart.taxes_included -%}
+                              {{ 'product.taxes_included' | t }}
+                            {%- elsif cart.duties_included -%}
+                              {{ 'product.duties_included' | t }}
+                            {%- endif -%}
+                            {%- if shop.shipping_policy.body != blank -%}
+                              {{ 'product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                            {%- endif -%}
+                          </p>
+                        {%- endif -%}
+                      </div>
+                      <span class="cart-drawer__total-price" data-cart-total-price="{{- cart.total_price -}}">
+                        {{- cart.total_price | money_with_currency -}}
+                      </span>
+                    </div>
+                    {%- if cart.cart_level_discount_applications.size > 0 -%}
+                      <ul class="cart-drawer__summary-discounts list-unstyled" role="list" aria-label="{{- 'customer.order.discount' | t -}}">
+                        {%- for discount in cart.cart_level_discount_applications -%}
+                          <li>
+                            {%- render 'icon', icon_name: 'theme-sale-tag' -%}
+                            <span>
+                              {{ discount.title }}
+                              (-{{ discount.total_allocated_amount | money }})
+                            </span>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                    <div class="cart-drawer__summary-actions">
+                      {%- if settings.show_cart_terms == 'both' or settings.show_cart_terms == 'cart_drawer' -%}
+                        {%- assign terms_text = settings.cart_terms | replace: '<p>', '' | replace: '</p>', '' -%}
+                        <div class="cart-drawer__terms">
+                          <div class="checkbox checkbox--plain">
+                            <input type="checkbox" name="terms" required id="Terms-Conditions">
+                            <label for="Terms-Conditions">
+                              {{- terms_text -}}
+                            </label>
+                          </div>
+                        </div>
+                      {%- endif -%}
+                      <div class="cart-drawer__action-buttons">
+                        {%- liquid
+                          assign value = 'cart.view_cart' | t
+                          render 'button', type: 'link', button_style: 'button--outlined',value: value, href: routes.cart_url, fullwidth: true, class: 'button'
+                          assign value = 'cart.checkout' | t
+                          render 'button', type: 'submit', name: 'checkout', value: value, style: 'solid', fullwidth: true, class: 'button'
+                          assign value = nil
+                        -%}
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</cart-drawer>

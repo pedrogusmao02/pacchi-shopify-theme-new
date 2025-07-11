@@ -1,0 +1,397 @@
+{{- 'section-compare-slider.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'compare-slider.js' | asset_url -}}" defer="defer"></script>
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+  #shopify-section-{{ section.id }} .compare-slider__slider {
+    aspect-ratio: {{ section.settings.media_aspect_ratio }};
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div
+    id="section-compare-slider-{{- section.id -}}"
+    data-id="{{- section.id -}}"
+    class="section-compare-slider overflow-hidden js-animation-fade-in compare-slider__layout--{{ section.settings.section_layout }}"
+  >
+    <div class="container {{ section.settings.section_width }}">
+      <div class="grid">
+        <div class="compare-slider__content">
+          <div class="compare-slider__content-group">
+            {%- if section.settings.heading != blank -%}
+              <h2 class="section__heading {{ section.settings.heading_size }}">
+                {{- section.settings.heading -}}
+              </h2>
+            {%- endif -%}
+            {%- if section.settings.text != blank -%}
+              <div class="compare-slider__text">
+                {{- section.settings.text -}}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- if section.settings.button_label != blank -%}
+            {%- render 'button',
+              type: 'link',
+              class: 'button max-w-fit compare-slider__button',
+              button_style: section.settings.button_style,
+              value: section.settings.button_label,
+              href: section.settings.button_link
+            -%}
+          {%- endif -%}
+        </div>
+        <div class="compare-slider__slider">
+          <div class="compare-slider__image-group">
+            {% capture images_html %}
+              {% for block in section.blocks reversed %}
+                {%- liquid
+                  assign image_class = 'compare-slider__image-before'
+                  assign label_class = 'compare-slider__label-after'
+                  # assign block_title_default = 'sections.compare_slider.image_after' | t
+                  if forloop.index == 2
+                    assign image_class = 'compare-slider__image-after'
+                    assign label_class = 'compare-slider__label-before'
+                    # assign block_title_default = 'sections.compare_slider.image_before' | t
+                  endif
+                  assign block_title = block.settings.title
+                -%}
+                <div class="compare-slider__image {{ image_class }}" style>
+                  {% liquid
+                    if block.settings.image
+                      render 'image', image: block.settings.image, alt: block.settings.image.alt | default: block_title | escape
+                    else
+                      echo 'lifestyle-1' | placeholder_svg_tag: 'ims-placeholder-svg'
+                    endif
+                  %}
+                  {% if block_title != '' %}
+                    <div class="compare-slider__label {{ label_class }} color-{{ block.settings.color_scheme }} gradient">
+                      {{ block_title }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% endcapture %}
+            {{ images_html }}
+          </div>
+
+          <div class="compare-slider__handle">
+            <div class="compare-slider__handle-line">
+              <div class="compare-slider__handle-circle">
+                <div class="compare-slider__handle-inner-circle">
+                  {%- render 'icon', icon_name: 'theme-drag' -%}
+                </div>
+              </div>
+            </div>
+            <input class="compare-slider__handle-value" name="compare-slider__input" max="100" min="0" type="range" value="50" aria-label="{{ block_title }}" />
+          </div>
+
+        </div>
+        <div class="before-and-after__mobile-footer">
+          {%- if section.settings.button_label != blank -%}
+            <div>
+              {%- render 'button',
+                type: 'link',
+                class: 'button',
+                button_style: section.settings.button_style,
+                value: section.settings.button_label,
+                href: section.settings.button_link
+              -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.compare-slider.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_layout",
+      "label": "t:sections.global.section.layout.label_alt",
+      "options": [
+        {
+          "value": "full",
+          "label": "t:sections.global.section.layout.options.full.label"
+        },
+        {
+          "value": "shrink",
+          "label": "t:sections.global.section.layout.options.shrink.label"
+        }
+      ],
+      "default": "shrink"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Before / <em>After</em>"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.global.element.text.label",
+      "default": "<p>Before and after images are a great way to showcase the transformation or improvement in a particular subject.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.element.button_label.label",
+      "info": "t:sections.global.element.button_label.info",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.element.button.link.label"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "button--text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "button--filled"
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "label": "t:sections.global.aspect_ratio.for__media.label",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "1:1"
+        },
+        {
+          "value": "3/2",
+          "label": "2:3"
+        },
+        {
+          "value": "4/3",
+          "label": "3:4"
+        },
+        {
+          "value": "5/4",
+          "label": "4:5"
+        },
+        {
+          "value": "16/9",
+          "label": "9:16"
+        }
+      ],
+      "default": "3/2"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section.width.label_alt",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section.width.options.page.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section.width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-page"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image-before-slide",
+      "limit": 1,
+      "name": "t:sections.compare-slider.blocks.image-before-slide.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.global.element.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.element.label.label",
+          "default": "Before"
+        },
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.global.color_scheme.for__label.label",
+          "default": "scheme-1"
+        }
+      ]
+    },
+    {
+      "type": "image-after-slide",
+      "limit": 1,
+      "name": "t:sections.compare-slider.blocks.image-after-slide.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.global.element.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.element.label.label",
+          "default": "After"
+        },
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:sections.global.color_scheme.for__label.label",
+          "default": "scheme-1"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.compare-slider.name",
+      "settings": {
+        "heading": "Before / <em>After</em>",
+        "text": "<p>Before and after images are a great way to showcase the transformation or improvement in a particular subject.</p>",
+        "button_label": "Shop now",
+        "button_link": "/",
+        "button_style": "button--filled",
+        "color_scheme": "scheme-1",
+        "spacing_top": "2",
+        "spacing_bottom": "2",
+        "section_layout": "shrink",
+        "section_width": "max-w-page"
+      },
+      "blocks": [
+        {
+          "type": "image-before-slide",
+          "settings": {
+            "title": "Image before"
+          }
+        },
+        {
+          "type": "image-after-slide",
+          "settings": {
+            "title": "Image after"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

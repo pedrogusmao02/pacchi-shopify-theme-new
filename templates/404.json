@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {
+        "heading": "<em>Oops!</em>",
+        "text": "<p>We can't find what you're looking for here. Click below to go back to the homepage.</p>",
+        "button_label": "Back home",
+        "button_link": "/",
+        "button_style": "button--outlined",
+        "section_width": "max-w-narrower",
+        "color_scheme": "scheme-1",
+        "spacing_top": "4",
+        "spacing_bottom": "4"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

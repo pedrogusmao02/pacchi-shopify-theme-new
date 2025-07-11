@@ -1,0 +1,142 @@
+{% liquid
+  assign currencies_using_comma_decimals = 'ANG,ARS,BRL,BYN,BYR,CLF,CLP,COP,CRC,CZK,DKK,EUR,HRK,HUF,IDR,ISK,MZN,NOK,PLN,RON,RUB,SEK,TRY,UYU,VES,VND' | split: ','
+  assign uses_comma_decimals = false
+  if currencies_using_comma_decimals contains cart.currency.iso_code
+    assign uses_comma_decimals = true
+  endif
+
+  assign opened_accordions = opened_accordions | default: false
+
+  assign total_active_values = total_active_values | plus: filter.active_values.size
+
+  assign presentation = filter.presentation | default: 'text'
+
+  comment
+  if presentation == 'image'
+    assign show_more_number = 12
+    assign visual_layout_class = 'facets-layout facets-layout-grid facets-layout-grid--' | append: presentation
+  else
+    assign show_more_number = 10
+    assign visual_layout_class = 'facets-layout facets-layout-list facets-layout-list--' | append: presentation
+  endif
+  endcomment
+%}
+
+<details class="accordion__section facets__accordion-section{% if opened_accordions %} is-active{% endif %}" id="Filters-accordion-section-{{- index -}}"{% if opened_accordions %} open{% endif %}>
+  <summary class="facets__accordion-btn h4 js-btn" id="Filters-accordion-button-{{- index -}}">
+    {{- filter.label | escape -}}
+
+    <div class="facets__accordion-icon">
+      {%- render 'icon', icon_name: 'theme-chevron', class: 'icon' -%}
+    </div>
+  </summary>
+
+  <div class="accordion__body facets__accordion-body slim-scrollbar" id="Filters-accordion-dropdown-{{- index -}}" {% if opened_accordions %} style="height: auto;"{% endif %}>
+    <div id="Filter-{{ filter.param_name | escape }}-{{ section.id }}" class="js-filter" data-index="{{- index -}}">
+
+      {%- case filter.type -%}
+        {%- when 'list' or 'boolean' -%}
+          <ul class="facets__list list-unstyled" role="list">
+
+            {%- for value in filter.values -%}
+              <li class="facets__item{% if value.active %} facets__item--checked{% endif %}">
+                {%- liquid
+                  assign checkbox_additional_classes = ''
+                  capture checkbox_attr
+                    if value.active
+                      echo 'checked'
+                    endif
+
+                    if value.count == 0 and value.active == false
+                      echo 'disabled'
+                    endif
+                  endcapture
+
+                  assign id = 'Filter-' | append: filter.param_name | escape | append: '-' | append: forloop.index | strip
+                  assign checkbox_attr = checkbox_attr | strip
+
+                  if value.count == 0 and value.active == false
+                    assign checkbox_additional_classes = checkbox_additional_classes | append: 'checkbox--disabled'
+                  endif
+                -%}
+
+
+                <div class="checkbox facet-checkbox {{ checkbox_additional_classes }}" tabindex="0">
+                  {%- if presentation == 'swatch' and value.swatch != blank -%}
+                    {% render 'product-option', type: 'checkbox', id: id, name: value.param_name, value: value.value, form_id: product_form_id, swatch_value: value.swatch, checked: value.active, visually_hidden: true, where: 'facet' %}
+                    <label for="{{- id -}}" class="checkbox__label" aria-hidden="true">
+                      {{- value.label | escape -}}
+                    </label>
+                  {%- else -%}
+                    <input type="checkbox" name="{{- value.param_name -}}" value="{{- value.value -}}" id="{{- id -}}"
+                      class="product-option__input"
+                      {{ checkbox_attr }}
+                    >
+                    {%- if presentation == 'image' -%}
+                      {%- if value.image -%}
+                        <label for="{{- id -}}" class="varian-option__label media product-option__image">
+                          {% render 'image', image: value.image, width: 200 %}
+                        </label>
+                      {%- endif -%}
+                    {%- else -%}
+                      <label for="{{- id -}}">
+                        {{- value.label | escape -}}
+                      </label>
+                    {%- endif -%}
+                  {%- endif -%}
+
+                  {%- assign id = nil -%}
+                  {%- assign checkbox_attr = nil -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- when 'price_range' -%}
+          <price-range class="facets__price">
+            <div class="facets__price-row">
+              <span>{{- cart.currency.symbol -}}</span>
+
+              {%-
+                liquid
+                assign label = 'collection.filters_from' | t
+                assign filter_label = filter.label | escape
+                assign id = 'Filter-' | append: filter_label | append: '-GTE'
+                assign input_placeholder = '0' | money_without_currency
+                if filter.min_value.value
+                  assign value = filter.min_value.value | money_without_currency
+                endif
+                assign max = filter.range_max | money_without_currency
+
+                render 'text-input', type: 'number', class: 'facets__price-field' name: filter.min_value.param_name, id: id, label: label, placeholder: input_placeholder, min: 0, max: max, hide_label: false
+
+                assign label = nil
+                assign id = nil
+                assign value = nil
+                assign max = nil
+              -%}
+            </div>
+            <div class="facets__price-row">
+              <span>{{- cart.currency.symbol -}}</span>
+              {%- liquid
+                assign label = 'collection.filters_to' | t
+                assign filter_label = filter.label | escape
+                assign id = 'Filter-' | append: filter_label | append: '-LTE'
+                assign input_placeholder = filter.range_max | money_without_currency
+                if filter.max_value.value
+                  assign value = filter.max_value.value | money_without_currency
+                endif
+                assign max = filter.range_max | money_without_currency
+
+                render 'text-input', type: 'number', class: 'facets__price-field' name: filter.max_value.param_name, id: id, value: value, label: label, placeholder: input_placeholder, min: 0, max: max, hide_label: false
+
+                assign label = nil
+                assign id = nil
+                assign value = nil
+                assign max = nil
+              -%}
+            </div>
+          </price-range>
+      {%- endcase -%}
+    </div>
+  </div>
+</details>

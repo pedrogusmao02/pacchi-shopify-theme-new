@@ -1,0 +1,25 @@
+.main-list-collections__grid {
+  display: grid;
+  gap: var(--grid-spacing);
+}
+
+.main-list-collections__actions {
+  margin-block-start: 2.8rem;
+}
+
+@media screen and (min-width: 575px) {
+  .main-list-collections__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (min-width: 750px) {
+
+  .main-list-collections__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .main-list-collections__actions {
+    margin-block-start: 4rem;
+  }
+}

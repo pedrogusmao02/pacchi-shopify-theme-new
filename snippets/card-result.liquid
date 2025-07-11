@@ -1,0 +1,44 @@
+{% comment %}
+  Renders a result card
+  Accepts:
+  - result: {Object}  Liquid object (article/page)
+  - class: {String} CSS class to apply to the card
+  Usage:
+  {%- render 'card-result', result: result, class: 'grid__item' -%}
+{% endcomment %}
+
+<div class="color-{{ color_scheme }} gradient">
+  <div class="card-result {{ class }}">
+    <a href="{{- result.url -}}">
+      {%- if result.image -%}
+        <div class="media media--overlay card-result__media">
+          {%- render 'image', image: result.image, image_url_width: 550, alt: result.image.alt | escape -%}
+        </div>
+      {%- endif -%}
+      <div class="card-result__content{% if result.image %} color-text-inverse{% endif %}">
+        {%- liquid
+          case result.object_type
+          when 'article'
+            assign result_object_type_html = 'search.object_type.article' | t
+          when 'page'
+            assign result_object_type_html = 'search.object_type.page' | t
+          when 'product'
+            assign result_object_type_html = 'search.object_type.product' | t
+          else
+            assign result_object_type_html = 'search.object_type.query' | t
+          endcase
+        -%}
+
+        <p class="text-navigation-button">
+          {{- result_object_type_html -}}
+        </p>
+        <h3 class="card-result__title">
+          {{- result.title | escape -}}
+        </h3>
+        <span class="link card-result__link">
+          {{- 'search.view_type' | t: type: result_object_type_html -}}
+        </span>
+      </div>
+    </a>
+  </div>
+</div>

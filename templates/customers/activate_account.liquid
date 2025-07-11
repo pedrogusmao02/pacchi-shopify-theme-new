@@ -1,0 +1,85 @@
+{{- 'customer.css' | asset_url | stylesheet_tag -}}
+
+<script src="{{- 'form-validate.js' | asset_url -}}" defer></script>
+
+<section class="color-scheme-1 gradient">
+  <div class="account">
+    <div class="container max-w-narrow">
+      <div class="account__col account__col--center">
+        <div class="form-customer form-customer--activate">
+          <div class="form-customer__head">
+            <h1 class="h2 form-customer__title">
+              {{- 'customer.activate_account.title' | t -}}
+            </h1>
+          </div>
+
+          <div class="form-customer__body">
+            <form-validate>
+              {%- form 'activate_customer_password' -%}
+                {%- if form.errors -%}
+                  <div class="color-red">
+                    {{- form.errors | default_errors -}}
+                  </div>
+                {%- endif -%}
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'theme.form.password' | t
+                    assign placeholder = 'theme.form.password_placeholder' | t
+                    assign error = ''
+                    assign has_error = false
+                    assign attr = 'autocomplete="new-password"'
+                    if form.errors contains 'password'
+                      assign error = form.errors.translated_fields['password'] | capitalize | append: ' ' | append: form.errors.messages['password']
+                      assign has_error = true
+                    endif
+                    render 'text-input', id: 'activePassword', label: label, type: 'password', name: 'customer[password]', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign error = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  {%-
+                    liquid
+                    assign label = 'customer.activate_account.password_confirm' | t
+                    assign placeholder = 'customer.reset_password.password_confirm_placeholder' | t
+                    assign error = ''
+                    assign has_error = false
+                    assign attr = 'autocomplete="new-password"'
+                    if form.errors contains 'password'
+                      assign error = form.errors.translated_fields['password_confirmation'] | capitalize | append: ' ' | append: form.errors.messages['password_confirmation']
+                      assign has_error = true
+                    endif
+                    render 'text-input', id: 'activePasswordConfirm', label: label, type: 'password', name: 'customer[password_confirmation]', placeholder: placeholder, attr: attr, message: error, has_error: has_error, required: true
+                    assign label = nil
+                    assign placeholder = nil
+                    assign attr = nil
+                    assign error = nil
+                    assign has_error = nil
+                  -%}
+                </div>
+
+                <div class="form-row">
+                  {% liquid
+                    assign value = 'customer.activate_account.submit' | t
+                    render 'button', type: 'submit', value: value, style: 'solid', class: 'button'
+                    assign value = nil
+
+                    assign value = 'customer.activate_account.cancel' | t
+                    render 'button', type: 'submit', value: value, name: 'decline', class: 'button button--outlined'
+                    assign value = nil
+                  %}
+                </div>
+              {%- endform -%}
+            </form-validate>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,85 @@
+{% comment %}
+  Renders instance-swiper.
+  Accepts:
+    - handle: {string} Handle of the instance (required)
+    - slides: {string} Array of slides as a string (required)
+    - class: {string} for additional css classes (optional)
+    - options: {string} Swiper options as a sting (optional)
+    - thumbs: {boolean} If thumbs navigation is enabled (optional)
+    - arrows: {object} Arrows block settings if provided (optional)
+    - pagination: {object} Pagination block settings if provided (optional)
+  Simple Usage:
+    <swiper-instance-simple handle="instance-simple">
+      {% render 'instance-swiper', handle: 'instance-simple', slides: instance_simple_slides %}
+    </swiper-instance-handle>
+  Advanced Usage:
+    <swiper-instance-advanced
+      handle="instance-advanced"
+      thumbs="instance-thumbs"
+    >
+      {% render 'instance-swiper',
+        handle: 'instance-advanced',
+        slides: instance_advanced_slides,
+        thumbs: true,
+        arrows: arrows,
+        pagination: pagination
+      %}
+    </swiper-instance-handle>
+{% endcomment %}
+
+{% assign handle = handle | default: 'instance' | prepend: 'swiper--' %}
+{% capture automated_options %}
+  {% if arrows and arrows != 'none' %}
+  "navigation": {
+    "nextEl": ".swiper-button-next",
+    "prevEl": ".swiper-button-prev"
+  }
+  {% endif %}
+{% endcapture %}
+<script type="application/json" id="{{- handle -}}--automated-options">
+  {% if automated_options != blank %}
+    {
+      {{- automated_options -}}
+    }
+  {% else %}
+    { }
+  {% endif %}
+</script>
+<script type="application/json" id="{{- handle -}}--overwrite-options">
+  {% if options %}{{- options -}}{% else %}{ }{% endif %}
+</script>
+
+{%- liquid
+  assign class = class
+  if class == blank
+    assign class = handle
+  else
+    assign class = handle | append: ' {{ class }}'
+  endif
+  if thumbs
+    assign class = class | append: ' swiper--with-thumbs-nav'
+  endif
+-%}
+
+<!-- Slider main container -->
+<div class="swiper{% if class != blank %} {{ class }}{% endif %}">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper photoswipe-wrapper">
+    {% if slides %}
+      <!-- Slides -->
+      {{ slides }}
+    {% endif %}
+  </div>
+
+  {% if arrows and arrows != 'none' %}
+    <div class="swiper-buttons{% unless arrows == "both" %} {% if arrows == "mobile" %}small-up-hide{% elsif arrows == "desktop" %}small-hide{% endif %}{% endunless %}">
+      <div class="swiper-button swiper-button-prev color-{{ section.settings.color_scheme_gallery }} gradient">
+        {% render 'icon', icon_name: 'theme-chevron-small' %}
+      </div>
+      <div class="swiper-button swiper-button-next color-{{ section.settings.color_scheme_gallery }} gradient">
+        {% render 'icon', icon_name: 'theme-chevron-small' %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>

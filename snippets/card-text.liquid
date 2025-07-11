@@ -1,0 +1,70 @@
+{%- comment -%}
+  Accepts:
+
+  - class {String} - Card class
+  - title {String} - Card title
+  - button_label {String} - Button text
+  - button_link {String} - Button URL
+{%- endcomment -%}
+
+{% liquid
+  assign heading_size = heading_size | default: 'h3'
+  assign button_style = button_style | default: 'button--outlined'
+  assign card_width = card_width | default: false
+  assign card_image = card_image | default: false
+  assign button_label = button_label | default: false
+  assign button_link = button_link | default: false
+
+  assign column_count = column_count | times: 1 | default: 4
+  assign column_count_mobile = column_count_mobile | times: 1 | default: 2
+
+  assign column_factor = column_factor | times: 1 | default: 1
+  assign column_factor_mobile = column_factor
+  if column_factor > column_count
+    assign column_factor = column_count
+  endif
+  if column_factor_mobile > column_count_mobile
+    assign column_factor_mobile = column_count_mobile
+  endif
+%}
+
+{% style %}
+  .block-{{ block_id }} {
+    grid-column: span {{ column_factor_mobile }};
+    grid-row: span {{ row_factor }};
+    height: 100%;
+  }
+  @media screen and (min-width: 750px) {
+    .block-{{ block_id }} {
+      grid-column: span {{ column_factor }};
+      grid-row: span {{ row_factor }};
+    }
+  }
+{% endstyle %}
+
+{%- if text or button_label -%}
+  <div class="block-{{ block_id }}">
+    <div class="card-text {{ class }}">
+      {%- if card_image -%}
+        <div class="media">
+          {%- render 'image', image: card_image, alt: text | escape -%}
+        </div>
+      {%- endif -%}
+      <div class="card-text__content justify-{{ content_position }} align-{{ content_alignment }} text-{{ content_alignment }} justify-{{ content_position_mobile }}--mobile align-{{ content_alignment_mobile }}--mobile text-{{ content_alignment_mobile }}--mobile">
+        {%- if text -%}
+          <div class="card-text__title">
+            {{- text -}}
+          </div>
+        {%- endif -%}
+        {%- if button_label -%}
+          <div class="card-text__button">
+            {%- render 'button', type: 'link', class: 'button', button_style: button_style, value: button_label, href: button_link -%}
+          </div>
+        {%- endif -%}
+      </div>
+      {% if link_type == 'card' %}
+        <a href="{{ button_link }}" class="card-text__link">&nbsp;</a>
+      {% endif %}
+    </div>
+  </div>
+{%- endif -%}

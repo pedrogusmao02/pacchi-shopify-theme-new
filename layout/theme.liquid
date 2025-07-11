@@ -1,0 +1,133 @@
+<!doctype html>
+
+<html class="no-js" lang="{{ request.locale.iso_code }}"{%- if request.locale.iso_code == 'ar' or request.locale.iso_code == 'he' -%} dir="rtl"{%- endif -%}>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    {%- unless settings.type_heading_font.system? and settings.type_body_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+
+    {% render 'meta-tags' %}
+    <script src="{{- 'swiper-bundle.min.js' | asset_url -}}" defer="defer"></script>
+    <script src="{{- 'bodyScrollLock.min.js' | asset_url -}}" defer="defer"></script>
+    <script src="{{- 'pubsub.js' | asset_url -}}" defer="defer"></script>
+    <script src="{{- 'global.js' | asset_url -}}" defer="defer"></script>
+    <noscript>
+      <style>
+        img[loading='lazy'] { opacity: 1; }
+      </style>
+    </noscript>
+    <script src="{{ 'cookies.js' | asset_url }}" defer="defer"></script>
+
+    {{ content_for_header }}
+
+    {%- render 'settings' -%}
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+    {% render 'css', css: 'component-drawer.css' %}
+
+    {%- if settings.enable_predictive_search -%}
+      {% render 'css', css: 'component-predictive-search.css' %}
+      <script src="{{- 'predictive-search.js' | asset_url -}}" defer="defer"></script>
+    {%- endif -%}
+
+    {% comment %}theme-check-disable AssetPreload{% endcomment %}
+    {%- unless settings.type_heading_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_heading_font | font_url }}" type="font/woff2" crossorigin>
+    {%- endunless -%}
+    {%- unless settings.type_body_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+      {%- endunless -%}
+    {% comment %}theme-check-enable AssetPreload{% endcomment %}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      if (Shopify.designMode) {
+        document.documentElement.classList.add('shopify-design-mode');
+      }
+    </script>
+  </head>
+
+  <body class="template template--{{ template.name }}{% if template.suffix %} template--{{- template.suffix -}}{% endif %} is-at-top">
+    <a class="skip-to-content-link button visually-hidden" href="#MainContent">
+      {{- 'theme.accessibility.skip_to_content' | t -}}
+    </a>
+
+    {%- sections 'header-group' -%}
+
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    <footer class="js-animation-fade-in">
+      {%- sections 'footer-group' -%}
+    </footer>
+
+    {%- sections 'overlay-group' -%}
+
+    <ul hidden>
+      <li id="a11y-refresh-page-message">{{- 'theme.accessibility.refresh_page' | t -}}</li>
+    </ul>
+
+    <script>
+      window.theme = window.theme || {};
+      theme = {
+        settings: {
+          money_format: {{ shop.money_format | json }},
+          money_with_currency_format: {{ shop.money_with_currency_format | json }},
+          cart_free_shipping_threshold: {{ settings.shipping_notification_threshold | times: 100 }},
+          cart_free_shipping_text: `{{ 'cart.free_shipping_text_html' | t: amount: '0' }}`,
+          cart_free_shipping_text_success: `{{ 'cart.free_shipping_text_success' | t }}`,
+        }
+      }
+      window.shopUrl = '{{ request.origin }}';
+      window.routes = {
+        cart_url: '{{ routes.cart_url }}',
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}',
+        search_url: '{{ routes.search_url }}',
+        predictive_search_url: '{{ routes.predictive_search_url }}',
+      };
+      window.cartStrings = {
+        error: `{{ 'cart.error' | t }}`,
+        quantityError: `{{ 'cart.quantity_error_html' | t: quantity: '[quantity]' }}`
+      }
+      window.variantStrings = {
+        addToCart: '{{ 'theme.actions.add_to_cart' | t }}',
+        unavailable: '{{ 'product.unavailable' | t }}',
+        soldOut: '{{ 'product.sold_out' | t }}',
+        addSubscriptionToCart: 'Add subscription to cart',
+        preOrder: '{{ 'product.preorder' | t }}'
+      }
+      window.validationStrings = {
+        invalidEmail: '{{ 'theme.form.invalid_email' | t }}'
+      }
+      window.accessibilityStrings = {
+        recipientFormExpanded: `{{ 'gift_card.recipient.expanded' | t }}`,
+        recipientFormCollapsed: `{{ 'gift_card.recipient.collapsed' | t }}`,
+      };
+    </script>
+
+    {% if settings.back_to_top_button != 'disable' %}
+      <back-to-top class="hide">
+        <button href="#" class="button back-to-top {{ settings.back_to_top_button }}">
+          {% render 'icon', icon_name: 'theme-chevron', class: 'icon--rotate-270' %}
+        </button>
+      </back-to-top>
+    {% endif %}
+
+    {% render 'subify-snippet' %}
+  </body>
+</html>

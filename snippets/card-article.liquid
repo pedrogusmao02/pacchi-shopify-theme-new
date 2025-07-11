@@ -1,0 +1,83 @@
+{% comment %}
+    Renders an article card
+    Accepts:
+    - article: {Object} Article Liquid object
+    - class: {String} Class to be applied to the card
+    - show_date: {Boolean} Show date
+    - show_author: {Boolean} Show author
+    - show_excerpt: {Boolean} Show excerpt
+    Usage:
+    {%- render 'card-article', article: blog.articles[0] -%}
+{% endcomment %}
+
+{% liquid
+  assign image_per_view = image_per_view | default: 1
+  assign article_title_placeholder = 'blog.post' | t
+  assign article_author_placeholder = 'blog.author' | t
+  assign article_content_placeholder = 'blog.sample_content' | t
+  assign article_title = article.title | default: article_title_placeholder
+  assign article_author = article.author | default: article_author_placeholder
+  assign article_content = article.excerpt_or_content | default: article_content_placeholder
+%}
+
+{%- assign image_per_view = image_per_view | default: 1 -%}
+
+<article class="card-article {{ class }}">
+  <a href="{{- article.url -}}">
+    <div class="media card-article__media">
+      {%- liquid
+        if article.image != blank
+          render 'image', image: article.image, alt: article.image.alt | escape, image_per_view: image_per_view
+        else
+          echo 'image' | placeholder_svg_tag: 'placeholder-svg'
+        endif
+      -%}
+    </div>
+
+    {%- assign content_alignment = content_alignment | default: '' -%}
+
+    <div class="card-article__content {{ content_alignment }}">
+      <h3 class="card-article__title h6">
+        {{- article_title -}}
+      </h3>
+
+      {%- if show_excerpt -%}
+        {%- if article.excerpt.size > 0 or article.content.size > 0 or article_content.size > 0 -%}
+          <div class="card-article__entry entry entry--list-padding-none">
+            <p>
+              {{- article_content | strip_html | truncate: 180 -}}
+            </p>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if show_author or show_date -%}
+        <div class="card-article__meta">
+          <span class="article-card__author">
+            {%- if show_author -%}
+              {%- if show_date -%}
+                {{- article_author -}}
+              {%- else -%}
+                {{- 'blog.posted_by' | t: author: article_author -}}
+              {%- endif -%}
+            {%- endif -%}
+          </span>
+
+          {%- if show_date -%}
+            {%- assign date_format = 'theme.date.format_short' | t -%}
+            {%- assign published_at = article.published_at | date: date_format -%}
+            <span class="article-card__date">
+              {{ 'blog.posted_on' | t: date: published_at -}}
+            </span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if show_read_more -%}
+        <div class="card-article__read-more text--link">
+          {{- 'theme.actions.read_more' | t -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </a>
+</article>

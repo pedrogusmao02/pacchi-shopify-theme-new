@@ -1,0 +1,165 @@
+{% comment %}
+    Renders a list of product's price (regular, sale)
+    Accepts:
+    - product: {Object} Product Liquid object
+    - use_variant: {Boolean} Renders selected or first variant price instead of overall product pricing (optional)
+    - price_class: {String} Adds a price class to the price element (optional)
+    Usage:
+    {% render 'price', product: product %}
+{% endcomment %}
+
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign variant = product.selected_or_first_available_variant
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+
+  assign compare_at_price = target.compare_at_price
+  assign compare_at_price_max = target.compare_at_price_max
+  assign compare_at_price_min = target.compare_at_price_min
+  assign price = target.price | default: 1999
+  assign price_min = product.price_min
+  assign price_max = product.price_max
+  assign available = target.available | default: false
+  assign money_price = price | money
+  assign money_price_min = price_min | money
+  assign money_price_max = price_max | money
+  if settings.show_currency_codes
+    assign money_price = price | money_with_currency
+    assign money_price_min = price_min | money_with_currency
+    assign money_price_max = price_max | money_with_currency
+  endif
+
+  if target == product and product.price_varies == false
+    assign compare_at_price = target.compare_at_price_max
+  endif
+-%}
+
+<div class="price
+  {%- if price_class %} {{ price_class }}{% endif -%}
+  {%- if available == false %} price--sold-out {% endif -%}
+  {%- if compare_at_price > price %} price--on-sale {% endif -%}
+  {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}
+">
+
+  <div class="price__container"
+    data-label-price-regular="{{ 'product.price_regular' | t }}"
+    data-label-price-sale="{{ 'product.price_sale' | t }}"
+    data-label-price-from="{{ 'product.price_from' | t }}"
+    data-label-price-min="{{ 'product.price_min' | t }}"
+    {% if settings.show_currency_codes %}
+      data-money-format = "{{ shop.money_with_currency_format }}"
+    {% else %}
+      data-money-format = "{{ shop.money_format }}"
+    {% endif %}
+  >
+    {%- if target -%}
+
+      {%- if target == product and product.price_varies -%}
+
+        {%- if compare_at_price_max > product.price_max or compare_at_price_min > product.price_min -%}
+
+          {%- assign sale_container_class = 'price__sale' -%}
+          <div class="{{ sale_container_class }}">
+            <div class="price__sale-inner">
+              <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+              <s>{{- compare_at_price_max | money -}}</s>
+              <ins>
+                {{- 'product.price_from' | t -}}
+                <span class="visually-hidden">{{- 'product.price_min' | t -}}</span>
+                <span>{{- money_price_min -}}</span>
+                <span aria-hidden="true">-</span>
+                <span class="visually-hidden">{{- 'product.price_max' | t -}}</span>
+                <span>{{- money_price_max -}}</span>
+              </ins>
+            </div>
+          </div>
+
+        {% else %}
+          <div class="price__regular">
+            <span class="visually-hidden">{{- 'product.price_min' | t -}}</span>
+            <span>{{- money_price_min -}}</span>
+            <span aria-hidden="true">-</span>
+            <span class="visually-hidden">{{- 'product.price_max' | t -}}</span>
+            <span>{{- money_price_max -}}</span>
+          </div>
+        {%- endif -%}
+
+      {%- elsif compare_at_price > price -%}
+
+          {% if template.name == 'product' %}
+            {%- assign sale_container_class = 'price__sale' -%}
+            <div class="{{ sale_container_class }}">
+              <div class="price__sale-inner">
+                <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+                <s>{{- compare_at_price | money -}}</s>
+                <ins>
+                  <span class="visually-hidden">{{- 'product.price_sale' | t -}}</span>
+                  <ins>{{ money_price }}</ins>
+                </ins>
+              </div>
+            </div>
+          {% else %}
+            {%- assign sale_container_class = 'price__sale' -%}
+            <div class="{{ sale_container_class }}">
+              <div class="price__sale-inner">
+                <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+                <s>{{- product.compare_at_price_max | money -}}</s>
+                <ins>
+                  {%- if price_min != price_max -%}
+                  {{- 'product.price_from' | t -}}
+                  {%- endif -%}
+                  <span class="visually-hidden">{{- 'product.price_min' | t -}}</span>
+                  <span>{{- money_price_min -}}</span>
+                  {%- if price_min != price_max -%}
+                    <span aria-hidden="true">-</span>
+                    <span class="visually-hidden">{{- 'product.price_max' | t -}}</span>
+                    <span>{{- money_price_max -}}</span>
+                  {%- endif -%}
+                </ins>
+              </div>
+            </div>
+          {% endif %}
+
+      {%- else -%}
+
+        <div class="price__regular">
+          <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+          <span>{{ money_price }}</span>
+        </div>
+
+      {%- endif -%}
+
+      {%- if variant.unit_price_measurement -%}
+        <div class="product__notice caption caption--small">
+          <span class="visually-hidden">
+            {{- 'product.price_unit' | t -}}
+          </span>
+
+          {%- if settings.show_currency_codes -%}
+            {{- variant.unit_price | money_with_currency -}}
+          {%- else -%}
+            {{- variant.unit_price | money -}}
+          {%- endif -%}
+
+          <span aria-hidden="true">/</span>
+
+          {%- if variant.unit_price_measurement.reference_value != 1 -%}
+            {{- variant.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+
+          {{- variant.unit_price_measurement.reference_unit -}}
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <span>{{- 9999 | money -}}</span>
+    {%- endif -%}
+  </div>
+</div>

@@ -1,0 +1,200 @@
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --section-content-alignment: {{ section.settings.content_alignment }};
+  }
+{% endstyle %}
+
+{{- 'section-age-verification-popup.css' | asset_url | stylesheet_tag -}}
+<script src="{{- 'age-verification-popup.js' | asset_url -}}" defer="defer"></script>
+
+<age-verification-popup
+  id="AgeVerificationModal-{{- section.id -}}"
+  class="age-verification-popup color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_blurred_backdrop %} age-verification-popup--blurred{% endif %}"
+  {% if request.design_mode and section.settings.show_popup_on_customizer %} data-open-in-design-mode="true"{% endif %}
+>
+  <div class="age-verification-popup__wrapper" aria-modal="true" role="dialog" tabindex="-1">
+    {%- if section.settings.image != blank -%}
+      <div class="age-verification-popup__media media">
+        {%- render 'image', image: section.settings.image, image_url_width: 300, alt: section.settings.image.alt | escape, section_index: section.index -%}
+      </div>
+    {%- endif -%}
+    <div class="age-verification-popup__content">
+      {%- if section.settings.heading != blank -%}
+        <h4 class="section__heading {{ section.settings.heading_size }}">
+          {{- section.settings.heading -}}
+        </h4>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="age-verification-popup__entry">
+          {{- section.settings.text | replace: '<p>', '' | replace: '</p>', '' -}}
+        </div>
+      {%- endif -%}
+      <div class="age-verification-popup__actions">
+        {%- assign confirm_button_id = 'ModalClose-' | append: section.id -%}
+        {%- render 'button', id: confirm_button_id, type: 'button', class: 'button button-yes', button_style: section.settings.button_confirm_style, value: section.settings.button_confirm -%}
+        {%- render 'button', type: 'link', class: 'button button-no', button_style: section.settings.button_decline_style, value: section.settings.button_decline, href: section.settings.button_decline_url -%}
+      </div>
+    </div>
+  </div>
+</age-verification-popup>
+
+{% schema %}
+{
+  "name": "t:sections.age-verification-popup.name",
+  "tag": "section",
+  "class": "section-age-verification-popup",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.global.element.image.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Verify your age"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h5"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.global.element.text.label",
+      "default": "<p>You must be 18 years of age or older to enter this site. Please verify your age.</p>"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.global.content.alignment.label_alt",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blurred_backdrop",
+      "label": "t:sections.age-verification-popup.settings.show_blurred_backdrop.label",
+      "info": "You need to refresh to see the changes for this option, or you can check from preview.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.buttons.content"
+    },
+    {
+      "type": "text",
+      "id": "button_confirm",
+      "label": "t:sections.age-verification-popup.settings.button_confirm.label",
+      "default": "Yes"
+    },
+    {
+      "type": "select",
+      "id": "button_confirm_style",
+      "label": "t:sections.age-verification-popup.settings.button_confirm_style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "button--text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "button--filled"
+    },
+    {
+      "type": "text",
+      "id": "button_decline",
+      "label": "t:sections.age-verification-popup.settings.button_decline.label",
+      "default": "No"
+    },
+    {
+      "type": "url",
+      "id": "button_decline_url",
+      "label": "t:sections.age-verification-popup.settings.button_decline_url.label",
+      "default": "/"
+    },
+    {
+      "type": "select",
+      "id": "button_decline_style",
+      "label": "t:sections.age-verification-popup.settings.button_decline_style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "button--text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "button--text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popup_on_customizer",
+      "label": "t:sections.age-verification-popup.settings.show_popup_on_customizer.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

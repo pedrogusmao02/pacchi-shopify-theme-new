@@ -1,0 +1,98 @@
+{% comment %}
+  Renders Product Badges
+  Accepts:
+    - product: {Object} Product Liquid object
+    - block?: {Object} Shopifyu section > block object
+  Usage:
+    {% render 'product-badges', product: product %}
+{% endcomment %}
+
+{% comment %} Variables | Product Badges {% endcomment %}
+{%- liquid
+
+  assign not_on_card = block | default: false
+  assign show_badges_custom = show_badges_custom | default: false
+  assign show_badges_discount = show_badges_discount | default: false
+  assign show_badges_sold = false
+
+  if not_on_card and block.settings.show_badges
+    assign show_badges_custom = true
+  elsif not_on_card == false and settings.show_product_card_badges
+    assign show_badges_custom = true
+  endif
+
+  if not_on_card and block.settings.show_badges_discount
+    assign show_badges_discount = true
+  elsif not_on_card == false and settings.show_product_card_badges_discount
+    assign show_badges_discount = true
+  endif
+
+  if not_on_card and block.settings.show_badges_sold
+    assign show_badges_sold = true
+  elsif not_on_card == false and settings.show_product_card_badges_sold
+    assign show_badges_sold = true
+  endif
+
+  assign badges = ''
+  if product and product != empty
+
+    assign product_for_discount = product.selected_or_first_available_variant | default: product
+    if product_for_discount.compare_at_price > product_for_discount.price and show_badges_discount
+      assign discount_percentage = product_for_discount.compare_at_price | minus: product_for_discount.price | times: 100 | divided_by: product_for_discount.compare_at_price
+      assign discount_locale = 'product.discount_badge_html' | t: percentage: discount_percentage
+      assign badges = badges | append: discount_locale | append: ','
+    elsif product.compare_at_price > product.price and show_badges_discount
+      assign discount_percentage = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+      assign discount_locale_ghost = 'product.discount_badge_html' | t: percentage: discount_percentage
+      assign badges = badges | append: discount_locale_ghost | append: ','
+    endif
+
+    if product.metafields.theme.preorder.value
+      assign tag = 'product.preorder_badge' | t
+      assign badges = badges | append: tag | append: ','
+    endif
+
+    if show_badges_custom
+      for tag in product.tags
+        if tag contains 'badge:'
+          assign badge = tag | remove: 'badge:' | strip
+          assign badges = badges | append: badge | append: ','
+        endif
+      endfor
+    endif
+
+    if product.available == false and show_badges_sold
+      assign tag = 'product.sold_out' | t
+      assign badges = badges | append: tag | append: ','
+    endif
+
+  endif
+-%}
+
+{%- capture product_badges -%}
+  {%- if badges != '' -%}
+    {% style %}
+    :root {
+      --color-badge-discount-background: {{- settings.product_badge_background_color -}};
+      --color-badge-discount-foreground: {{- settings.product_badge_foreground_color -}};
+    }
+    {% endstyle %}
+    <link rel="stylesheet" href="{{- 'component-product-badges.css' | asset_url -}}" media="print" onload="this.media='all'">
+
+    {%- assign badges = badges | split: ',' -%}
+
+    <span class="product-card__badges">
+      {%- for badge in badges -%}
+        {% if badge != blank %}
+          {% capture additional_badge_classes %}{% if badge contains discount_locale and discount_locale != blank %} product-card__badge--discount{% endif %}{% if badge contains discount_locale_ghost and discount_locale_ghost != blank %} product-card__badge--discount hidden{% endif %} {% if settings.button_border_radius == "0" %}product-card__badge--square{% else %}product-card__badge--rounded{% endif %}{% endcapture %}
+          {%- assign badge_classes = 'product-card__badge' | append: additional_badge_classes | strip -%}
+          <span class="{{ badge_classes }}">{{- badge -}}</span>
+        {% endif %}
+      {%- endfor -%}
+    </span>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if badges != '' -%}
+  {{ product_badges }}
+{%- endif -%}

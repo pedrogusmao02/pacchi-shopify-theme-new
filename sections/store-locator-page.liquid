@@ -1,0 +1,320 @@
+{{ 'section-store-locator.css' | asset_url | stylesheet_tag }}
+
+<script src="{{- 'store-locator-filter.js' | asset_url -}}" defer="defer"></script>
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    --section-card-height: {% if section.settings.cards_height == 80 %}auto{% else %}{{ section.settings.cards_height | append: 'vh' }}{% endif %};
+    --section-gap-between-tiles: var(--grid-spacing);
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="store-locator-page">
+    <div class="container {{ section.settings.section_width -}}">
+      {%- if section.settings.breadcrumbs -%}
+        <div class="store-locator-page__breadcrumbs">
+          {%- render 'breadcrumbs', alignment: 'center' -%}
+        </div>
+      {%- endif -%}
+      {%- if section.settings.section_title != blank -%}
+        <div class="store-locator-page__title">
+          <h1 class="h3">{{- section.settings.section_title -}}</h1>
+        </div>
+      {%- elsif section.settings.section_title == blank
+        and page.title
+      -%}
+        <div class="store-locator-page__title">
+          <h1 class="h3">{{- page.title -}}</h1>
+        </div>
+      {%- endif -%}
+
+      <div class="store-locator__search-controls">
+        {%- capture attr -%}
+          autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"
+        {%- endcapture -%}
+        {%- assign search_label = 'sections.store_locator.search_label' | t -%}
+        {%- assign search_placeholder = 'sections.store_locator.search_by_location' | t -%}
+
+        {%- render 'text-input',
+          id: 'search-store-locator',
+          label: search_label,
+          type: 'search',
+          name: 'search',
+          placeholder: search_placeholder,
+          hide_label: true,
+          class: 'store-locator__search',
+          attr: attr
+        -%}
+
+        <button class="store-locator__search-button search__button search__button--submit button-reset js-btn-submit"
+          type="submit"
+          aria-label="{{- 'sections.store_locator.search' | t -}}"
+        >
+          {%- render 'icon', icon_name: 'theme-search' -%}
+        </button>
+      </div>
+      <div class="grid">
+        {%- if section.blocks.size > 0 -%}
+          {% for block in section.blocks %}
+            {%- liquid
+              assign card_layout = 'default'
+              if section.settings.cards_images_overlay
+                assign card_layout = 'image-overlay'
+              endif
+            -%}
+            {%- render 'store-locator-pin', block: block, card_layout: card_layout, display_images: section.settings.cards_display_images -%}
+          {% endfor %}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Store locator page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page settings"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Our Stores"
+    },
+    {
+      "type": "checkbox",
+      "id": "breadcrumbs",
+      "label": "t:sections.global.element.breadcrumbs.show_breadcrumbs.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Cards settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "cards_display_images",
+      "label": "Hide card images",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "cards_images_overlay",
+      "label": "Overlay images on desktop",
+      "info": "Mobile by default overlayed.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "cards_height",
+      "label": "t:sections.store-locator.settings.section_height.label",
+      "info": "Set max (80) for auto height.",
+      "min": 40,
+      "max": 80,
+      "step": 2,
+      "unit": "vh",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        },
+        {
+          "value": "max-w-full",
+          "label": "t:sections.global.settings.section_width.options__3.label"
+        }
+      ],
+      "default": "max-w-page",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.settings.spacing.settings.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.settings.spacing.settings.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pin",
+      "name": "t:sections.store-locator.blocks.pin.name",
+      "settings": [
+        {
+          "type": "header",
+          "content": "t:sections.global.header.store_info.content"
+        },
+        {
+          "type": "richtext",
+          "id": "store_title",
+          "label": "t:sections.store-locator.blocks.pin.settings.title.label",
+          "default": "<h3>Your store name</h3>"
+        },
+        {
+          "type": "textarea",
+          "id": "store_address",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_address.label"
+        },
+        {
+          "type": "text",
+          "id": "store_tel",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_tel.label"
+        },
+        {
+          "type": "richtext",
+          "id": "store_opening_hours",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_opening_hours.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "store_image",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_image.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.header.store_location.content"
+        },
+        {
+          "type": "text",
+          "id": "store_latitude",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_latitude.label",
+          "info": "t:sections.store-locator.blocks.pin.settings.store_latitude.info"
+        },
+        {
+          "type": "text",
+          "id": "store_longitude",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_longitude.label",
+          "info": "t:sections.store-locator.blocks.pin.settings.store_longitude.info"
+        },
+        {
+          "type": "textarea",
+          "id": "coordinate_title",
+          "label": "t:sections.store-locator.blocks.pin.settings.coordinate_title.label",
+          "info": "t:sections.store-locator.blocks.pin.settings.coordinate_title.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.header.actions.content"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "t:sections.global.element.button.style.label",
+          "options": [
+            {
+              "value": "button--filled",
+              "label": "t:sections.global.element.button.style.options.filled.label"
+            },
+            {
+              "value": "button--outlined",
+              "label": "t:sections.global.element.button.style.options.outlined.label"
+            },
+            {
+              "value": "default",
+              "label": "t:sections.global.element.button.style.options.default.label"
+            }
+          ],
+          "default": "button--outlined"
+        },
+        {
+          "type": "text",
+          "id": "store_pin",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_pin.label"
+        },
+        {
+          "type": "url",
+          "id": "store_pin_link",
+          "label": "t:sections.store-locator.blocks.pin.settings.store_pin_link.label",
+          "info": "t:sections.store-locator.blocks.pin.settings.store_pin_link.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.header.settings.content",
+          "info": "t:sections.global.header.settings.info"
+        },
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "default": "scheme-1",
+          "label": "t:sections.global.color_scheme.label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

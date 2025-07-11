@@ -1,0 +1,217 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+
+{%- unless product.has_only_default_variant -%}
+  <product-variant-selects
+    id="product-variant-selects-{{ section.id }}"
+    data-section="{{ section.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign picker_type = block.settings.picker_type
+        assign opt_swatch = false
+        for opt in option.values
+          if opt.swatch
+            assign opt_swatch = true
+          endif
+        endfor
+        if opt_swatch == false and picker_type == 'swatch'
+          assign picker_type = 'button'
+        endif
+      -%}
+
+      {% capture size_guide %}
+        {%- if option.name == block.settings.sizes_option and block.settings.size_guide_page != blank -%}
+          <menu-drawer class="product__size-guide section__drawer">
+            <details id="Size-Guide-drawer" class="drawer__container">
+              <summary class="drawer__button section__drawer-button">
+                <button class="button button--text">
+                {{- 'product.size_guide' | t -}}
+                </button>
+              </summary>
+              <div class="drawer__content js-drawer"
+                id="Size-Guide-menu-drawer"
+                tabindex="-1">
+                <button
+                  class="drawer__button-close button-reset no-js-hidden js-btn-close-drawer"
+                  aria-label="{{- 'theme.actions.close' | t -}}"
+                  aria-controls="Size-Guide-menu-drawer"
+                  aria-expanded="false"
+                >
+                  {%- render 'icon', icon_name: 'theme-close' -%}
+                </button>
+                <div class="drawer__row drawer__row--gutter-sm">
+                  <h2 class="drawer__title heading-static">
+                    {{- block.settings.size_guide_page.title -}}
+                  </h2>
+                  <div class="rte">
+                    {{- block.settings.size_guide_page.content -}}
+                  </div>
+                </div>
+              </div>
+            </details>
+          </menu-drawer>
+        {%- endif -%}
+      {% endcapture %}
+
+      {%- if picker_type == 'swatch' or picker_type == 'button' -%}
+        <fieldset class="js product__variant-options product-form__input product-form__input--button">
+          <legend class="form__label">
+            {{ option.name }}
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+            {%- if size_guide -%}
+              {{- size_guide -}}
+            {%- endif -%}
+          </legend>
+          {%- render 'main-product__variant-options', product: product, option: option, block: block, picker_type: picker_type -%}
+        </fieldset>
+      {%- else -%}
+        {%- assign select_options_html = '' -%}
+        {%- capture select_option_html -%}
+          {%- render 'main-product__variant-options', product: product, option: option, block: block, picker_type: picker_type -%}
+        {%- endcapture -%}
+        {%- assign select_options_html = select_options_html | append: select_option_html -%}
+
+        <div class="product-form__input product-form__input--dropdown">
+          <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name }}
+          </label>
+          <div class="select">
+            {%- if picker_type == 'swatch_dropdown' -%}
+              <span
+                data-selected-value
+                class="dropdown-swatch"
+              >
+                {% render 'swatch', swatch: option.selected_value.swatch, shape: block.settings.swatch_shape %}
+              </span>
+            {%- endif -%}
+
+            {%- liquid
+              assign select_input_id = 'Option-' | append: section.id | append: '-' | append: forloop.index0
+              assign name = 'options' | append: '_' | append: section.id | append: '[' | append: option.name | append: ']'
+              render 'select-input', id: select_input_id, name: name, options: select_options_html, class: 'product-selector__dropdown', swatch_value: option.selected_value.swatch, shape: block.settings.swatch_shape
+            -%}
+
+            {{- size_guide -}}
+          </div>
+        </div>
+      {% endif %}
+
+    {%- endfor -%}
+
+    {% comment %}
+      {% liquid
+        comment
+
+        assign is_there_a_list = false
+        if hide_variants_media_list != blank
+          assign is_there_a_list = true
+          assign list_of_product_option_names = hide_variants_media_list | split: ','
+        endif
+
+        if is_there_a_list
+          assign available_variant_positions = ''
+          for product_option in product.options_with_values
+            for item_of_product_option_names in list_of_product_option_names
+              if product_option.name == item_of_product_option_names
+                assign available_variant_positions = available_variant_positions | append: product_option.position | append: ','
+              endif
+            endfor
+          endfor
+          assign available_variant_positions_array = available_variant_positions | split: ','
+
+          if product.selected_or_first_available_variant == null
+            echo product.variants | json
+          endif
+
+
+          for selected_variant_option in product.selected_or_first_available_variant.options
+            assign forloop_selected_variant_option = forloop
+            for available_variant_position in available_variant_positions_array
+              assign available_variant_position_int = available_variant_position | times: 1
+              if forloop_selected_variant_option.index == available_variant_position_int
+                assign variant_handle = selected_variant_option | handleize
+                for product_variant in product.variants
+                  for product_variant_option in product_variant.options
+                    assign product_variant_option_handle = product_variant_option | handleize
+                    echo product_variant_option_handle
+                    echo ' - '
+                    echo variant_handle
+                    echo '<br>'
+                    if product_variant_option_handle == variant_handle
+                      assign variant_handle = product_variant_option_handle
+                      break
+                    endif
+                  endfor
+                endfor
+                echo variant_handle
+                # echo selected_variant_option | handleize
+              endif
+            endfor
+          endfor
+        else
+          echo product.selected_or_first_available_variant.options | json | handleize
+        endif
+        endcomment
+      %}
+    {% endcomment %}
+
+    <script type="application/json" data-all-variants>
+      {{ product.variants | json }}
+    </script>
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+    {% comment %}
+    <script type="application/json" data-selected-variant-options-handle>
+      {% liquid
+        assign is_there_a_list = false
+        if hide_variants_media_list != blank
+          assign is_there_a_list = true
+          assign list_of_product_option_names = hide_variants_media_list | split: ','
+        endif
+
+        if is_there_a_list
+          assign available_variant_positions = ''
+          for product_option in product.options_with_values
+            for item_of_product_option_names in list_of_product_option_names
+              if product_option.name == item_of_product_option_names
+                assign available_variant_positions = available_variant_positions | append: product_option.position | append: ','
+              endif
+            endfor
+          endfor
+          assign available_variant_positions_array = available_variant_positions | split: ','
+
+          assign selected_variant_options = ''
+          for selected_variant_option in product.selected_or_first_available_variant.options
+            assign forloop_selected_variant_option = forloop
+            for available_variant_position in available_variant_positions_array
+              assign available_variant_position_int = available_variant_position | times: 1
+              if forloop_selected_variant_option.index == available_variant_position_int
+                assign selected_variant_options = selected_variant_options | append: selected_variant_option
+                if forloop_selected_variant_option.last == false
+                  assign selected_variant_options = selected_variant_options | append: '-'
+                endif
+              endif
+            endfor
+          endfor
+          echo selected_variant_options | json | handleize
+        else
+          echo product.selected_or_first_available_variant.options | json | handleize
+        endif
+      %}
+    </script>
+    {% endcomment %}
+  </product-variant-selects>
+{%- endunless -%}

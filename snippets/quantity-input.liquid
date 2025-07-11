@@ -1,0 +1,48 @@
+{% comment %}
+    Renders quantity input field with controls
+    Accepts:
+    - product_ref {Object} Liquid product object
+    - value {Integer} Quantity value. Defaults to 1
+    - name {String} Input name. Accepts 'quantity' or 'updates[]'
+    - min {Integer} Minimum value. Defaults to 1
+    - max {Integer} Minimum value. Defaults to 99
+    - index {Integer} Index of the cart line_item
+    - hide_label {Boolean} Hide label
+    - compact {Boolean} Use compact mode
+    - context {String} Context that the input belongs to
+    Usage:
+    {% render 'quantity-input', product_ref: product %}
+{% endcomment %}
+
+<quantity-input class="quantity{% if compact %} quantity--compact{% endif %} field">
+  <label for="ProductQuantity-{{- index | default: product_ref.id -}}-{{- context -}}{% if cart_item %}cart-item{% endif %}" class="{% if hide_label %}visually-hidden{% else %}field__label{% endif %}">
+    {{- 'product.quantity' | t -}}:
+  </label>
+
+  <div class="quantity__wrapper">
+    <button class="quantity__button" name="decrement" type="button">
+      <span class="visually-hidden">
+        {{- 'product.quantity_decrease_for_product' | t: product: product_ref.title | escape -}}
+      </span>
+      {%- render 'icon', icon_name: 'theme-minus', class: 'icon' -%}
+    </button>
+
+    <input
+      class="quantity__input"
+      type="number"
+      name="{{- name | default: 'quantity' -}}"
+      id="ProductQuantity-{{- index | default: product_ref.id -}}-{{- context -}}{% if cart_item %}cart-item{% endif %}"
+      min="{{- min | default: 1 -}}"
+      max="{{- max | default: 99 -}}"
+      value="{{- value | default: 1 -}}"
+      {% if index %}data-index="{{- index -}}"{% endif %}
+    >
+
+    <button class="quantity__button" name="increment" type="button">
+      <span class="visually-hidden">
+        {{- 'product.quantity_increase_for_product' | t: product: product_ref.title | escape -}}
+      </span>
+      {%- render 'icon', icon_name: 'theme-plus', class: 'icon' -%}
+    </button>
+  </div>
+</quantity-input>

@@ -1,0 +1,257 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "1e0c79e9-7de0-4eee-b9c5-f27132635fb8": {
+          "type": "title",
+          "settings": {
+            "spacing_bottom": "1"
+          }
+        },
+        "8effeb43-55b7-4ec4-ab9b-68bcd89b865b": {
+          "type": "price",
+          "settings": {
+            "spacing_bottom": "1",
+            "show_price_tax_info": true,
+            "show_price_shipping_info": false,
+            "show_price_custom_info": ""
+          }
+        },
+        "1e939cd6-0958-4135-a9e5-c50faef01437": {
+          "type": "variant_picker",
+          "settings": {
+            "title": "Variant picker",
+            "size_guide_page": "size-guide",
+            "sizes_option": "Size"
+          }
+        },
+        "1e939cd6-0955-4135-a9e5-c50faef01437": {
+          "type": "purchase_options",
+          "settings": {
+            "spacing_bottom": "1"
+          }
+        },
+        "8604a6ff-ad0b-44dd-8068-1de4e062f8e8": {
+          "type": "buy_buttons",
+          "settings": {
+            "spacing_bottom": "1",
+            "show_quantity": true,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        },
+        "b2dabe12-2158-4ba6-bc54-9baae453acf5": {
+          "type": "text",
+          "settings": {
+            "link_to_resource": "none"
+          }
+        },
+        "1ad0121e-439d-45c0-b45d-4f080836ade5": {
+          "type": "text",
+          "settings": {
+            "spacing_bottom": "1",
+            "link_to_resource": "none"
+          }
+        },
+        "7be6b89c-da83-4ff2-9b85-44fb28cbfa27": {
+          "type": "pickup-availability",
+          "settings": {
+            "spacing_bottom": "1"
+          }
+        }
+      },
+      "block_order": [
+        "1e0c79e9-7de0-4eee-b9c5-f27132635fb8",
+        "8effeb43-55b7-4ec4-ab9b-68bcd89b865b",
+        "1e939cd6-0958-4135-a9e5-c50faef01437",
+        "1e939cd6-0955-4135-a9e5-c50faef01437",
+        "8604a6ff-ad0b-44dd-8068-1de4e062f8e8",
+        "b2dabe12-2158-4ba6-bc54-9baae453acf5",
+        "1ad0121e-439d-45c0-b45d-4f080836ade5",
+        "7be6b89c-da83-4ff2-9b85-44fb28cbfa27"
+      ],
+      "settings": {
+        "product_media_layout": "product__media-layout--full",
+        "product_media_layout_mobile": "product__media-layout--full--sm",
+        "product_media_object_fit": "cover",
+        "product_slider_auto_height": false,
+        "media_transparent_background": false,
+        "display_media_zoom": "none",
+        "product_media_with_thumbs": "none",
+        "product_media_thumbs_ratio": "auto",
+        "product_media_thumbs_object_fit": "cover",
+        "gallery_arrows_show_on": "desktop",
+        "display_media_gallery_pagination": "none",
+        "media_gallery_info": "",
+        "metafield_as_seen_on": "",
+        "color_scheme_gallery": "",
+        "enable_sticky_info": true,
+        "enable_actions_bar": true,
+        "section_width": "max-w-fluid",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "977cac03-4044-4567-8907-fa55103a47eb": {
+      "type": "complete-the-set",
+      "blocks": {
+        "collapsible_BxQcN6": {
+          "type": "collapsible",
+          "settings": {
+            "block_type": "drawer",
+            "heading": "Description",
+            "link": "",
+            "content": "<p>[description]</p>",
+            "page": ""
+          }
+        },
+        "collapsible_pR4zmY": {
+          "type": "collapsible",
+          "settings": {
+            "block_type": "drawer",
+            "heading": "Delivery & Returns",
+            "link": "",
+            "content": "<p>Shipping and returns can be inserted here.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_DYfCGt": {
+          "type": "collapsible",
+          "settings": {
+            "block_type": "drawer",
+            "heading": "Stylist tip",
+            "link": "",
+            "content": "<p>Stylist tips can be entered here.</p>",
+            "page": ""
+          }
+        },
+        "collapsible_QcDnKh": {
+          "type": "collapsible",
+          "settings": {
+            "block_type": "link",
+            "heading": "Contact us",
+            "content": "",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_BxQcN6",
+        "collapsible_pR4zmY",
+        "collapsible_DYfCGt",
+        "collapsible_QcDnKh"
+      ],
+      "settings": {
+        "content_type": "products",
+        "featured_image_aspect_ratio": "4/3",
+        "flip_desktop": false,
+        "flip_mobile": true,
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "layout": "layout-2",
+        "enable_slideshow_overflow": false,
+        "heading": "You may also like",
+        "subheading": "",
+        "button_label": "View all",
+        "button_link": "",
+        "button_style": "button--filled",
+        "show_navigation_arrows": true,
+        "slider_autoplay": 3,
+        "tabs_button_style": "tab-btn-filled",
+        "max_products": 8,
+        "show_unavailable_products": false,
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "recently_viewed": {
+      "type": "recently-viewed-products",
+      "disabled": true,
+      "settings": {
+        "layout": "layout-1",
+        "enable_slideshow_overflow": false,
+        "heading": "Recently viewed",
+        "subheading": "",
+        "button_label": "View all",
+        "button_link": "",
+        "button_style": "button--filled",
+        "show_navigation_arrows": true,
+        "slider_autoplay": 3,
+        "tabs_button_style": "tab-btn-filled",
+        "max_products": 8,
+        "show_unavailable_products": false,
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "e86737b7-1cc0-43fc-8537-509199f13681": {
+      "type": "trust-indicators",
+      "blocks": {
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-0": {
+          "type": "indicator",
+          "settings": {
+            "title": "Fast and secure global shopping",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-1": {
+          "type": "indicator",
+          "settings": {
+            "title": "30 days return policy",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-2": {
+          "type": "indicator",
+          "settings": {
+            "title": "100% secure payments",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        }
+      },
+      "block_order": [
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-0",
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-1",
+        "template--17423162900795__e86737b7-1cc0-43fc-8537-509199f13681-1673866949c520be61-2"
+      ],
+      "settings": {
+        "swipe_on_mobile": true,
+        "slideshow_autoplay_interval": 3,
+        "content_direction": "horizontal",
+        "content_alignment": "text-center",
+        "content_size": "h5",
+        "color_scheme_for_blocks": "",
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "977cac03-4044-4567-8907-fa55103a47eb",
+    "recommendations",
+    "recently_viewed",
+    "e86737b7-1cc0-43fc-8537-509199f13681"
+  ]
+}

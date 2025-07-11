@@ -1,0 +1,85 @@
+{% comment %}
+  Renders text input form element
+  Accepts:
+  - id {String} ID of the input element
+  - label {String} Label of the input element
+  - type {String} Type of the input element
+  - name {String} Name of the input element
+  - placeholder {String} Placeholder of the input element
+  - value {String} Value of the input element
+  - required {Boolean} Whether the input element is required or not
+  - min {Integer} Minimum value of the input element
+  - max {Integer} Maximum value of the input element
+  - readonly {Boolean} Whether the input element is read only or not
+  - attr {String} Data attributes to be added to the input element
+  - message {String} Message to be displayed
+  - has_error {Boolean} Whether the input element has error or not
+
+  Usage:
+  {%- render 'text-input',
+    id: 'my-id',
+    label: 'My Label',
+    type: 'text',
+    name: 'my-name',
+    placeholder: 'My Placeholder',
+    value: 'My Value',
+    required: true,
+    min: 0,
+    max: 100,
+    attr: 'data-attr="value"'
+  -%}
+{% endcomment %}
+
+{%-
+  liquid
+  assign class = class | default: false
+  assign id = id | default: false
+  assign label = label | default: false
+  assign hide_label = hide_label | default: false
+  assign type = type | default: 'text'
+  assign name = name | default: false
+  assign placeholder = placeholder | default: false
+  assign value = value | default: false
+  assign required = required | default: false
+  assign min = min | default: false
+  assign max = max | default: false
+  assign readonly = readonly | default: false
+  assign attr = attr | default: false
+  assign message = message | default: false
+  assign has_error = has_error | default: false
+  assign checked = checked | default: false
+-%}
+
+<div class="field{% if has_error %} has-error{% endif %}{% if class %} {{- class -}}{% endif %}" data-input-wrapper>
+  {%- if label and id -%}
+    <label for="{{- id -}}" class="field__label{% if hide_label %} visually-hidden{% endif %}">{{- label -}}</label>
+  {%- endif -%}
+  <input
+    type="{{- type -}}"
+    {% if id %}id="{{- id -}}"{% endif %}
+    {% if name %}name="{{- name -}}"{% endif %}
+    {% if placeholder %}placeholder="{{- placeholder -}}"{% endif %}
+    {% if value %}value="{{- value -}}"{% endif %}
+    {% if required %}required{% endif %}
+    {% if readonly %}readonly{% endif %}
+    {% if min %}min="{{- min -}}"{% endif %}
+    {% if max %}max="{{- max -}}"{% endif %}
+    {% if required and type == 'password' %}minlength="5"{% endif %}
+    {% if required and type == 'email' %}pattern="^([a-zA-Z0-9_\-\+\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,9})$"{% endif %}
+    {% if attr %}{{ attr }}{% endif %}
+    {% if checked %}checked{% endif %}
+    class="field__input{{ input_class }}"
+  />
+
+  <span
+    class="field__message{% unless message %} hidden{% endunless %}"
+    data-message
+    {% if message and has_error == false %}
+      tabindex="-1"
+      autofocus
+    {% endif %}
+  >{%- if message -%}{{- message -}}{%- endif -%}</span>
+
+  {%- if message -%}
+  {%- endif -%}
+</div>

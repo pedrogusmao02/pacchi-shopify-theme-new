@@ -1,0 +1,103 @@
+card-slider {
+  display: block;
+}
+
+html .card-slider {
+  overflow: visible;
+}
+
+.card-slider__buttons {
+  position: static;
+  margin-block-start: 3.2rem;
+  transform: none;
+  justify-content: flex-end;
+  padding: 0;
+}
+
+.card-slider .card-slider__slide {
+  width: calc(100% - 16.666%);
+}
+
+html.no-js .card-slider__wrapper {
+  overflow-x: auto;
+  margin: 0 calc(0rem - var(--page-gutter));
+  padding: 0 var(--page-gutter) 2rem;
+}
+
+html.no-js .card-slider__slide + .card-slider__slide {
+  margin-inline-start: .2rem;
+}
+
+@media screen and (min-width: 575px) {
+  .card-slider .card-slider__slide {
+    width: calc(100% - 33.333%);
+  }
+
+  .card-slider--articles .card-slider__slide {
+    width: calc(50% - .2rem);
+  }
+
+  .card-slider.card-slider--testimonials .card-slider__slide {
+    width: 100%;
+    height: auto;
+  }
+
+}
+
+@media screen and (min-width: 750px) {
+  html.js .card-slider {
+    overflow: hidden;
+  }
+
+  html.js .layout-2 .card-slider {
+    overflow: unset;
+  }
+
+  .card-slider .card-slider__slide {
+    width: calc(100% / 3 - .2rem);
+  }
+
+  .card-slider--testimonials .card-slider__buttons {
+    column-gap: 2.4rem;
+  }
+
+  .card-slider--testimonials:not(.no-image) .card-slider__buttons::before {
+    content: '';
+    visibility: hidden;
+    width: 0;
+  }
+
+  .card-slider--testimonials .card-slider__buttons-inner {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .card-slider--testimonials.no-image .card-slider__buttons {
+    margin-block-start: 4rem;
+  }
+
+  .card-slider--testimonials.no-image .card-slider__buttons-inner {
+    justify-content: center;
+    flex: 1;
+  }
+
+  .card-slider--testimonials.image-end .card-slider__buttons-inner {
+    order: -1;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .card-slider--testimonials.no-image .card-slider__buttons {
+    margin-block-start: 6.4rem;
+  }
+
+  .card-slider--testimonials .card-slider__buttons {
+    column-gap: 4.8rem;
+  }
+}
+
+@media screen and (min-width: 1100px) {
+  .card-slider--testimonials .card-slider__buttons {
+    column-gap: 18.1%;
+  }
+}

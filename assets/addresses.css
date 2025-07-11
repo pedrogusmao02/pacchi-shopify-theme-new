@@ -1,0 +1,37 @@
+.addresses__new {
+  margin: 2rem 0 4rem;
+}
+
+.addresses__item-actions button + button,
+.address-form__actions button + button {
+  margin-block-start: 2rem;
+}
+
+.address-form__actions {
+  text-align: center;
+}
+
+.addresses__body ul[role="list"] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 0 4rem;
+}
+
+.addresses__item + .addresses__item {
+  margin-block-start: 0;
+}
+
+.addresses__item {
+  padding: 4rem 2rem;
+}
+
+@media screen and (max-width: 989px) {
+  .addresses__body ul[role="list"] {
+    display: block;
+  }
+
+  .addresses__item + .addresses__item {
+    margin-block-start: 6rem;
+  }
+}

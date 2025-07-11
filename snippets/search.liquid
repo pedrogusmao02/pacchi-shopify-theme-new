@@ -1,0 +1,66 @@
+{%- assign clear_button_visible = clear_button_visible | default: false -%}
+
+<predictive-search class="search">
+  <form action="{{- routes.search_url -}}">
+    <div class="search__head">
+      <div class="search__controls">
+        {%- if settings.enable_predictive_search -%}
+          {%- capture attr -%}
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="predictive-search-results-list"
+            aria-controls="predictive-search-results-list"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            autocorrect="off"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+          {%- endcapture -%}
+        {%- endif -%}
+
+        <button type="submit" class="search__button search__button--submit button-reset js-btn-submit"
+          aria-label="{{- 'search.submit' | t -}}"
+        >
+          {%- render 'icon', icon_name: 'theme-search' -%}
+        </button>
+
+        {%- liquid
+          assign label = 'search.heading' | t
+          assign placeholder = 'search.placeholder' | t
+          assign id = 'search-' | append: input_id
+          render 'text-input', type: 'search', label: label, placeholder: placeholder, id: id, name: 'q', hide_label: true, class: 'field--search', attr: attr, input_class: input_class, value: value
+          assign label = nil
+          assign placeholder = nil
+          assign id = nil
+          assign attr = nil
+        -%}
+
+        <button type="button" class="search__button search__button--clear button-reset js-btn-clear-text"
+          aria-label="{{- 'search.clear' | t -}}"
+          {%- if clear_button_visible != true -%}disabled{%- endif -%}
+        >
+          {{- 'search.clear' | t -}}
+        </button>
+
+        <button
+          class="drawer__button-close button-reset no-js-hidden js-btn-close-drawer"
+          aria-label="{{- 'theme.actions.close' | t -}}"
+          aria-controls="Search-menu-drawer-{{- append_id -}}"
+          aria-expanded="false"
+        >
+          {%- render 'icon', icon_name: 'theme-close-small' -%}
+        </button>
+      </div>
+    </div>
+
+    {%- if settings.enable_predictive_search -%}
+      <div class="search__message hidden js-message-error" {%- if request.locale.iso_code == 'ar' or request.locale.iso_code == 'he' -%} style="display: none"{%- endif -%}>
+        <p data-text>
+          {{- 'search.error' | t -}}
+        </p>
+      </div>
+      <div class="search__body hidden js-results-container"></div>
+    {%- endif -%}
+  </form>
+</predictive-search>

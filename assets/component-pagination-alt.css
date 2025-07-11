@@ -1,0 +1,35 @@
+.pagination-alt ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--color-link));
+  text-align: center;
+}
+
+.pagination-alt li + li {
+  margin-inline-start: 4.8rem;
+}
+
+.pagination-alt span,
+.pagination-alt a {
+  display: block;
+}
+
+.pagination-alt span {
+  cursor: default;
+}
+
+.pagination-alt a {
+  transition: opacity var(--duration-default);
+}
+
+.pagination-alt a[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .pagination-alt a:hover {
+    opacity: 0.7;
+  }
+}

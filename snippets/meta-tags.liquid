@@ -1,0 +1,56 @@
+{%- liquid
+  assign meta_title = page_title | default: shop.name
+  assign meta_description = page_description | default: shop.description | default: shop.name
+  assign meta_url = canonical_url | default: request.origin
+  assign meta_type = 'website'
+
+  if request.page_type == 'product'
+    assign meta_type = 'product'
+  elsif request.page_type == 'article'
+    assign meta_type = 'article'
+  elsif request.page_type == 'collection'
+    assign meta_type = 'product.group'
+  elsif request.page_type == 'password'
+    assign meta_url = request.origin
+  endif
+%}
+
+<title>
+  {{ meta_title }}
+  {%- if current_tags %}
+    &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+  {%- if current_page != 1 %}
+    &ndash; Page {{ current_page }}{% endif -%}
+  {%- unless meta_title contains shop.name %}
+    &ndash; {{ shop.name }}{% endunless -%}
+</title>
+
+{%- if meta_description -%}
+  <meta name="description" content="{{ meta_description | escape }}">
+{%- endif -%}
+
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ meta_url }}">
+<meta property="og:title" content="{{ meta_title | escape }}">
+<meta property="og:type" content="{{ meta_type }}">
+<meta property="og:description" content="{{ meta_description | escape }}">
+
+{%- if page_image -%}
+  <meta property="og:image" content="http:{{ page_image | image_url }}">
+  <meta property="og:image:secure_url" content="https:{{ page_image | image_url }}">
+  <meta property="og:image:width" content="{{ page_image.width }}">
+  <meta property="og:image:height" content="{{ page_image.height }}">
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+{%- endif -%}
+
+{%- if settings.social_twitter_link != blank -%}
+  <meta name="twitter:site" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+{%- endif -%}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ meta_title | escape }}">
+<meta name="twitter:description" content="{{ meta_description | escape }}">

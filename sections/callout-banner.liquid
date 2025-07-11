@@ -1,0 +1,556 @@
+{{ 'section-callout-banner.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .callout-banner.callout-banner__timer-layout-1 {
+      --callout-banner-timer-number-font-size: var(--font-size-static-{{ section.settings.timer_size }});
+    }
+  }
+  @media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .callout-banner.callout-banner__timer-layout-2 {
+      --callout-banner-timer-number-font-size: var(--font-size-static-{{ section.settings.timer_size }});
+      --callout-banner-timer-text-font-size: var(--font-size-static-{{ section.settings.timer_size }});
+    }
+  }
+{%- endstyle -%}
+
+{% comment %}
+  esthetic-ignore
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="container {{ section.settings.section_width }}">
+    <div class="callout-banner callout-banner--{{ section.settings.section_layout }} callout-banner--{{ section.settings.media_position }} callout-banner__timer-layout-{{ section.settings.timer_layout }} color-{{ section.settings.color_scheme_for_content }} gradient js-animation-fade-in">
+      <div class="grid">
+        {%- if section.settings.section_layout == 'vertical' or section.settings.media_position == 'full' -%}
+          <div class="grid__item media">
+            {%- liquid
+              if section.settings.image
+                if section.settings.image_mobile
+                  assign media_class = 'small-hide'
+                endif
+                render 'image', image: section.settings.image, class: media_class
+                if section.settings.image_mobile
+                  render 'image', image: section.settings.image_mobile, class: 'large-hide'
+                endif
+              endif
+            -%}
+          </div>
+        {% endif %}
+        <div class="grid__item grid content">
+          <div class="callout-banner__content">
+            {%- if section.settings.subheading != blank -%}
+              <small class="inline-richtext">
+                {{ section.settings.subheading }}
+              </small>
+            {%- endif -%}
+            {%- if section.settings.heading != blank -%}
+              <h2 class="inline-richtext {{ section.settings.heading_size }} callout-banner__content-heading">
+                {{ section.settings.heading }}
+              </h2>
+            {% endif %}
+            {%- if section.settings.text != blank -%}
+              <div class="rte">
+                {{ section.settings.text }}
+              </div>
+            {%- endif -%}
+          </div>
+          <div class="callout-banner__action">
+            {%- if section.settings.button_label != blank and section.settings.action_preference == 'button' -%}
+              <div class="callout-banner__button">
+                {% render 'button', type: 'link', class: 'button', button_style: section.settings.button_style, value: section.settings.button_label, href: section.settings.button_link %}
+              </div>
+            {%- endif -%}
+            {%- if section.settings.newsletter_button_label != blank and section.settings.action_preference == 'newsletter_form' -%}
+              <div class="callout-banner__newsletter-form">
+                {%- render 'newsletter-form', namespace: section.id, js_class: 'js-form', submit_button_text: section.settings.newsletter_button_label -%}
+              </div>
+            {%- endif -%}
+          </div>
+
+            <div class="callout-banner__timer">
+              {%- if section.settings.section_layout == 'horizontal' and section.settings.media_position != 'full' -%}
+                <div class="grid__item media">
+                  {%- liquid
+                    if section.settings.image
+                      if section.settings.image_mobile
+                        assign media_class = 'small-hide'
+                      endif
+                      render 'image', image: section.settings.image, class: media_class
+                      if section.settings.image_mobile
+                        render 'image', image: section.settings.image_mobile, class: 'large-hide'
+                      endif
+                    endif
+                  -%}
+                </div>
+              {% endif %}
+              {%- if section.settings.show_timer -%}
+                {%- liquid
+                  if section.settings.timer_layout == '2'
+                    assign timer_text_first_letter = true
+                    assign timer_column_type = 'row'
+                  else
+                    assign timer_text_first_letter = false
+                    assign timer_column_type = 'column'
+                  endif
+                  assign timer_end_message = section.settings.timer_end_message | default: 'Sale has ended'
+                -%}
+
+                {%- render 'countdown-timer',
+                  id: section.id,
+                  column_type: timer_column_type,
+                  timer_text_first_letter: timer_text_first_letter,
+                  timer_year: section.settings.timer_year,
+                  timer_month: section.settings.timer_month,
+                  timer_day: section.settings.timer_day,
+                  timer_hour: section.settings.timer_hour,
+                  timer_minute: section.settings.timer_minute,
+                  show_timer_days: section.settings.show_timer_days,
+                  show_timer_hours: section.settings.show_timer_hours,
+                  show_timer_minutes: section.settings.show_timer_minutes,
+                  show_timer_seconds: section.settings.show_timer_seconds,
+                  timer_end_message: timer_end_message,
+                  timer_layout: section.settings.timer_layout
+                -%}
+              {%- endif -%}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.callout-banner.name",
+  "tag": "section",
+  "class": "section-callout-banner",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_layout",
+      "label": "t:sections.global.settings.section_layout.label",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "t:sections.global.settings.section_layout.options__3.label"
+        },
+        {
+          "value": "vertical",
+          "label": "t:sections.global.settings.section_layout.options__4.label"
+        }
+      ],
+      "default": "horizontal"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.global.element.image.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "t:sections.global.element.image.for__mobile.label",
+      "info": "t:sections.global.element.image.for__mobile.info"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "t:sections.global.settings.media_position.label",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:sections.global.settings.media_position.options__5.label"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.global.settings.media_position.options__6.label"
+        },
+        {
+          "value": "full",
+          "label": "t:sections.global.settings.media_position.options__9.label"
+        }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "t:sections.global.element.subheading.label",
+      "default": "Callout tagline"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Callout heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.global.element.text.label",
+      "default": "<p>Add descriptive text for your calldown here.</p>"
+    },
+    {
+      "type": "select",
+      "id": "action_preference",
+      "options": [
+        {
+          "value": "button",
+          "label": "t:sections.global.element.button.label"
+        },
+        {
+          "value": "newsletter_form",
+          "label": "t:sections.callout-banner.settings.newsletter_form.label"
+        }
+      ],
+      "default": "button",
+      "label": "t:sections.callout-banner.settings.action_preference.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.element.button_label.label",
+      "info": "t:sections.global.element.button_label.info",
+      "default": "Shop Sale"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.element.button.link.label"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button_label",
+      "label": "t:sections.callout-banner.settings.newsletter_button.label",
+      "default": "Submit"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "default",
+          "label": "t:sections.global.element.button.style.options.default.label"
+        }
+      ],
+      "default": "button--outlined"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.settings.timer.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "t:sections.global.settings.timer.settings.show_timer.label",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "timer_layout",
+      "label": "t:sections.callout-banner.settings.timer_layout.label",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.callout-banner.settings.timer_layout.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.callout-banner.settings.timer_layout.options__2.label"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "timer_size",
+      "label": "t:sections.callout-banner.settings.timer_size.label",
+      "options": [
+        {
+          "value": "h4",
+          "label": "S"
+        },
+        {
+          "value": "h3",
+          "label": "M"
+        },
+        {
+          "value": "h2",
+          "label": "L"
+        },
+        {
+          "value": "h1",
+          "label": "XL"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "number",
+      "id": "timer_year",
+      "label": "t:sections.global.settings.timer.settings.timer_year.label",
+      "default": 2024
+    },
+    {
+      "type": "select",
+      "id": "timer_month",
+      "label": "t:sections.global.settings.timer.settings.timer_month.label",
+      "options": [
+        {
+          "value": "01",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__1"
+        },
+        {
+          "value": "02",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__2"
+        },
+        {
+          "value": "03",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__3"
+        },
+        {
+          "value": "04",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__4"
+        },
+        {
+          "value": "05",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__5"
+        },
+        {
+          "value": "06",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__6"
+        },
+        {
+          "value": "07",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__7"
+        },
+        {
+          "value": "08",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__8"
+        },
+        {
+          "value": "09",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__9"
+        },
+        {
+          "value": "10",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__10"
+        },
+        {
+          "value": "11",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__11"
+        },
+        {
+          "value": "12",
+          "label": "t:sections.global.settings.timer.settings.timer_month.options.options__12"
+        }
+      ],
+      "default": "01"
+    },
+    {
+      "type": "range",
+      "id": "timer_day",
+      "label": "t:sections.global.settings.timer.settings.timer_day.label",
+      "min": 1,
+      "max": 31,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "timer_hour",
+      "label": "t:sections.global.settings.timer.settings.timer_hour.label",
+      "min": 0,
+      "max": 23,
+      "step": 1,
+      "default": 0,
+      "unit": "h"
+    },
+    {
+      "type": "range",
+      "id": "timer_minute",
+      "label": "t:sections.global.settings.timer.settings.timer_minute.label",
+      "min": 0,
+      "max": 59,
+      "step": 1,
+      "default": 0,
+      "unit": "m"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "timer_end_message",
+      "label": "t:sections.callout-banner.settings.timer_end_message.label",
+      "info": "t:sections.callout-banner.settings.timer_end_message.info",
+      "default": "Sale has ended"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.parts_display_settings.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer_days",
+      "label": "t:sections.global.settings.timer.settings.show_timer_days.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer_hours",
+      "label": "t:sections.global.settings.timer.settings.show_timer_hours.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer_minutes",
+      "label": "t:sections.global.settings.timer.settings.show_timer_minutes.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer_seconds",
+      "label": "t:sections.global.settings.timer.settings.show_timer_seconds.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section_width.label",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section_width.options.page.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section_width.options.fluid.label"
+        },
+        {
+          "value": "max-w-full",
+          "label": "t:sections.global.section_width.options.full.label"
+        }
+      ],
+      "default": "max-w-full"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_for_content",
+      "label": "t:sections.global.color_scheme.for__content.label",
+      "default": "scheme-6"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Callout banner"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,24 @@
+{% comment %}
+  Renders a text truncator component that truncates text to a specified number of lines.
+  # render 'text-truncator', text: text, max_lines: 3
+{% endcomment %}
+{%- if max_lines > 0 -%}
+	<text-truncator
+    data-read-more="{{- 'theme.actions.read_more' | t -}}"
+    data-read-less="{{- 'theme.actions.read_less' | t -}}"
+		data-max-line-count="{{- max_lines | times: 1 -}}"
+	>
+		<div class="text-truncator rte no-scrollbar">
+			{{- text -}}
+    </div>
+    <button type="button" class="button button--text button--uppercase text-truncator__button">
+      <span class="text-truncator__button-text"></span>
+      <span class="icon-plus">{% render 'icon', icon_name: 'theme-plus' %}</span>
+      <span class="icon-minus">{% render 'icon', icon_name: 'theme-minus' %}</span>
+    </button>
+	</text-truncator>
+{% else %}
+  <div class="rte">
+    {{- text -}}
+  </div>
+{%- endif -%}

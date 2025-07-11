@@ -1,0 +1,79 @@
+{%- liquid
+  assign product_id = product_id | default: product.id
+  assign product_recommendations_icon = icon | default: 'theme-package'
+  assign product_recommendations_title = title | default: settings.cart_upsell_title | default: ''
+  assign product_recommendations_limit = limit | default: 8
+-%}
+
+{{- 'component-product-recommendations.css' | asset_url | stylesheet_tag -}}
+<script src="{{ 'product-recommendations.js' | asset_url }}" defer="defer"></script>
+
+<product-recommendations
+  class="product-recommendations hidden {{ class }} color-{{ settings.color_scheme_for_upsell }}"
+  data-url="{{- routes.product_recommendations_url -}}?section_id={{- section.id -}}&product_id={{- product_id -}}&limit={{- product_recommendations_limit -}}&intent=complementary"
+  data-recommendation-area="{{- area -}}"
+>
+  {%- if product_recommendations_title != blank -%}
+    <h5 class="product-recommendations__title{% if template.name == 'cart' %} heading-static{% endif %}">
+      {%- if icon -%}
+        {% render 'icon', icon_name: product_recommendations_icon %}
+      {%- endif -%}
+      {{- product_recommendations_title | escape -}}
+    </h5>
+  {%- endif -%}
+
+  <div class="swiper product-recommendations__body">
+    <div class="product-recommendations__items swiper-wrapper" data-recommendations>
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+        {%- for recommendation in recommendations.products limit: product_recommendations_limit -%}
+
+          <a href="{{- recommendation.url -}}" class="product-recommendations__item swiper-slide">
+
+            {%- if recommendation.featured_image -%}
+              <div class="media product-recommendations__item-media">
+                {%- render 'image', image: recommendation.featured_image, alt: recommendation.featured_image.alt | escape -%}
+              </div>
+            {%- endif -%}
+
+            <div class="product-recommendations__item-details">
+              <div>
+                <h6 class="product-recommendations__item-title">
+                  {{- recommendation.title | escape -}}
+                </h6>
+
+                <p class="product-recommendations__item-price">
+                  {%- if recommendation.compare_at_price_min > recommendation.price_min -%}
+                    <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+                    <del>{{- recommendation.compare_at_price_min | money -}}</del>
+                    <span class="visually-hidden">{{- 'product.price_sale' | t -}}</span>
+                    <ins>{{- recommendation.price_min | money -}}</ins>
+                  {%- else -%}
+                    <span class="visually-hidden">{{- 'product.price_regular' | t -}}</span>
+                    {{- recommendation.price_min | money -}}
+                  {%- endif -%}
+                </p>
+              </div>
+
+              {%- if settings.product_card_enable_quick_add_to_cart_button -%}
+                <button
+                  type="button"
+                  class="quick-cart-drawer__trigger quick-cart-drawer__trigger--recommendations button button--text"
+                  aria-expanded="false"
+                  onclick="preventDefault(event)"
+                  aria-controls="quick-cart-drawer"
+                  data-product-url="{{- recommendation.handle | prepend: '/products/'  -}}"
+                >
+                  {{- 'cart.quick_add' | t -}}
+                  <div class="quick-cart-drawer__trigger--loading">
+                    {%- render 'loading-spinner' -%}
+                  </div>
+                </button>
+              {%- endif -%}
+            </div>
+
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</product-recommendations>

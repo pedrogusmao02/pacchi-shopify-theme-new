@@ -1,0 +1,96 @@
+{% comment %}
+Renders button UI element
+Accepts:
+- type: {String} button type, default is 'button'
+- name: {String} button name
+- id: {String} button id
+- value: {String} button value
+- href: {String} button href, only if type is 'link'
+- class: {String} button class
+- style: {String} button style, accepts outlined/secondary
+- fullwidth: {Boolean} button fullwidth, default is false
+- disabled: {Boolean} button disabled, default is false
+- attr: {String} button attributes, accepts any html attribute
+
+Usage:
+{%- render 'button', name: 'update', type: 'submit', value: 'Update' -%}
+{% endcomment %}
+
+{%-
+  liquid
+  assign type = type | default: 'button'
+  assign name = name | default: false
+  assign id = id | default: false
+  assign value = value | default: false
+  assign href = href | default: false
+  assign target = target | default: false
+
+  assign class = class | default: ''
+  assign style = style | default: ''
+  assign fullwidth = fullwidth | default: false
+  assign attr = attr | default: false
+  assign disabled = disabled | default: false
+
+  assign loading_spinner = loading_spinner | default: false
+
+  assign button_style = button_style | default: 'button--filled'
+
+  if button_style == 'default'
+    assign button_style = 'button--filled'
+  endif
+
+  assign css = class | append: ' ' | append: button_style
+
+  # add button text transform class if set or not set to none
+  if settings.button_text_transform or settings.button_text_transform != 'none'
+    assign css = css | append: ' ' | append: settings.button_text_transform
+  endif
+
+  # if style
+  #  assign css = css | append: ' ' | append: 'button--' | append: style
+  # endif
+  if fullwidth
+    assign css = css | append: ' ' | append: 'button--full'
+  endif
+
+  if color_scheme
+    assign css = css | append: ' color-' | append: color_scheme
+  endif
+
+-%}
+
+{%- if value -%}
+  {%- if type == 'link' -%}
+    <a
+      {% if id %}id="{{- id -}}"{% endif %}{% if attr %}{{ attr }}{% endif %}{% if disabled %}disabled{% endif %}{% if target %} target="{{- target -}}"{% endif %}
+      href="{{- href -}}"
+      class="{{- css -}}">
+
+      {% if icon_name %}
+        {% render 'icon', icon_name: icon_name, class: 'icon', text: value %}
+      {%- else -%}
+        {{- value -}}
+      {%- endif -%}
+
+    </a>
+  {%- else -%}
+    <button
+      type="{{- type -}}"
+      {% if id %}id="{{- id -}}"{% endif %}{% if name %}name="{{- name -}}"{% endif %}{% if attr %}{{ attr }}{% endif %}{% if disabled %}disabled{% endif %}
+      class="{{- css -}}">
+
+      {% if icon_name %}
+        {% render 'icon', icon_name: icon_name, class: 'icon', text: value %}
+      {%- else -%}
+        {{- value -}}
+      {%- endif -%}
+
+      {%- if loading_spinner -%}
+        <div class="button__spinner">
+          {%- render 'loading-spinner' -%}
+        </div>
+      {%- endif -%}
+
+    </button>
+  {%- endif -%}
+{%- endif -%}

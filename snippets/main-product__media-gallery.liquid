@@ -1,0 +1,561 @@
+{% assign zoom_modal = section.settings.display_media_zoom %}
+{% comment %} This prevents init without save on customiser {% endcomment %}
+{% comment %} {% unless zoom_modal == 'none' %} {% endcomment %}
+<link data-photoswipe rel="stylesheet" href="{{- 'photoswipe.css' | asset_url -}}" media="print" onload="this.media='all'">
+<script data-photoswipe src="{{- 'photoswipe.umd.min.js' | asset_url -}}" defer="defer"></script>
+<script data-photoswipe src="{{- 'photoswipe-lightbox.umd.min.js' | asset_url -}}" defer="defer"></script>
+{% comment %} {% endunless %} {% endcomment %}
+
+<script src="{{ 'product-media-gallery.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign product_images = product.media | where: 'media_type', 'image'
+  assign product_models = product.media | where: 'media_type', 'model'
+  assign product_local_videos = product.media | where: 'media_type', 'video'
+  assign product_external_videos = product.media | where: 'media_type', 'external_video'
+  assign product_videos = product_local_videos | concat: product_external_videos
+  assign product_media = product_images | concat: product_models | concat: product_videos | sort: 'position'
+
+  # feat: hide variants media
+  assign hide_variants_media = section.settings.hide_variants | default: false
+  comment
+    assign hide_variants_media_list = section.settings.variant_list_of_hideable_media
+  endcomment
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .main-product__media {
+    --product-media-aspect-ratio: {% if section.settings.product_media_aspect_ratio == 'fit' %}auto{% else %}{{ section.settings.product_media_aspect_ratio | default: 'auto' }}{% endif %};
+    --product-thumbs-aspect-ratio: {{ section.settings.product_media_thumbs_ratio | default: 'auto' }};
+    --product-media-object-fit: {{ section.settings.product_media_object_fit | default: 'cover' }};
+    --product-thumbs-object-fit: {{ section.settings.product_media_thumbs_object_fit | default: 'cover' }};
+  }
+  {%- if section.settings.media_transparent_background -%}
+    .main-product__media .swiper--product-gallery .media img,
+    .main-product__media--thumbs-wrapper .media img,
+    .main-product__media--grid-item .media img {
+      mix-blend-mode: multiply;
+    }
+  {%- endif -%}
+{% endstyle %}
+
+{% comment %} MEDI GALLERY SLIDER NAVIGATIONS {% endcomment %}
+{%- liquid
+  assign thumbs_desktop = true
+  assign thumbs_mobile = true
+  if section.settings.product_media_with_thumbs == 'only_mobile' or section.settings.product_media_with_thumbs == 'none'
+    assign thumbs_desktop = false
+  endif
+  if section.settings.product_media_with_thumbs == 'only_desktop' or section.settings.product_media_with_thumbs == 'none'
+    assign thumbs_mobile = false
+  endif
+
+  assign arrows_mobile = true
+  if section.settings.gallery_arrows_show_on == 'desktop' or section.settings.gallery_arrows_show_on == 'none'
+    assign arrows_mobile = false
+  endif
+
+  assign pagination = false
+  if thumbs_mobile == false and section.settings.display_media_gallery_pagination != 'none' or thumbs_mobile == false and arrows_mobile == false
+    assign pagination = true
+  endif
+-%}
+
+{% comment %} METAFIELD FEATURES - MEDIA INFO {% endcomment %}
+{%- capture metafield_media_info -%}
+  {% if section.settings.media_gallery_info != blank %}
+    <product-media-info class="main-product__media--feat main-product__media--feat-media-info color-{{ section.settings.color_scheme_gallery }} gradient" style="opacity: 0">
+      <div class="product__media--info">
+        <div class="product__media--info-marquee">
+          <p aria-hidden="true">{{- section.settings.media_gallery_info -}}</p>
+          <p>{{- section.settings.media_gallery_info -}}</p>
+        </div>
+      </div>
+    </product-media-info>
+  {% endif %}
+{%- endcapture -%}
+
+{% comment %} METAFIELD FEATURES - AS SEEN ON {% endcomment %}
+{%- capture metafield_media_as_seen_on -%}
+  {% if section.settings.metafield_as_seen_on != blank %}
+    {%- liquid
+      assign metafield_as_seen_on_namespace = section.settings.metafield_as_seen_on | split: '.' | first
+      assign metafield_as_seen_on_key = section.settings.metafield_as_seen_on | split: '.' | last
+      assign metafield_as_seen_on = product.metafields[metafield_as_seen_on_namespace][metafield_as_seen_on_key]
+    -%}
+    {% if metafield_as_seen_on != blank %}
+      <div class="main-product__media--feat main-product__media--feat-as-seen-on color-{{ section.settings.color_scheme_gallery }} gradient">
+        {%- render 'product-as-seen-on', product: product, metafield_as_seen_on: metafield_as_seen_on -%}
+      </div>
+    {% endif %}
+  {% endif %}
+{%- endcapture -%}
+
+{% comment %}
+  CHECK PRODUCT MEDIA HAS SAME ASPECT RATIO
+  If all product media has same aspect ratio,
+  then disable slider auto height to prevent aspect ratio settings overwriting
+{% endcomment %}
+{%- liquid
+  assign product_media_has_same_aspect_ratio = true
+  assign product_media_first_aspect_ratio = product_media.first.aspect_ratio
+  for media in product_media
+    unless forloop.first
+      if media.aspect_ratio != product_media_first_aspect_ratio
+        assign product_media_has_same_aspect_ratio = false
+        break
+      endif
+    endunless
+  endfor
+  assign product_slider_auto_height = section.settings.product_slider_auto_height | default: false
+  if product_media_has_same_aspect_ratio == true
+    assign product_slider_auto_height = false
+  endif
+-%}
+
+{% comment %}
+{%- liquid
+  if hide_variants_media
+
+    assign is_there_a_list = false
+    if hide_variants_media_list != blank
+      assign is_there_a_list = true
+      assign list_of_product_option_names = hide_variants_media_list | split: ','
+      # echo 'variant_list: ' | append: list_of_product_option_names | append: '<br>'
+    endif
+    # assign is_there_a_list = true
+
+    assign variant_media_positions = ''
+    assign hideable_variant_options = ''
+
+    if 1==1
+      for variant in product.variants
+
+        assign forloop_product_variant = forloop
+        assign hideable_variant_options_array = hideable_variant_options | split: ','
+        assign value_already_present = false
+
+        assign available_variant_positions = ''
+        for product_option in product.options_with_values
+          for item_of_product_option_names in list_of_product_option_names
+            if product_option.name == item_of_product_option_names
+              assign available_variant_positions = available_variant_positions | append: product_option.position | append: ','
+              # break
+            endif
+          endfor
+        endfor
+        assign available_variant_positions_array = available_variant_positions | split: ','
+        # echo 'available_variant_positions_array: ' | append: available_variant_positions_array | append: '<br>'
+
+        for hideable_variant_option in hideable_variant_options_array
+
+          if is_there_a_list
+            assign variant_options_handle = ''
+            for variant_option in variant.options
+              assign variant_option_handle = variant_option | handleize
+              assign variant_options_handle = variant_options_handle | append: variant_option_handle
+              if forloop.last == false
+                assign variant_options_handle = variant_options_handle | append: '-'
+              endif
+            endfor
+            if hideable_variant_option == variant_options_handle
+              assign value_already_present = true
+              # break
+            endif
+          else
+            assign variant_options_handle = variant.options | json | handleize
+            if hideable_variant_option == variant_options_handle
+              assign value_already_present = true
+              # break
+            endif
+          endif
+
+        endfor
+        if value_already_present == false
+
+          if is_there_a_list
+
+            assign variant_options_handle = ''
+            for variant_option in variant.options
+
+              assign variant_option_forloop = forloop
+              assign available_variant_option = false
+              for variant_position in available_variant_positions_array
+                assign variant_position_number = variant_position | times: 1
+                if variant_option_forloop.index == variant_position_number
+                  assign available_variant_option = variant_option
+                endif
+              endfor
+              # echo 'available_variant_option: ' | append: available_variant_option | append: '<br>'
+
+              if available_variant_option
+                assign variant_option_handle = available_variant_option | handleize
+                assign variant_options_handle = variant_options_handle | append: variant_option_handle
+                if forloop.last == false
+                  assign variant_options_handle = variant_options_handle | append: '-'
+                endif
+              endif
+
+              comment
+              assign variant_option_handle = variant_option | handleize
+              assign variant_options_handle = variant_options_handle | append: variant_option_handle
+              if forloop.last == false
+                assign variant_options_handle = variant_options_handle | append: '-'
+              endif
+              endcomment
+            endfor
+            assign hideable_variant_options = hideable_variant_options | append: variant_options_handle
+            if forloop_product_variant.last == false
+              assign hideable_variant_options = hideable_variant_options | append: ','
+            endif
+          else
+            assign variant_options_handle = variant.options | json | handleize
+            assign hideable_variant_options = hideable_variant_options | append: variant_options_handle
+            if forloop_product_variant.last == false
+              assign hideable_variant_options = hideable_variant_options | append: ','
+            endif
+          endif
+
+          assign variant_media_positions = variant_media_positions | append: variant.featured_media.position | append: ','
+          # echo 'variant_media_positions: ' | append: variant_media_positions | append: '<br>'
+        endif
+      endfor
+    endif
+
+    if 1==3
+      for product_option_with_values in product.options_with_values
+        for product_option_value in product_option_with_values.values
+          # echo product_option_value.variant | json | append: '<br>'
+          echo product_option_value.variant.options | json | append: '<br>'
+
+          assign forloop_product_option_value = forloop
+          assign hideable_variant_options_array = hideable_variant_options | split: ','
+          assign value_already_present = false
+
+          if product_option_value.variant
+            assign variant_options_handle = product_option_value.variant.options | json | handleize
+
+            for hideable_variant_option in hideable_variant_options_array
+              if hideable_variant_option == variant_options_handle
+                assign value_already_present = true
+                # break
+              endif
+            endfor
+
+          endif
+          if value_already_present == false
+
+            if product_option_value.variant
+              assign hideable_variant_options = hideable_variant_options | append: variant_options_handle
+              if forloop_product_option_value.last == false
+                assign hideable_variant_options = hideable_variant_options | append: ','
+              endif
+
+              assign variant_media_positions = variant_media_positions | append: product_option_value.variant.featured_media.position | append: ','
+            endif
+          endif
+
+        endfor
+      endfor
+    endif
+
+    # echo 'hideable_variant_options: ' | append: hideable_variant_options | append: '<br>'
+
+    assign variant_media_positions = variant_media_positions | split: ','
+    assign hideable_variant_options = hideable_variant_options | split: ','
+    assign variant_media_positions_size = variant_media_positions.size | minus : 1
+    assign data_group_array = ''
+
+    for variant_media_position in variant_media_positions
+      assign i = forloop.index0
+      if variant_media_position != ''
+        if i == 0
+          assign start_position = 1
+        else
+          assign start_position = variant_media_positions[i] | plus: 0
+        endif
+        assign end_index = i | plus: 1
+
+        # increase end_index value until end_position is not empty
+        assign end_position = ''
+        assign max_end_index = variant_media_positions_size
+        for j in (end_index..max_end_index)
+          assign end_position = variant_media_positions[j]
+          if end_position != ''
+            assign end_index = j
+            break
+          endif
+        endfor
+        assign end_position = variant_media_positions[end_index] | default: product.media.size | plus: 0
+
+        for media in product.media
+          if media.position >= start_position and media.position < end_position
+            assign hideable_variant_options_i = hideable_variant_options[i]
+            assign data_group_array = data_group_array | append: hideable_variant_options_i | append: ","
+          endif
+        endfor
+      endif
+    endfor
+
+    comment
+    for media in product.media
+
+      for i in (0..variant_media_positions_size)
+
+        if i == 0
+          assign start_position = 1
+        else
+          assign start_position = variant_media_positions[i] | plus: 0
+        endif
+        assign end_index = i | plus: 1
+        assign end_position = variant_media_positions[end_index] | default: 9999 | plus: 0
+
+        echo 'x: '
+        echo variant_media_positions[i] | append: ' - '
+        echo 'y: '
+        echo variant_media_positions[end_index] | append: ' - '
+        echo hideable_variant_options[i] | append: ' - '
+        echo start_position | append: ' - ' | append: end_position | append: '<br>'
+
+        if media.position >= start_position and media.position < end_position and variant_media_positions[i] != ''
+          assign hideable_variant_options_i = hideable_variant_options[i]
+          assign data_group_array = data_group_array | append: hideable_variant_options_i | append: ","
+        endif
+      endfor
+
+    endfor
+    endcomment
+    assign data_group_array = data_group_array | split: ','
+  endif
+-%}
+{% endcomment %}
+
+<div
+  id="MediaGallery-{{ section.id }}"
+  class="main-product__media "
+  {% if section.settings.product_media_aspect_ratio == 'fit' %}data-height-limited{% endif %}
+  {% if product_slider_auto_height %}data-slider-auto-height{% endif %}
+  data-with-thumbs="{{ section.settings.product_media_with_thumbs }}"
+  {% if section.settings.product_media_layout == 'product__media-layout--grid' %}data-desktop-grid{% endif %}
+  {% if topbar_mobile == 'on-top' %}data-mobile-topbar{% endif %}
+  {% if product_has_single_media %}data-single-media{% endif %}
+  data-hide-other-variants-media="{% if hide_variants_media %}true{% else %}false{% endif %}"
+>
+  {% unless product_has_single_media %}
+    {% comment %} SLIDER - PRODUCT MEDIA {% endcomment %}
+    <div
+      class="main-product__media--slider-wrapper{% if section.settings.product_media_layout == 'product__media-layout--grid' %} small-up-hide{% endif %}"
+      data-layout-desktop="{{- section.settings.product_media_layout -}}"
+      data-layout-mobile="{{- section.settings.product_media_layout_mobile -}}"
+    >
+      {% comment %} METAFIELD FEATURES - SLIDER {% endcomment %}
+      <div class="main-product__media--features">
+        {{- metafield_media_info -}}
+        {{- metafield_media_as_seen_on -}}
+      </div>
+      <div class="main-product__media--slider">
+        <swiper-product-gallery
+          handle="product-gallery"
+          class="color-{{- section.settings.color_scheme_gallery -}}"
+          {% unless section.settings.product_media_with_thumbs == 'none' %}thumbs="product-thumbs"{% endunless %}
+          {% unless zoom_modal == 'none' %}zoom="{{- zoom_modal -}}"{% endunless %}
+          data-hide-other-variants-media="{% if hide_variants_media %}true{% else %}false{% endif %}"
+        >
+          {%- liquid
+            assign product_gallery_slides = ''
+            if product_media.size > 0
+              for media in product_media
+                capture product_gallery_slides
+                  echo product_gallery_slides
+                  render 'product-media-card', media: media, card_type: 'slide', zoom_modal: zoom_modal, media_index: forloop.index0, section_index: section.index, data_group_array: data_group_array
+                endcapture
+              endfor
+            endif
+          -%}
+          {% capture product_gallery_options %}
+          {% if pagination %}
+            {
+              "navigation": {
+                "nextEl": ".swiper-button-next",
+                "prevEl": ".swiper-button-prev"
+              },
+              {% if section.settings.display_media_gallery_pagination != 'none' %}
+              "pagination": {
+                "el": ".swiper--product-gallery__pagination",
+                "clickable": {% if section.settings.display_media_gallery_pagination == 'dynamic' %}false{% else %}true{% endif %},
+                "dynamicBullets": {% if section.settings.display_media_gallery_pagination == 'dynamic' %}true{% else %}false{% endif %}
+              },
+              {% endif %}
+              "autoHeight": {{ product_slider_auto_height }},
+              {% if section.settings.product_media_layout_mobile == 'product__media-layout--partial--sm' %}
+                "spaceBetween": 8,
+                "slidesPerView": 1.125,
+              {% endif %}
+              "breakpoints": {
+                "750": {
+                  "pagination": false,
+                  "spaceBetween": 8
+                  {% if section.settings.product_media_layout == 'product__media-layout--partial' %},
+                    "slidesPerView": 1.5
+                  {% elsif section.settings.product_media_layout == 'product__media-layout--full' %},
+                    "slidesPerView": 1
+                  {% endif %}
+                }
+              }
+            }
+          {% else %}
+            {
+              "navigation": {
+                "nextEl": ".swiper-button-next",
+                "prevEl": ".swiper-button-prev"
+              },
+              "autoHeight": {{ product_slider_auto_height }}
+              {% if section.settings.product_media_layout_mobile == 'product__media-layout--partial--sm' %},
+                "spaceBetween": 8,
+                "slidesPerView": 1.125
+              {% endif %}
+              {% if section.settings.product_media_layout == 'product__media-layout--partial' %},
+                "breakpoints": {
+                  "750": {
+                    "spaceBetween": 8,
+                    "slidesPerView": 1.5
+                  }
+                }
+              {% elsif section.settings.product_media_layout == 'product__media-layout--full' %},
+                "breakpoints": {
+                  "750": {
+                    "spaceBetween": 8,
+                    "slidesPerView": 1
+                  }
+                }
+              {% endif %}
+            }
+          {% endif %}
+          {% endcapture %}
+          {% render 'instance-swiper',
+            handle: 'product-gallery',
+            options: product_gallery_options,
+            slides: product_gallery_slides,
+            arrows: section.settings.gallery_arrows_show_on
+          %}
+        </swiper-product-gallery>
+      </div>
+    </div>
+
+    {% unless section.settings.product_media_with_thumbs == 'none' %}
+      {% comment %} THUMBS - PRODUCT MEDIA {% endcomment %}
+      <div class="main-product__media--thumbs-wrapper{% unless thumbs_mobile and thumbs_desktop %}{% if thumbs_mobile %} small-up-hide{% elsif thumbs_desktop %} small-hide{% endif %}{% endunless %}{% if section.settings.product_media_layout == 'product__media-layout--grid' %} small-up-hide{% endif %}">
+        <swiper-product-thumbs
+          handle="product-thumbs"
+          class="color-{{- section.settings.color_scheme_gallery -}}"
+        >
+          {% capture product_thumbs_options %}
+          {
+            "direction": "horizontal",
+            {% if product.media.size > 5 %}
+            "centeredSlides": true,
+            "centeredSlidesBounds": true,
+            {% endif %}
+            "freeMode": true,
+            "mousewheel": true,
+            "slidesPerView": "auto",
+            "spaceBetween": 8,
+            "breakpoints": {
+              "750": {
+                {% unless product.media.size > 5 %}
+                "centeredSlides": true,
+                "centeredSlidesBounds": true,
+                {% endunless %}
+                "spaceBetween": 16,
+                "direction": "horizontal"
+              },
+              "990": {
+                {% unless product.media.size > 5 %}
+                "centeredSlides": true,
+                "centeredSlidesBounds": true,
+                {% endunless %}
+                "spaceBetween": 16,
+                "direction": "vertical"
+              }
+            }
+          }
+          {% endcapture %}
+          {%- liquid
+            assign product_thumbs_slides = ''
+            if product_media.size > 0
+              for media in product_media
+                capture product_thumbs_slides
+                  echo product_thumbs_slides
+                  render 'product-media-card', media: media, card_type: 'thumbs', zoom_modal: zoom_modal, media_index: forloop.index0, section_index: section.index, data_group_array: data_group_array
+                endcapture
+              endfor
+            endif
+          -%}
+          {% render 'instance-swiper',
+            handle: 'product-thumbs',
+            options: product_thumbs_options,
+            slides: product_thumbs_slides
+          %}
+        </swiper-product-thumbs>
+      </div>
+    {% endunless %}
+
+    {% if section.settings.product_media_layout == 'product__media-layout--grid' %}
+      {% comment %} GRID - PRODUCT MEDIA {% endcomment %}
+      <div class="main-product__media--grid small-hide photoswipe-wrapper">
+        {%- if product_media.size > 0 -%}
+          {%- for media in product_media -%}
+            <div class="main-product__media--grid-item color-{{- section.settings.color_scheme_gallery -}}">
+              {% comment %} METAFIELD FEATURES - GRID {% endcomment %}
+              {% if forloop.first or forloop.index0 == 1 %}
+                <div class="main-product__media--features">
+                  {% if forloop.first %}{{- metafield_media_as_seen_on -}}{% endif %}
+                  {% if forloop.index0 == 1 %}{{- metafield_media_info -}}{% endif %}
+                </div>
+              {% endif %}
+              {%- render 'product-media-card', media: media, card_type: 'grid', zoom_modal: zoom_modal, media_index: forloop.index0, section_index: section.index, data_group_array: data_group_array -%}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    {% endif %}
+  {% else %}
+    {% comment %} SINGLE PRODUCT MEDIA {% endcomment %}
+    {% assign media = product_media.first %}
+    <div class="main-product__media--grid-item">
+      {% comment %} METAFIELD FEATURES - GRID {% endcomment %}
+      {% if forloop.first or forloop.index0 == 1 %}
+        <div class="main-product__media--features">
+          {% if forloop.first %}{{- metafield_media_as_seen_on -}}{% endif %}
+          {% if forloop.index0 == 1 %}{{- metafield_media_info -}}{% endif %}
+        </div>
+      {% endif %}
+      {%- render 'product-media-card', media: media, card_type: 'grid', zoom_modal: zoom_modal, media_index: forloop.index0, section_index: section.index, data_group_array: data_group_array -%}
+    </div>
+  {% endunless %}
+
+</div>
+
+{% comment %}
+ PAGINATION - PRODUCT MEDIA GALLERY
+ Please don't move elsewhere!
+ Out and after grid is relatively right place
+ and it's been bind by specific class name , works exactly fine (:
+{% endcomment %}
+{% if pagination %}
+  <div class="swiper--product-gallery__pagination swiper-pagination{% if section.settings.display_media_gallery_pagination == 'dynamic' or section.settings.display_media_gallery_pagination == 'lines' %} swiper-pagination--{{ section.settings.display_media_gallery_pagination }}{% endif %} small-up-hide{% if section.settings.product_media_layout_mobile == 'product__media-layout--partial--sm' %} swiper-pagination--carousel{% endif %}"></div>
+{% endif %}
+
+
+{% unless zoom_modal == 'none' %}
+  {% comment %} ZOOM MODAL BUTTONS {% endcomment %}
+  <div class="hidden" data-close-icon>
+    {%- render 'icon', icon_name: 'theme-close' -%}
+  </div>
+  <div class="hidden" data-prev-icon>
+    {%- render 'icon', icon_name: 'theme-chevron', class: 'icon--rotate-180' -%}
+  </div>
+  <div class="hidden" data-next-icon>
+    {%- render 'icon', icon_name: 'theme-chevron' -%}
+  </div>
+{% endunless %}

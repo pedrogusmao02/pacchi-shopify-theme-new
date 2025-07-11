@@ -1,0 +1,177 @@
+<div class="quick-cart-product product">
+  <div class="quick-cart-drawer__slider-wrapper">
+    <div class="swiper quick-cart-drawer__media-swiper">
+      <div class="swiper-wrapper">
+        {%- for media in product.media -%}
+          {%- render 'highlighted-product-media',
+            media: media,
+            output_type: 'slider-slide',
+            media_index: forloop.index0
+          -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  {% comment %} PRODUCT INFO & DETAILS {% endcomment %}
+  <div class="product__content">
+    <div class="container">
+      <div>
+        <div class="product__title-wrapper">
+          <a href="{{ product.url }}" title="{{ product.title | escape }}" class="h2 product__title text-link">
+            <span class="text-link--on-load">{{- product.title | escape | default: 'Product title' -}}</span>
+          </a>
+          {%- render 'product-badges', product: product %}
+        </div>
+
+        <div class="product__price">
+          {%- render 'price', product: product, use_variant: true -%}
+        </div>
+      </div>
+
+      <product-card class="product-card product-card__quick-cart">
+        {% comment %} Product Variants || Options || Swatches {% endcomment %}
+        {%- assign variants = product.variants -%}
+
+        {%- assign swatch_options = settings.swatches_option | split: ',' -%}
+        {%- assign current_swatch_options = '' -%}
+        {%- for swatch_opt in swatch_options -%}
+          {%- assign swatch_opt_striped = swatch_opt | strip -%}
+          {%- assign swatch_option = product.options_by_name[swatch_opt_striped].values | join: ',' -%}
+          {%- assign current_swatch_options = current_swatch_options | append: swatch_option | append: ',' -%}
+        {%- endfor -%}
+        {%- assign current_swatch_options = current_swatch_options | split: ',' -%}
+
+        {%- liquid
+          assign variants_available_arr = product.variants | map: 'available'
+          assign variants_option_first_arr = product.variants | map: 'option1'
+          assign variants_option_second_arr = product.variants | map: 'option2'
+          assign variants_option_third_arr = product.variants | map: 'option3'
+        -%}
+
+        {% if settings.show_product_groups_on_product_card %}
+          {% render 'product-groups', product: product, on: 'page' %}
+        {% endif %}
+
+        <div class="product-card__variants">
+          <ul class="product-card__variants--list">
+            {%- for opts in (1..3) -%}
+              {%- assign options = blank -%}
+              {%- if opts == 1 -%}
+                {%- assign options = product.options_with_values[0].values -%}
+              {%- elsif opts == 2 -%}
+                {%- assign options = product.options_with_values[1].values -%}
+              {%- elsif opts == 3 -%}
+                {%- assign options = product.options_with_values[2].values -%}
+              {%- endif -%}
+              {%- if options != blank -%}
+                {% assign option_handle = options | json %}
+                  {% unless option_handle contains 'Default' %}
+                    <li>
+                      {%- if options.size > 0 -%}
+                        <fieldset class="product__variant-options js-product-card-options">
+                          <legend>
+                            {{ product.options_with_values[forloop.index0].name -}}
+                            <span data-selected-variant>
+                              {{- product.options_with_values[forloop.index0].selected_value -}}
+                            </span>
+                          </legend>
+                          {%- for opt in options -%}
+                            {%- liquid
+                              assign option_disabled = true
+
+                              for option1_name in variants_option_first_arr
+                                case opts
+                                  when 1
+                                    if variants_option_first_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                                      assign option_disabled = false
+                                    endif
+                                  when 2
+                                    if option1_name == product.selected_or_first_available_variant.option1 and variants_option_second_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                                      assign option_disabled = false
+                                    endif
+                                  when 3
+                                    if option1_name == product.selected_or_first_available_variant.option1 and variants_option_second_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option_third_arr[forloop.index0] == opt and variants_available_arr[forloop.index0]
+                                      assign option_disabled = false
+                                    endif
+                                endcase
+                              endfor
+                            -%}
+
+                            {%- liquid
+                              # product swatch check
+                              assign opt_swatch = false
+                              if opt.swatch and settings.product_card_swatches_show
+                                assign opt_swatch = opt | strip | handleize
+                              endif
+
+                              assign input_is_checked = false
+                              if forloop.first
+                                assign input_is_checked = true
+                              endif
+
+                              assign input_is_disabled = false
+                              if option_disabled
+                                assign input_is_disabled = true
+                              endif
+
+                              assign input_name = product.id | append: '-option[' | append: opts | append: ']'
+                              assign input_id = product.id | append: '-variant-option-' | append: opts | append: '-' | append: forloop.index
+                            -%}
+
+                            <div class="button--variant{% if opt_swatch %} button--swatch{% if settings.swatches_shape == 'circle' %} button--swatch-rounded{% endif %}{% endif %}" tabindex="0">
+                              {%- render 'product-option', id: input_id, name: input_name, value: opt, swatch_value: opt.swatch, class: 'hidden variant-option-radio-input', visually_hidden: true, product: product, option: options, where: 'quick-cart-product' -%}
+                            </div>
+                          {%- endfor -%}
+                        </fieldset>
+                      {%- endif -%}
+                    </li>
+                {% endunless %}
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+
+          <script
+            data-product-variants-json
+            type="application/json"
+          >
+            {{- variants | json -}}
+          </script>
+        </div>
+
+        {%- liquid
+          assign product_preorder = false
+          if product.metafields.theme.preorder.value
+            assign product_preorder = true
+          endif
+        -%}
+
+        {%- form 'product', product,
+          class: 'product-card__add-to-cart--form product__form product__form--inline',
+          novalidate: 'novalidate'
+        -%}
+          <input type="hidden" name="id" value="{{- product.first_available_variant.id -}}">
+          <div class="product-selector__quantity">
+            {%- render 'quantity-input', product: product, hide_label: true -%}
+          </div>
+          <button type="submit" class="button button--filled button--uppercase"{% unless product.available %} disabled{% endunless %}>
+            <span>
+              {%- if product_preorder -%}
+                {{- 'product.preorder' | t -}}
+              {%- else -%}
+                {{- 'theme.actions.add_to_cart' | t -}}
+              {%- endif -%}
+            </span>
+          </button>
+          {% if product_preorder == false %}
+            {{- form | payment_button -}}
+          {% endif %}
+          <div class="product-form__error-message-wrapper" role="alert" hidden>
+            <span class="product-form__error-icon">{% render 'icon', icon_name: 'theme-warning' %}</span>
+            <span class="product-form__error-message"></span>
+          </div>
+        {%- endform -%}
+      </product-card>
+    </div>
+  </div>
+</div>

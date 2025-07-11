@@ -1,0 +1,44 @@
+{
+  "sections": {
+    "1658995208ad05f95f": {
+      "type": "hero-banner",
+      "blocks": {
+        "e3867974-072c-4cfe-968e-a10d22e8941a": {
+          "type": "slide",
+          "settings": {
+            "banner_layout": "hero-banner--full",
+            "header_menu_text_color": "#ffffff",
+            "video_external": "",
+            "enable_media_overlay_desktop": true,
+            "video_external_mobile": "",
+            "enable_media_overlay_mobile": true
+          }
+        }
+      },
+      "block_order": [
+        "e3867974-072c-4cfe-968e-a10d22e8941a"
+      ],
+      "settings": {}
+    },
+    "9585dbdf-5519-43bd-a4c5-6aa99afe9a31": {
+      "type": "seo-content",
+      "settings": {}
+    },
+    "b9e1f375-bbe3-49e0-b449-eff934bd3497": {
+      "type": "blog-articles",
+      "settings": {
+        "heading": "Blog",
+        "blog": "",
+        "button_text": "Visit Blog",
+        "layout": "layout-2",
+        "content_alignment": "text-center",
+        "button_style": "button--filled"
+      }
+    }
+  },
+  "order": [
+    "1658995208ad05f95f",
+    "9585dbdf-5519-43bd-a4c5-6aa99afe9a31",
+    "b9e1f375-bbe3-49e0-b449-eff934bd3497"
+  ]
+}

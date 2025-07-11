@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "banner": {
+      "type": "main-search-banner",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-search",
+      "settings": {
+        "enable_sorting": true,
+        "products_per_page": 12
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "main"
+  ]
+}

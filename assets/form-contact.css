@@ -1,0 +1,62 @@
+.form-contact {
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+  padding: 2.4rem 0;
+}
+.form-contact .grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  row-gap: 1.6rem;
+}
+
+.form-contact .field__label {
+  width: 100%;
+}
+
+.form-contact .field__options {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 2.4rem;
+}
+.form-contact .field__option {
+  display: flex;
+  align-items: center;
+}
+
+.form-contact .form-row--actions button {
+  width: 100%;
+}
+
+.checkbox:has(.field__options) {
+  min-height: 4.6rem;
+}
+
+.shopify-section:first-child .form-contact {
+  padding-block-start: 6.4rem;
+}
+
+* + .shopify-section .form-contact {
+  padding-block-start: 0;
+}
+
+label:has(+ input:required):after,
+.field__label:has(+ .field__options input[type="checkbox"]:required)::after,
+.field__label:has(+ .field__options input[type="radio"]:required)::after {
+  content: ' *';
+  color: red;
+}
+
+@media screen and (min-width: 750px) {
+  .form-contact .form-row--actions {
+    margin-block-start: 2rem;
+  }
+  .form-contact .form-row--actions button {
+    width: auto;
+  }
+}
+
+.form-contact__message--success {
+  margin-block-end: 2.4rem;
+  border: none;
+  outline: none;
+}

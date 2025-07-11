@@ -1,0 +1,59 @@
+{% comment %}
+  Renders a go back button for product page
+  Accepts:
+  - fallback?: {string} - Fallback URL if coming from an external source
+  - style?: {String}
+  - label?: {String}
+  Usage:
+  {%- render 'product-goback', fallback: product_collection.url -%}
+{% endcomment %}
+{% liquid
+  assign show_on_class = show_on
+  if show_on_class == 'mobile'
+    assign show_on_class = 'large-up-hide'
+  elsif show_on_class == 'desktop'
+    assign show_on_class = 'small-hide medium-hide'
+  else
+    assign show_on_class = ''
+  endif
+%}
+<product-goback class="button button--uppercase product-button__goback--{{ style | default: 'filled' }} {{ show_on_class }}">
+
+  {%- render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' -%}
+
+  <span {%- if style == 'text' %} class="button button--text"{% endif %}>
+    {% if label != blank %}
+      {{ label  }}
+    {% else %}
+      {{ 'product.go_back' | t }}
+    {% endif %}
+  </span>
+</product-goback>
+
+<script>
+  if (!customElements.get("product-goback")) {
+    class ProductGoBackButton extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.addEventListener("click", () => {
+          let lastPageUrl = document.referrer;
+
+          if (lastPageUrl === "") {
+            location.href = "{{ fallback | default: collections.all.url }}";
+          } else {
+            history.back();
+          }
+        });
+      }
+
+      disconnectedCallback() {
+        this.removeEventListener("click");
+      }
+    }
+
+    customElements.define("product-goback", ProductGoBackButton);
+  }
+</script>

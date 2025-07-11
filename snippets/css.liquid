@@ -1,0 +1,35 @@
+{%- comment -%}
+  render 'css' tag for css files of section
+
+  params:
+  - css: css file name -- required
+  - section_index: section index -- required
+
+
+  *** important: if you set section_index to 1 while calling this snippet, don't use this snippet, not needed
+  --- ex: render 'css', css: 'section-newsletter-popup.css', section_index: 1
+{%- endcomment -%}
+
+{%- liquid
+  if section.location == 'header' or section.location == 'template'
+    assign default_section_index = section.index | default: 3
+  else
+    assign default_section_index = 3
+  endif
+  assign section_index = section_index | default: default_section_index
+
+  if section.location == 'header'
+    assign section_index = 1
+  endif
+-%}
+
+{%- if css -%}
+  {% if section_index > 2 %}
+    <link rel='stylesheet' href='{{ css | asset_url }}' media='print' onload="this.media='all'">
+    <noscript>
+      {{ css | asset_url | stylesheet_tag }}
+    </noscript>
+  {% else %}
+    {{ css | asset_url | stylesheet_tag }}
+  {% endif %}
+{%- endif -%}

@@ -1,0 +1,159 @@
+{%- liquid
+  # required
+  assign image = image | default: false
+  assign image_optimization = settings.image_optimization | default: 'true'
+
+  # role: presentation for decorative images - a11y
+  if role != 'presentation'
+    # if image alt is not specified, image default alt will be used
+    assign alt = alt | default: image.alt | default: '' | escape
+  endif
+
+  assign widths = widths | default: 'auto'
+  assign sizes = sizes | default: 'auto'
+
+  # assign attr = attr | default: false
+
+  assign loading = loading | default: 'lazy'
+  # set default section_index value
+  if section.location == 'header' or section.location == 'template'
+    assign default_section_index = section.index | default: 3
+  else
+    assign default_section_index = 3
+  endif
+  assign section_index = section.index | default: default_section_index
+  if section_index < 2
+    assign loading = 'eager'
+    assign fetchpriority = 'high'
+  endif
+
+  # media index
+  if media_index
+    assign media_index = media_index | default: 1
+    # check difference with image_per_view and media_index
+    assign media_index_checker = image_per_view | minus: media_index
+    if media_index_checker < 0
+      assign loading = 'lazy'
+    endif
+  endif
+
+  assign min_image_width = 128
+
+  # image optimization
+  if image_optimization == 'true'
+    assign max_image_width = settings.page_width | default: 1440
+    if max_image_width > image.width
+      assign max_image_width = image.width
+    endif
+  else
+    assign max_image_width = image.width
+    # assign image_per_view = 1
+  endif
+
+  # for mobile images
+  assign image_for_mobile = image_for_mobile | default: false
+  if image_for_mobile
+    assign max_image_width = 720
+  endif
+
+  # for grid blocks
+  assign image_per_view = image_per_view | default: 1
+  if image_per_view > 1
+    assign image_per_view = image_per_view | minus: 1
+  endif
+  if image_optimization == 'false'
+    assign image_per_view = 1
+  endif
+
+  assign max_image_width = max_image_width | divided_by: image_per_view | floor
+
+  # default widths
+  assign width_list = '360,480,600,720,840,960,1280,1440,1800,2160,2880,3600,4320,5760'
+
+  if width
+    assign max_image_width = width
+  endif
+
+  # set limits
+  if max_image_width > 5760
+    assign max_image_width = 5760
+  elsif max_image_width < 360
+    assign max_image_width = 360
+  endif
+
+  # recalculate width list based on max_image_width
+  assign width_list = width_list | split: ','
+  assign temp_width_list = ''
+  for width in width_list
+    assign width_int = width | plus: 0
+    if width_int <= max_image_width
+      assign temp_width_list = temp_width_list | append: width_int | append: ','
+    endif
+  endfor
+  assign temp_width_list = temp_width_list | remove_last: ','
+  assign width_list = temp_width_list
+
+  # generate srcset
+  assign srcset = ''
+  assign width_list = width_list | split: ','
+  for width in width_list
+    assign width_int = width | plus: 0
+    if width_int == image.width
+      assign srcset_item = image | image_url
+    else
+      assign srcset_item = image | image_url: width: width_int
+    endif
+    assign srcset = srcset | append: ' ' | append: srcset_item | append: ' ' | append: width_int | append: 'w,'
+  endfor
+  assign srcset = srcset | remove_last: ','
+
+  # generate sizes
+  if sizes == 'auto'
+    assign size_list = width_list
+    assign sizes = ''
+    for size in size_list
+      assign size_int = size | plus: 0
+      assign sizes = sizes | append: '(max-width: ' | append: size_int | append: 'px) ' | append: size_int | append: 'px,'
+    endfor
+    assign sizes = sizes | append: ' 100vw'
+  endif
+
+  # set width and height
+  assign width = width | default: image.width
+  assign height = width | divided_by: image.aspect_ratio | ceil
+
+  # animation
+  if animation == 'false'
+    assign class = class | append: ' animation-none'
+  endif
+-%}
+
+{%- unless attr -%}
+  {{
+    image
+    | image_url: width: min_image_width
+    | image_tag:
+      width: width,
+      height: height,
+      alt: alt,
+      role: role,
+      class: class,
+      srcset: srcset,
+      sizes: sizes,
+      loading: loading,
+      fetchpriority: fetchpriority,
+      attr: attr
+  }}
+{%- else -%}
+  <img
+    src="{{ image | image_url: width: min_image_width }}"
+    {% if alt %}alt="{{ alt }}"{% endif %}
+    width="{{- width -}}"
+    height="{{- height -}}"
+    {% if loading %}loading="{{ loading }}"{% endif %}
+    {% if class %}class="{{ class }}"{% endif %}
+    {% if sizes %}sizes="{{ sizes }}"{% endif %}
+    {% if srcset %}srcset="{{ srcset }}"{% endif %}
+    {% if attr %}{{ attr }}{% endif %}
+  >
+  {%- endunless -%}

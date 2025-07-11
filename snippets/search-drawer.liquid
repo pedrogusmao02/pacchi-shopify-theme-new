@@ -1,0 +1,45 @@
+{%- comment -%}
+  Accepts:
+
+  - section {Section}
+  - button_class {String}
+  - append_id {String}
+{%- endcomment -%}
+
+<search-drawer class="drawer drawer--search">
+  <details id="Search-drawer-{{- append_id -}}" class="drawer__container">
+    <summary
+      class="header__utils-link drawer__button text--link {{ button_class }}"
+      id="Search-drawer-button-{{- append_id -}}"
+      aria-label="{{- 'search.heading' | t -}}"
+    >
+      {%- assign icon_text = 'search.heading' | t -%}
+      {%- render 'icon', icon_name: 'theme-search', text: icon_text, class: 'header__utils-link--icon' -%}
+      <noscript>
+        {%- render 'icon', icon_name: 'theme-close-small' -%}
+      </noscript>
+    </summary>
+
+    <div class="drawer__content drawer__content--search slim-scrollbar color-{{ settings.color_scheme_for_drawers }} gradient {% if settings.search_suggestions != blank %} drawer__content--search-suggestions{% endif %} js-drawer" id="Search-menu-drawer-{{- append_id -}}" tabindex="-1">
+
+      <div class="drawer__row">
+        {%- render 'search', with input_id: 'desktop', input_class: ' js-drawer-focus-element' -%}
+      </div>
+
+      {%- if linklists[settings.search_suggestions].links.size > 0 -%}
+      <div class="drawer__row search-drawer__suggestions">
+        <h6 class="search-drawer__title">
+          {{- 'search.popular_searches' | t -}}
+        </h6>
+        <ul class="list-unstyled">
+        {%- for link in settings.search_suggestions.links -%}
+          <li>
+            {% render 'button', type: 'link', href: link.url, value: link.title, class: 'button', button_style: 'button--outlined' %}
+          </li>
+        {%- endfor -%}
+        </ul>
+      </div>
+      {%- endif -%}
+    </div>
+  </details>
+</search-drawer>

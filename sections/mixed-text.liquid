@@ -1,0 +1,247 @@
+{{- 'section-mixed-text.css' | asset_url | stylesheet_tag -}}
+  {%- capture inner_settings_classes -%}
+    {{ section.settings.content_alignment }}
+  {%- endcapture -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} > div {
+      padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+      padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+      --mixed-text-content-width: {{ section.settings.content_width }}%;
+    }
+  {%- endstyle -%}
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="section-mixed-text container {{ section.settings.section_width }}">
+      <div class="section-mixed-text__wrapper {{ inner_settings_classes | strip }}">
+        <div class="section-mixed-text__content {{ inner_settings_classes | strip }}">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign content_text = block.settings.text | default: ''
+              assign content_image = block.settings.image | default: ''
+              if content_image != blank
+                render 'image', image: content_image
+              elsif content_image == blank and content_text == blank
+                echo 'image' | placeholder_svg_tag: 'placeholder-svg'
+              endif
+            -%}
+            {%- if content_text -%}
+              {% assign words = content_text | split: ' ' %}
+              {% for word in words %}
+                <span class="h2 {% if forloop.last %} section-mixed-text__content--last-word{% endif %}">
+                  {{ word }}{% unless forloop.last %}&nbsp;{% endunless %}
+                </span>
+              {% endfor %}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if section.settings.button_label != blank -%}
+          <div class="section-mixed-text__button">
+          {% render 'button', type: 'link', class: 'button', button_style: section.settings.button_style, value: section.settings.button_label, href: section.settings.button_link %}
+          </div>
+        {%- endif -%}
+      </div>
+   </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.mixed-text.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "t:sections.global.content.width.label",
+      "info": "t:sections.global.content.width.for__desktop.info",
+      "min": 40,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.global.content.alignment.label",
+      "options": [
+        {
+          "value": "align-start text-start justify-start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "align-center text-center justify-center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "align-end text-end justify-end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "align-start text-start justify-start"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.element.button_label.label",
+      "info": "t:sections.global.element.button_label.info"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.element.button.link.label"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "default",
+          "label": "t:sections.global.element.button.style.options.default.label"
+        }
+      ],
+      "default": "button--outlined"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-narrow",
+          "label": "t:sections.global.settings.section_width.options__4.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        }
+      ],
+      "default": "max-w-fluid",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "0"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "0"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "t:sections.mixed-text.blocks.tile.name",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "t:sections.global.element.text.label"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.global.element.image.label"
+        }
+      ]
+    }
+  ],
+    "presets": [
+    {
+      "name": "t:sections.mixed-text.name",
+      "blocks": [
+        {
+          "type": "tile",
+          "settings": {
+            "text": "We offer sustainable"
+          }
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "tile",
+          "settings": {
+            "text": "Offer item"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

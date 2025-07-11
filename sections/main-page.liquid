@@ -1,0 +1,179 @@
+{{- 'main-page.css' | asset_url | stylesheet_tag -}}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="main-page">
+    <div class="container {{ section.settings.section_width }}">
+      {%- if section.settings.breadcrumbs -%}
+        <div class="main-page__breadcrumbs">
+          {%- render 'breadcrumbs', alignment: 'center' -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_page_title -%}
+        <h1 class="main-page__title h1 {{ section.settings.page_title_alignment }}">{{- page.title -}}</h1>
+      {%- endif -%}
+
+      <div class="main-page__content rte">
+        {{- page.content -}}
+      </div>
+
+      {%- if section.settings.info_title != blank or section.settings.info_content != blank -%}
+        <div class="main-page__foot rte">
+          {%- if section.settings.info_title != blank -%}
+            <h2 class="main-page__foot-title h4">
+              {{- section.settings.info_title -}}
+            </h2>
+          {%- endif -%}
+
+          {%- if section.settings.info_content != blank -%}
+            {{- section.settings.info_content -}}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "breadcrumbs",
+      "label": "t:sections.global.element.breadcrumbs.show_breadcrumbs.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "t:sections.main-page.settings.show_page_title.label",
+      "info": "t:sections.main-page.settings.show_page_title.info",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "page_title_alignment",
+      "label": "t:sections.global.content.alignment.for__page_title.label",
+      "options": [
+        {
+          "value": "text-start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "text-center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "text-end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "text-center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.end_of_page_content.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "info_title",
+      "label": "t:sections.global.element.heading.label"
+    },
+    {
+      "type": "richtext",
+      "id": "info_content",
+      "label": "t:sections.global.element.text.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.settings.section_width.options__1.label"
+        },
+        {
+          "value": "max-w-narrower",
+          "label": "t:sections.global.settings.section_width.options__4.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.settings.section_width.options__2.label"
+        }
+      ],
+      "default": "max-w-narrower",
+      "label": "t:sections.global.settings.section_width.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.settings.spacing.settings.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.settings.spacing.settings.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ]
+}
+{% endschema %}
+

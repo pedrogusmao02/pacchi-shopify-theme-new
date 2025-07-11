@@ -1,0 +1,176 @@
+{% comment %}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} product object.
+  - option: {Object} current product_option object.
+  - block: {Object} block object.
+  - picker_type: {String} type of picker to dispay
+
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block
+    picker_type: picker_type
+  %}
+{% endcomment %}
+
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+{%- for value in option.values -%}
+
+  {%- liquid
+    if picker_type == 'swatch'
+      assign swatch_focal_point = null
+      if value.swatch.image
+        assign image_url = value.swatch.image | image_url: width: 50
+        assign swatch_value = 'url(' | append: image_url | append: ')'
+        assign swatch_focal_point = value.swatch.image.presentation.focal_point
+      elsif value.swatch.color
+        assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')'
+      else
+        assign swatch_value = null
+      endif
+    endif
+
+    assign option_disabled = true
+    if value.available or block.settings.enable_back_in_stock
+      assign option_disabled = false
+    endif
+  -%}
+
+  {%- capture input_id -%}
+    {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
+  {%- endcapture -%}
+
+  {%- capture input_name -%}
+    {{ option.name }}-{{ option.position }}
+  {%- endcapture -%}
+
+  {%- capture input_dataset -%}
+    data-product-url="{{ value.product_url }}"
+    data-option-value-id="{{ value.id }}"
+  {%- endcapture -%}
+
+  {%- capture label_unavailable -%}
+    <span class="visually-hidden label-unavailable">
+      {{- 'product.variant_sold_out_or_unavailable' | t -}}
+    </span>
+  {%- endcapture -%}
+
+  {%- if picker_type == 'swatch' or picker_type == 'button' -%}
+    {%- liquid
+      comment
+      assign variant_options_with_thumbnails = block.settings.variant_options_with_thumbnails | split: ','
+
+      for variant_with_image in variant_options_with_thumbnails
+        assign variant_with_image_handle = variant_with_image | handleize
+        assign option_handle = option.name | handleize
+        if variant_with_image_handle == option_handle
+          assign show_variant_image = true
+          break
+        else
+          assign show_variant_image = false
+        endif
+      endfor
+
+      if show_variant_image
+        # assign variant_img = 'product-placeholder'
+
+        if option.position == 1
+          for variant in product.variants
+            for variant_option in variant.options
+              if variant_option == value and variant.featured_image
+                assign variant_img = variant.featured_image
+                break
+              endif
+            endfor
+          endfor
+        else
+          if value.variant.featured_image
+            assign variant_img = value.variant.featured_image
+          endif
+        endif
+      else
+        assign variant_img = 'product-placeholder'
+      endif
+
+      # use custom thumbnails if option name is listed in settings -- start
+      assign variant_options_use_custom_thumbnails = settings.variant_options_use_custom_thumbnails | split: ','
+      assign product_options_type_values_metaobject = shop.metaobjects[settings.metaobject_for_product_options_type_values]
+      if variant_options_use_custom_thumbnails contains option.name
+        for product_option_type_value in product_options_type_values_metaobject.values
+          assign product_option_type_value_name = product_option_type_value.name | strip | downcase
+          assign product_title = value | downcase
+          if product_title contains product_option_type_value_name
+            assign variant_img = product_option_type_value.image
+            break
+          endif
+        endfor
+      endif
+      # use custom thumbnails if option name is listed in settings -- end
+      endcomment
+
+      comment
+      # dont delete this code - it will be used for last media usage as thumbnail feature
+      if settings.variant_options_use_last_image_as_thumbnail and settings.variant_options_use_last_image_as_thumbnail != blank
+        for variant_for_last_media_usage in settings.variant_options_use_last_image_as_thumbnail
+          assign variant_for_last_media_usage_handle = variant_for_last_media_usage | handleize
+          assign option_handle = option.name | handleize
+          if variant_for_last_media_usage_handle == option_handle
+            # get latest media for each variant
+            assign last_media_position_for_variant = ''
+            for variant in product.variants
+              assign next_variant = forloop.index0 | plus: 1
+              if forloop.last == false
+                assign last_media_position_for_variant = product.variants[next_variant].featured_media.position | minus: 1
+              else
+                assign last_media_position_for_variant = product.media.size
+              endif
+
+              assign last_media_position_for_variant = last_media_position_for_variant | minus: 1
+              assign variant_img = product.media[last_media_position_for_variant].image
+
+              if variant == value.variant
+                break
+              endif
+            endfor
+          endif
+        endfor
+      endif
+      endcomment
+
+      assign label_hidden = false
+      assign swatch_value = value.swatch | default: false
+
+      if value.swatch or variant_img
+        assign label_hidden = true
+      endif
+
+      render 'product-option', id: input_id, name: input_name, value: value, option: option, form_id: product_form_id, checked: value.selected, disabled: option_disabled, visually_hidden: true, additional_props: input_dataset, variant_img: variant_image_test, swatch_value: swatch_value, label_hidden: label_hidden, label_unavailable: label_unavailable, block: block, product: product, where: 'main-product'
+    -%}
+  {%- elsif picker_type == 'dropdown' or picker_type == 'swatch_dropdown' -%}
+    <option
+      id="{{ input_id }}"
+      value="{{ value | escape }}"
+      {% if value.selected %}
+        selected="selected"
+      {% endif %}
+      {% if swatch_value and picker_type == 'swatch_dropdown' %}
+        data-option-swatch-value="{{ swatch_value }}"
+        {% if swatch_focal_point %}
+          data-option-swatch-focal-point="{{ swatch_focal_point }}"
+        {% endif %}
+      {% endif %}
+      {{ input_dataset }}
+    >
+      {% if option_disabled -%}
+        {{- 'product.value_unavailable' | t: option_value: value -}}
+      {%- else -%}
+        {{- value -}}
+      {%- endif %}
+    </option>
+  {%- endif -%}
+{%- endfor -%}

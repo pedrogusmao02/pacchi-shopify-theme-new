@@ -1,0 +1,246 @@
+{%-
+  liquid
+  assign form_address_object = customer.new_address
+  assign address_form_id = 'AddAddress'
+  if address
+    assign form_address_object = address
+    assign address_form_id = 'EditAddress_' | append: address.id
+  endif
+-%}
+
+<div id="{{- address_form_id -}}" class="address-form account-dashboard__main-inner hidden" data-address-form>
+  <div class="account-dashboard__main-head">
+    <div class="account-dashboard__breadcrumbs">
+      <button class="link link--back" data-form-id="{{- address_form_id -}}">
+        {%- render 'icon', icon_name: 'theme-chevron', class: 'icon icon--rotate-180' -%}
+        {{- 'customer.addresses.back_to' | t -}}
+      </button>
+    </div>
+    <h2 class="account-dashboard__main-title h5">
+      {%- liquid
+        if address
+          echo 'customer.addresses.edit_address' | t
+        else
+          echo 'customer.addresses.add_address' | t
+        endif
+      -%}
+    </h2>
+  </div>
+
+  <div class="account-dashboard__body">
+    <div class="account-dashboard__col">
+      {%- form 'customer_address', form_address_object -%}
+        {%- if form.errors -%}
+          <div class="color-red">
+            {{- form.errors | default_errors -}}
+          </div>
+        {%- endif -%}
+        <div class="form-row form-row--double">
+          {%-
+            liquid
+            assign label = 'theme.form.first_name' | t
+            assign placeholder = 'theme.form.first_name_placeholder' | t
+            assign id = 'AddressFirstName_' | append: form.id
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'first_name'
+              assign error = form.errors.translated_fields['first_name'] | capitalize | append: ' ' | append: form.errors.messages['first_name']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="given-name"', name: 'address[first_name]', value: form.first_name, message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+
+          {%-
+            liquid
+            assign label = 'theme.form.last_name' | t
+            assign placeholder = 'theme.form.last_name_placeholder' | t
+            assign id = 'AddressLastName_' | append: form.id
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'last_name'
+              assign error = form.errors.translated_fields['last_name'] | capitalize | append: ' ' | append: form.errors.messages['last_name']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="family-name"', name: 'address[last_name]', value: form.last_name, message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+        </div>
+
+        <div class="form-row form-row--double">
+          {%-
+            liquid
+            assign label = 'customer.addresses.company' | t
+            assign placeholder = 'customer.addresses.company_placeholder' | t
+            assign id = 'AddressCompany_' | append: form.id
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="organization"', name: 'address[company]', value: form.company
+            assign label = nil
+            assign placeholder = nil
+          -%}
+          {%-
+            liquid
+            assign label = 'customer.addresses.address1' | t
+            assign placeholder = 'customer.addresses.address1_placeholder' | t
+            assign id = 'AddressLine1_' | append: form.id
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'address1'
+              assign error = form.errors.translated_fields['address1'] | capitalize | append: ' ' | append: form.errors.messages['address1']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="address-line1"', name: 'address[address1]', value: form.address1, message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+        </div>
+
+        <div class="form-row form-row--double">
+          {%-
+            liquid
+            assign label = 'customer.addresses.address2' | t
+            assign placeholder = 'customer.addresses.address2_placeholder' | t
+            assign id = 'AddressLine2_' | append: form.id
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="address-line2"', name: 'address[address2]', value: form.address2
+            assign label = nil
+            assign placeholder = nil
+          -%}
+          {%-
+            liquid
+            assign label = 'customer.addresses.city' | t
+            assign placeholder = 'customer.addresses.city_placeholder' | t
+            assign id = 'AddressCity_' | append: form.id
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'city'
+              assign error = form.errors.translated_fields['city'] | capitalize | append: ' ' | append: form.errors.messages['city']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="address-level2"', name: 'address[city]', value: form.city, message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+        </div>
+
+        <div class="form-row form-row--double">
+          {%-
+            liquid
+            assign label = 'customer.addresses.country' | t
+            assign id = 'AddressCountry_' | append: form.id
+            capture attr
+              echo 'data-default="' | append: form.country | append: '"'
+              echo 'autocomplete="country"'
+              if address
+                echo 'data-form-id="' | append: form.id | append: '"'
+                echo 'data-address-country-select'
+              endif
+            endcapture
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'country'
+              assign error = form.errors.translated_fields['country'] | capitalize | append: ' ' | append: form.errors.messages['country']
+              assign has_error = true
+            endif
+            render 'select-input', id: id, label: label, name: 'address[country]', options: all_country_option_tags, attr: attr, custom: true, element: 'customer-country-select', message: error, has_error: has_error, required: true
+            assign label = nil
+            assign id = nil
+            assign attr = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+          <div id="AddressProvinceContainer_{{- form.id -}}" style="display:none;">
+            {%-
+              liquid
+              assign label = 'customer.addresses.province' | t
+              assign placeholder = 'customer.addresses.province_placeholder' | t
+              assign id = 'AddressProvince_' | append: form.id
+              capture attr
+                echo 'data-default="' | append: form.province | append: '"'
+                echo 'autocomplete="address-level1"'
+              endcapture
+              render 'select-input', id: id, label: label, name: 'address[province]', attr: attr, custom: true, element: 'customer-country-select', placeholder: placeholder
+              assign label = nil
+              assign id = nil
+              assign attr = nil
+            -%}
+          </div>
+        </div>
+
+        <div class="form-row form-row--double">
+          {%-
+            liquid
+            assign label = 'customer.addresses.zip' | t
+            assign placeholder = 'customer.addresses.zip_placeholder' | t
+            assign id = 'AddressZip_' | append: form.id
+            capture attr
+              echo 'autocapitalize="characters"'
+              echo 'autocomplete="postal-code"'
+            endcapture
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'zip'
+              assign error = form.errors.translated_fields['zip'] | capitalize | append: ' ' | append: form.errors.messages['zip']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: attr, name: 'address[zip]', value: form.zip, message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign attr = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+          {%-
+            liquid
+            assign label = 'customer.addresses.phone' | t
+            assign placeholder = 'customer.addresses.phone_placeholder' | t
+            assign id = 'AddressPhone_' | append: form.id
+            assign error = ''
+            assign has_error = false
+            if form.errors contains 'phone'
+              assign error = form.errors.translated_fields['phone'] | capitalize | append: ' ' | append: form.errors.messages['phone']
+              assign has_error = true
+            endif
+            render 'text-input', label: label, placeholder: placeholder, id: id, attr: 'autocomplete="tel"', name: 'address[phone]', value: form.phone, type: 'tel', message: error, has_error: has_error, required: true
+            assign label = nil
+            assign placeholder = nil
+            assign error = nil
+            assign has_error = nil
+          -%}
+        </div>
+
+        {%- unless address == customer.default_address -%}
+          <div class="form-row">
+            <div class="checkbox">
+              {{- form.set_as_default_checkbox -}}
+
+              <label for="address_default_address_{{- form.id -}}">
+                {{- 'customer.addresses.set_default' | t -}}
+              </label>
+            </div>
+          </div>
+        {%- endunless -%}
+
+        <div class="form-row">
+          <div>
+            {%- liquid
+              assign value = 'customer.addresses.add_address' | t
+              if address
+                assign value = 'customer.addresses.update_address' | t
+              endif
+              render 'button', value: value, type: 'submit', style: 'solid', class: 'button button__update'
+            -%}
+          </div>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</div>

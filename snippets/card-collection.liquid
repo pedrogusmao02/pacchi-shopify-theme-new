@@ -1,0 +1,82 @@
+{%- comment -%}
+  Renders a collection card
+
+  Accepts:
+  - collection_ref: {Object} - Collection object
+  - class: {String} - Class to be applied to the card
+  - class_without_image: {String} Class to be applied when the card has no image. Replaces original class
+{%- endcomment -%}
+{%- liquid
+  assign class = class | default: blank
+  assign card_style = card_style | default: 'normal'
+
+  # assign collection_heading_placeholder = 'collection.label' | t
+  assign heading_size = heading_size | default: false
+  assign subheading = subheading | default: blank
+
+  assign image_default = collection_ref.featured_image
+  if section.settings.card_layout == 'product'
+    assign image_default = collection_ref.products.first.featured_image
+  endif
+  assign image = image | default: image_default
+
+  if image != blank
+    assign media_class = ' media--overlay'
+    capture card_image
+      assign image_alt = image.alt | default: heading | escape
+      render 'image', image: image, alt: image_alt
+    endcapture
+  elsif class_without_image
+    assign class = class_without_image | append: ' card-collection--no-image'
+  else
+    assign class = class | append: ' card-collection--no-image'
+  endif
+
+  assign card_arrow_btn = false
+  if section.settings.card_title_style == 'card-text-arrow'
+    assign card_arrow_btn = true
+  endif
+-%}
+<div class="card-collection {{ class }}">
+  <a href="{{- collection_ref.url -}}" class="card-collection__content-wrapper{% if section.settings.card_layout == 'text' %} button button--outlined{% if request.path == collection_ref.url %} active{% endif %}{% endif %}">
+
+    {%- if section.settings.card_layout != 'text' -%}
+      <div class="media{{ media_class }} card-collection__media">
+        {% if image != blank %}
+          {{ card_image }}
+        {% else %}
+          {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+      </div>
+    {%- endif -%}
+    <div class="card-collection__content text-{{ card_content_alignment }} {% if card_arrow_btn and card_style == 'normal' and card_layout != 'text' %} card-collection__content-arrow{% endif %}">
+      {%- if heading != blank -%}
+        <h4 class="card-collection__heading {% if heading_size %}{{ heading_size }}{% endif %}">
+          <span>{{- heading -}}</span>
+          {%- if section.settings.collection_product_count != 'hide' and collection_ref != blank -%}
+            <sup class="card-collection__counter{% if section.settings.collection_product_count == 'with_border' %} counter-border{% endif %}">
+              {{- collection_ref.products_count -}}
+            </sup>
+          {%- endif -%}
+        </h4>
+      {%- else -%}
+        <h4 class="card-collection__heading {% if heading_size %}{{ heading_size }}{% endif %}">
+          <span>{{- collection_ref.title -}}</span>
+          {%- if section.settings.collection_product_count != 'hide' and collection_ref != blank -%}
+            <sup class="card-collection__counter{% if section.settings.collection_product_count == 'with_border' %} counter-border{% endif %}">
+              {{- collection_ref.products_count -}}
+            </sup>
+          {%- endif -%}
+        </h4>
+      {%- endif -%}
+      {%- if card_arrow_btn and card_style == 'normal' and card_layout != 'text' -%}
+        <span class="card-collection__button card-collection__button--{{ settings.arrow_type }} button button--filled">
+          {%- render 'icon', icon_name: 'theme-arrow' -%}
+        </span>
+      {%- endif -%}
+    </div>
+    {%- if subheading != blank -%}
+      <div class="card-collection__subheading text-{{ card_content_alignment }} rte">{{ subheading }}</div>
+    {%- endif -%}
+  </a>
+</div>

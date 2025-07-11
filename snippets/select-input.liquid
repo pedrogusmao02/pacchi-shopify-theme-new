@@ -1,0 +1,77 @@
+{% comment %}
+  Renders select input form element
+  Accepts:
+  - id {String} ID of the input element
+  - label {String} Label of the input element
+  - name {String} Name of the input element
+  - class {String} Class of the input element
+  - label_class {String} Class of the label element
+  - options {HTML} Options to be rendered
+  - attr {HTML} Other attributes to be rendered
+  - custom {Bool} Renders custom dropdown for select input
+  - element {String} Custom HTML element for `custom` prop
+
+  Usage:
+  {%- render 'select-input',
+    id: 'select-input',
+    label: 'Select Input',
+    name: 'select-input',
+    options: options_html
+  -%}
+{% endcomment %}
+
+{%-
+  liquid
+  assign id = id | default: false
+  assign label = label | default: false
+  assign name = name | default: false
+  assign class = class | default: ''
+  assign label_class = label_class | default: ''
+  assign options = options | default: ''
+  assign element = element | default: 'dropdown-input'
+-%}
+
+<{{- element -}}>
+  {%- assign option_name = name | split: '[' | last | split: ']' | first -%}
+
+  <select
+    {% if name %}name="{{- name -}}"{% endif %}
+    {% if id %}id="{{- id -}}"{% endif %}
+    {% if attr %}{{ attr }}{% endif %}
+  >
+    {{- options -}}
+  </select>
+
+  <template data-name="option">
+    <li class="dropdown__item" data-item>
+      <button type="button" class="dropdown__item-button"></button>
+    </li>
+  </template>
+
+  <template data-name="details">
+    <details class="dropdown disclosure-has-popup no-js-hidden">
+      <summary class="dropdown__summary">
+        {%- if label -%}
+          <div class="dropdown__label">
+            {{- label | escape -}}
+          </div>
+        {%- endif -%}
+
+        <div class="dropdown__button" data-option-name="{{- option_name -}}">
+
+          {% if swatch_value %}
+            {% render 'swatch', swatch: swatch_value, shape: shape %}
+          {% endif %}
+
+          <span data-label>{{- label | escape -}}</span>
+
+          {% render 'icon', icon_name: 'theme-chevron-down', class: 'icon' %}
+        </div>
+      </summary>
+
+      <div class="dropdown__list">
+        <ul class="dropdown__items list-unstyled" data-options></ul>
+      </div>
+    </details>
+  </template>
+</{{- element -}}>

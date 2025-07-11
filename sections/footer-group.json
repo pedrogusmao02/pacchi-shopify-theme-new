@@ -1,0 +1,216 @@
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "trust_indicators_DXmKCE": {
+      "type": "trust-indicators",
+      "blocks": {
+        "indicator_HepHix": {
+          "type": "indicator",
+          "settings": {
+            "title": "Fast global shipping",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "indicator_WfHAMC": {
+          "type": "indicator",
+          "settings": {
+            "title": "Free returns",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "theme-return"
+          }
+        },
+        "indicator_GAtac7": {
+          "type": "indicator",
+          "settings": {
+            "title": "100% secure payments",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "option-lock"
+          }
+        },
+        "indicator_JpT8DX": {
+          "type": "indicator",
+          "disabled": true,
+          "settings": {
+            "title": "Customer satisfaction",
+            "subheading": "",
+            "link_label": "",
+            "link": "/",
+            "icon": "option-heart"
+          }
+        }
+      },
+      "block_order": [
+        "indicator_HepHix",
+        "indicator_WfHAMC",
+        "indicator_GAtac7",
+        "indicator_JpT8DX"
+      ],
+      "disabled": true,
+      "settings": {
+        "swipe_on_mobile": true,
+        "slideshow_autoplay_interval": 3,
+        "content_direction": "horizontal",
+        "content_alignment": "text-center",
+        "content_size": "h7",
+        "color_scheme_for_blocks": "scheme-8",
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-6",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "newsletter_wT8pfn": {
+          "type": "newsletter",
+          "settings": {
+            "column_factor": 3,
+            "row_factor": 1,
+            "heading": "Newsletter",
+            "text": "<p>Sign up to receive 10% off your first order</p>",
+            "content_position_vertical": "start",
+            "content_alignment": "start",
+            "content_alignment_for_mobile": "center"
+          }
+        },
+        "link_list_6FaNjd": {
+          "type": "link_list",
+          "settings": {
+            "column_factor": 1,
+            "row_factor": 1,
+            "menu_layout": "vertical",
+            "menu": "footer",
+            "title": "Company",
+            "title_url": "",
+            "menu_link_opacity": 100,
+            "show_first_menu_on_mobile": true
+          }
+        },
+        "link_list_YDgTgy": {
+          "type": "link_list",
+          "settings": {
+            "column_factor": 1,
+            "row_factor": 1,
+            "menu_layout": "vertical",
+            "menu": "pages",
+            "title": "Pages",
+            "title_url": "",
+            "menu_link_opacity": 100,
+            "show_first_menu_on_mobile": true
+          }
+        },
+        "link_list_NDtDLY": {
+          "type": "link_list",
+          "settings": {
+            "column_factor": 1,
+            "row_factor": 1,
+            "menu_layout": "vertical",
+            "menu": "footer-shop",
+            "title": "Shop",
+            "title_url": "",
+            "menu_link_opacity": 100,
+            "show_first_menu_on_mobile": true
+          }
+        },
+        "brand_TLymXh": {
+          "type": "brand",
+          "settings": {
+            "column_factor": 3,
+            "row_factor": 1,
+            "logo_svg_code": "",
+            "logo_width": 240,
+            "logo_width_mobile": 150,
+            "text": "<p>Release is a premium official Shopify theme designed by DigiFist.</p>",
+            "content_position_vertical": "start",
+            "content_alignment": "start",
+            "content_alignment_for_mobile": "start"
+          }
+        },
+        "social_media_YeVfDQ": {
+          "type": "social_media",
+          "settings": {
+            "column_factor": 3,
+            "row_factor": 1,
+            "icons": true,
+            "social_links_in_new_tab": true,
+            "heading": "",
+            "content_position_vertical": "end",
+            "content_alignment": "start",
+            "content_alignment_for_mobile": "start"
+          }
+        }
+      },
+      "block_order": [
+        "newsletter_wT8pfn",
+        "link_list_6FaNjd",
+        "link_list_YDgTgy",
+        "link_list_NDtDLY",
+        "brand_TLymXh",
+        "social_media_YeVfDQ"
+      ],
+      "settings": {
+        "spacing_grid": "2",
+        "show_border_top": true,
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-6",
+        "spacing_top": "0",
+        "spacing_bottom": "2"
+      }
+    },
+    "footer_JadcgE": {
+      "type": "footer",
+      "blocks": {
+        "richtext_GWFib7": {
+          "type": "richtext",
+          "settings": {
+            "column_factor": 3,
+            "row_factor": 1,
+            "heading": "",
+            "text": "<p>Copyright © [year] DigiFist. All rights reserved. Powered by Shopify.</p>",
+            "content_position_vertical": "center",
+            "content_alignment": "start",
+            "content_alignment_for_mobile": "center"
+          }
+        },
+        "payment_icons_g4NcKc": {
+          "type": "payment_icons",
+          "settings": {
+            "column_factor": 3,
+            "row_factor": 1,
+            "custom_payment_types": "",
+            "payment_icons_color": false,
+            "content_position_vertical": "center",
+            "content_alignment": "end",
+            "content_alignment_for_mobile": "center"
+          }
+        }
+      },
+      "block_order": [
+        "richtext_GWFib7",
+        "payment_icons_g4NcKc"
+      ],
+      "settings": {
+        "spacing_grid": "1",
+        "show_border_top": true,
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-6",
+        "spacing_top": "1",
+        "spacing_bottom": "1"
+      }
+    }
+  },
+  "order": [
+    "trust_indicators_DXmKCE",
+    "footer",
+    "footer_JadcgE"
+  ]
+}

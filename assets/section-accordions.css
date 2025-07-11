@@ -1,0 +1,134 @@
+.accordions {
+  padding: 4rem 0 6.4rem;
+}
+
+.accordions .section__heading {
+  margin-block-end: calc(var(--section-spacing-unit-size) * 2.25);
+}
+
+.accordions .section__heading:last-child {
+  margin-block-end: 0;
+}
+
+.accordion__button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: underline solid transparent .1rem;
+  text-underline-offset: .3rem;
+  transition: text-decoration-color var(--duration-default);
+  letter-spacing: var(--font-heading-letter-spacing);
+  padding-block: 0.2rem;
+  font-size: calc(var(--font-heading-scale) * 1.6rem);
+}
+
+.accordion__button span {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.accordion__button svg {
+  width: var(--font-heading-scale) * 1.6rem;
+  aspect-ratio: 1/1;
+}
+
+.accordion__section {
+  padding: 2.8rem 0;
+  border-block-end: 0.1rem solid rgba(var(--color-border), var(--alpha-border));
+}
+
+.accordion__section:first-child {
+  padding-block-start: 0;
+}
+
+.accordion__section:last-child {
+  padding-block-end: 0;
+  border-block-end: none;
+}
+
+.accordion__icon {
+  margin-inline-start: 1.6rem;
+  pointer-events: none;
+}
+
+.accordion__body-inner {
+  padding-block-start: 2.4rem;
+}
+
+.accordion__body p {
+  margin: 0 0 1.6rem;
+  color: rgba(var(--color-foreground), .75);
+}
+
+.accordion__body p:last-child {
+  margin-block-end: 0;
+}
+
+@media (hover: hover) {
+  .accordion__button:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .accordion__icon {
+    margin-inline-start: 3.2rem;
+  }
+
+  .accordions {
+    padding: 6.4rem 0 calc(var(--section-spacing-unit-size) * 2);
+  }
+
+  .accordion__body p {
+    margin-block-end: 3rem;
+  }
+
+  .accordion__section {
+    padding: 3.2rem 0;
+  }
+}
+
+
+/* Product accordion collapsible */
+.product__accordion {
+  padding-block: var(--spacing-5);
+  border-block-end: 1px solid rgba(var(--color-border), var(--alpha-border));
+}
+
+.product__accordion .accordion__button span svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.product__accordion .accordion__icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 1.2rem;
+}
+
+.product__accordion .accordion__icon>svg {
+  position: absolute;
+}
+
+.product__accordion .accordion__icon>svg:last-child {
+  transform: rotate(90deg);
+}
+
+.product__accordion .accordion__section.is-active .accordion__icon>svg:last-child {
+  transform: rotate(180deg);
+}
+
+.product__accordion .accordion__body p {
+  color: rgb(var(--color-foreground));
+}
+
+.product__accordion summary:hover {
+  cursor: pointer;
+}
+
+.product__accordion .accordion__body-inner {
+  padding-inline-end: 6.4rem;
+}

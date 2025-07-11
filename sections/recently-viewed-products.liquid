@@ -1,0 +1,271 @@
+{%- style -%}
+  #shopify-section-{{ section.id }}.section--recently-viewed-products:not(:has(.swiper-slide)) > div {
+    display: none;
+  }
+{%- endstyle -%}
+
+{%- capture attr -%}
+  data-product-handle="{{- product.handle -}}"
+{%- endcapture -%}
+
+{%- assign attr = attr | strip -%}
+
+{%- render 'products-feed',
+  section: section,
+  section_classes: 'hidden js-section',
+  element: 'recently-viewed-products',
+  attr: attr,
+  products_array: true
+-%}
+
+{% schema %}
+{
+  "name": "t:sections.recently-viewed-products.name",
+  "tag": "section",
+  "class": "section--recently-viewed-products",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:sections.global.section.layout.label",
+      "options": [
+        {
+          "value": "layout-1",
+          "label": "t:sections.global.section.layout.options.layout__1.label"
+        },
+        {
+          "value": "layout-2",
+          "label": "t:sections.global.section.layout.options.layout__2.label"
+        }
+      ],
+      "default": "layout-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slideshow_overflow",
+      "label": "t:sections.global.slideshow.overflow.label",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "t:sections.global.element.subheading.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.global.element.button_label.label",
+      "info": "t:sections.global.element.button_label.info",
+      "default": "View all"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.global.element.button.link.label"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "button--filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "button--outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "button--text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "button--filled"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.slideshow.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation_arrows",
+      "label": "t:sections.global.slideshow.show_navigation_arrows.label",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slider_autoplay",
+      "label": "t:sections.global.slideshow.autoplay_interval.label",
+      "info": "t:sections.global.slideshow.autoplay_interval.info",
+      "min": 0,
+      "max": 10,
+      "step": 0.5,
+      "unit": "sec",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.tabs.content"
+    },
+    {
+      "type": "select",
+      "id": "tabs_button_style",
+      "label": "t:sections.global.element.button.style.label",
+      "options": [
+        {
+          "value": "tab-btn-filled",
+          "label": "t:sections.global.element.button.style.options.filled.label"
+        },
+        {
+          "value": "tab-btn-outlined",
+          "label": "t:sections.global.element.button.style.options.outlined.label"
+        },
+        {
+          "value": "tab-btn-text",
+          "label": "t:sections.global.element.button.style.options.text.label"
+        }
+      ],
+      "default": "tab-btn-filled"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:sections.products-feed.settings.max_products.label",
+      "info": "t:sections.products-feed.settings.max_products.info",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_unavailable_products",
+      "label": "t:sections.products-feed.settings.show_unavailable_products.label",
+      "info": "t:sections.products-feed.settings.show_unavailable_products.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section.width.label_alt",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section.width.options.page.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section.width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-page"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.recently-viewed-products.name"
+    }
+  ]
+}
+{% endschema %}

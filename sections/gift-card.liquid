@@ -1,0 +1,146 @@
+<div class="gift-card__header center">
+  <a class="gift-card__logo full-unstyled-link" href="{{- routes.root_url -}}">
+    {%- if section.settings.logo_svg_code != blank -%}
+      {{- section.settings.logo_svg_code -}}
+    {%- elsif section.settings.logo_image != blank -%}
+      {%- render 'image', image: section.settings.logo_image -%}
+    {%- else -%}
+      <h2>{{- shop.name -}}</h2>
+    {%- endif -%}
+  </a>
+</div>
+
+<div class="gift-card__main center">
+  <div class="container max-w-narrow gift-card__inner">
+
+    <div class="gift-card__cover color-{{ section.settings.color_scheme_for_cover }}">
+      {%- assign formatted_balance = gift_card.balance | money_without_trailing_zeros | strip_html -%}
+      <h1 class="h4">{{ 'gift_card.heading' | t: value: formatted_balance, shop: shop.name }}</h1>
+      <div class="gift-card__image-wrapper relative">
+        {%- liquid
+          if section.settings.logo_card_image != blank
+            assign image = section.settings.logo_card_image
+            assign logo_image_src = image | image_url: width: image.width
+          else
+            assign logo_image_src = 'gift-card/card.svg' | shopify_asset_url
+          endif
+          assign logo_image_alt = section.settings.logo_card_image.alt | default: shop.name | escape
+
+          echo '<img width="auto" height="auto" src="' | append: logo_image_src | append: '" alt="' | append: logo_image_alt | append: '" class="gift-card__image" loading="lazy">'
+        -%}
+
+        <p class="gift-card__price">
+          {%- liquid
+            if gift_card.enabled == false or gift_card.expired
+              echo 'gift_card.expired' | t
+            elsif gift_card.balance != gift_card.initial_value
+              assign gift_card_balance = gift_card.balance | money_without_trailing_zeros
+              assign initial_value = gift_card.initial_value | money_without_trailing_zeros
+              if settings.show_currency_codes
+                assign gift_card_balance = gift_card.balance | money_with_currency
+              endif
+              echo 'gift_card.remaining_amount' | t: balance: gift_card_balance, initial_value: initial_value
+            else
+              if settings.show_currency_codes
+                echo gift_card.initial_value | money_with_currency
+              else
+                echo gift_card.initial_value | money_without_trailing_zeros
+              endif
+            endif
+          -%}
+        </p>
+      </div>
+    </div>
+
+    <div class="gift-card__content">
+      <div class="gift-card__subtext">
+        <p>{{- 'gift_card.how_to_use_gift_card' | t -}}</p>
+      </div>
+      <div class="gift-text-code">
+        <div class="field">
+          <input
+            type="text"
+            class="gift-card__number field__input center"
+            value="{{ gift_card.code | format_code }}"
+            aria-label="{{ 'gift_card.code' | t }}"
+            readonly
+          >
+        </div>
+        {%- if gift_card.pass_url -%}
+          <a href="{{ gift_card.pass_url }}" class="gift_card__apple-wallet">
+            <img src="{{ 'gift-card/add-to-apple-wallet.svg' | shopify_asset_url }}" width="120" height="40" alt="{{ 'gift_card.add_to_apple_wallet' | t }}" loading="lazy">
+          </a>
+        {%- endif -%}
+      </div>
+
+      <div class="gift-card__qr-code" data-identifier="{{ gift_card.qr_identifier }}"></div>
+
+      <div class="gift-card__information">
+        <div class="gift-card__buttons no-print">
+          <div class="form-row">
+            {%- liquid
+              assign value = 'theme.actions.print' | t
+              assign attr = 'onclick="window.print();"'
+              render 'button', value: value, attr: attr, class: 'button button--outlined'
+              assign value = nil
+              assign attr = nil
+            -%}
+          </div>
+
+          <div class="form-row">
+            {%- liquid
+              assign value = 'theme.actions.start_shopping' | t
+              capture attr
+                echo 'target="_blank"'
+                echo 'rel="noopener"'
+                echo 'aria-describedby="a11y-new-window-message"'
+              endcapture
+              render 'button', type: 'link', href: request.origin, value: value, attr: attr, class: 'button button--primary'
+              assign value = nil
+              assign attr = nil
+            -%}
+          </div>
+        </div>
+      </div>
+      <div hidden>
+        <span id="a11y-new-window-message">{{ 'theme.accessibility.open_in_new_window' | t }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.gift_card.name",
+  "class": "gift-card",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo_image",
+      "label": "t:sections.gift_card.settings.logo_image.label"
+    },
+    {
+      "type": "textarea",
+      "id": "logo_svg_code",
+      "label": "t:sections.gift_card.settings.logo_svg_code.label",
+      "info": "t:sections.gift_card.settings.logo_svg_code.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.cover.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme_for_cover",
+      "default": "scheme-6",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_card_image",
+      "label": "t:sections.gift_card.settings.logo_card_image.label",
+      "info": "t:sections.gift_card.settings.logo_card_image.info"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,152 @@
+ 
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "localization_FXcM4j": {
+          "type": "localization",
+          "settings": {
+            "show_on": "desktop"
+          }
+        },
+        "link_pEAxig": {
+          "type": "link",
+          "settings": {
+            "show_on": "desktop",
+            "link_label": "Our Stores",
+            "link": "/",
+            "icon": "store"
+          }
+        },
+        "cee0c4f6-5546-43a3-bfc3-2f3afa36d9d5": {
+          "type": "text-slide",
+          "settings": {
+            "content": "<p>FREE SHIPPING ON US ORDERS OVER $150</p>",
+            "icon": "theme-box"
+          }
+        },
+        "5e0cad2e-d931-416e-ac29-51a4a683ade2": {
+          "type": "text-slide",
+          "settings": {
+            "content": "<p>Welcome to Our Store</p>",
+            "icon": "theme-box"
+          }
+        },
+        "link_h8t4xz": {
+          "type": "link",
+          "settings": {
+            "show_on": "desktop",
+            "link_label": "New Products",
+            "link": "/",
+            "icon": "theme-box"
+          }
+        },
+        "timer_UXXqcR": {
+          "type": "timer",
+          "settings": {
+            "show_on": "desktop",
+            "timer_year": 2025,
+            "timer_month": "09",
+            "timer_day": 23,
+            "timer_hour": 0,
+            "timer_minute": 0,
+            "timer_end_message": "Sale has ended",
+            "show_timer_days": true,
+            "show_timer_hours": true,
+            "show_timer_minutes": true,
+            "show_timer_seconds": true
+          }
+        }
+      },
+      "block_order": [
+        "localization_FXcM4j",
+        "link_pEAxig",
+        "cee0c4f6-5546-43a3-bfc3-2f3afa36d9d5",
+        "5e0cad2e-d931-416e-ac29-51a4a683ade2",
+        "link_h8t4xz",
+        "timer_UXXqcR"
+      ],
+      "settings": {
+        "text_block_behaviour": "slider",
+        "slider_autoplay_interval": 5,
+        "font_weight": "700",
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-6"
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "b24138db-2e60-43bf-a7d4-d853a4298828": {
+          "type": "image-link-text",
+          "settings": {
+            "show_on": "both",
+            "menu_item_position": 2,
+            "color_scheme": "",
+            "card_aspect_ratio": "same_as_section",
+            "content_position_horizontal": "align-center text-center",
+            "content_position_vertical": "justify-center",
+            "title": "Transient Echoes",
+            "subtitle": "SPOTLIGHT",
+          }
+        },
+        "37cd2d1d-2b56-4ed5-93d6-934e97ab2ca2": {
+          "type": "image-link-text",
+          "settings": {
+            "show_on": "both",
+            "menu_item_position": 2,
+            "color_scheme": "",
+            "card_aspect_ratio": "same_as_section",
+            "content_position_horizontal": "align-center text-center",
+            "content_position_vertical": "justify-center",
+            "title": "Get ready for the sun",
+            "subtitle": "SS25",
+          }
+        }
+      },
+      "block_order": [
+        "b24138db-2e60-43bf-a7d4-d853a4298828",
+        "37cd2d1d-2b56-4ed5-93d6-934e97ab2ca2"
+      ],
+      "settings": {
+        "layout": "",
+        "sticky": true,
+        "nav_items_border": false,
+        "drawer_layer": true,
+        "logo_svg_code": "",
+        "logo_width": 100,
+        "logo_width_mobile": 100,
+        "logo_font_size": 1,
+        "transparent_header_bottom_border": true,
+        "country_drawer_header": true,
+        "country_drawer_navigation_menu": true,
+        "utils_link_display": "icon",
+        "first_additional_link_title": "",
+        "first_additional_link_url": "#",
+        "second_additional_link_title": "",
+        "second_additional_link_url": "",
+        "menu": "main-menu",
+        "menu_mobile": "",
+        "submenu": "search-suggestions",
+        "menu_mobile_card_column_count": "2",
+        "parent_link_size": "md",
+        "parent_without_submenu_size": "lg",
+        "spacing_between_cards": "2",
+        "card_aspect_ratio": "3/4",
+        "card_aspect_ratio_mobile": "3/4",
+        "megamenu_dropdown_column_width": 23.4,
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-1",
+        "color_scheme_for_dropdown": "",
+        "color_scheme_for_drawer": ""
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header"
+  ]
+}

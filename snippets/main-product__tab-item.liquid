@@ -1,0 +1,57 @@
+{% comment %}
+  Renders tab item for main-product content tabs block
+  Accepts:
+  - type: {String} trigger or content
+  - index: {Number} index of this block in the section.
+  - heading: {String} heading to display.
+  - icon: {String} icon to display.
+  - custom_icon: {String} icon to display.
+  - content: {String} content to display.
+  - page: {Page} page object.
+  - is_description: {Boolean} whether this is the description tab.
+  - is_active: {Boolean} whether this is the active tab.
+  - block: {Object} block object.
+
+
+  Usage:
+  {% render 'main-product__tab-item' %}
+{% endcomment %}
+
+{% assign tab_id = 'tab-' | append: index | append: '-' | append: block.id %}
+
+{% if type == 'trigger' %}
+  <button
+    class="product__tab product__tab--trigger"
+    data-tab="{{- tab_id -}}"
+    {% if is_active %}
+      data-default-open="{{ tab_id }}"
+    {% endif %}
+  >
+    {% if custom_icon != blank %}
+      {{ custom_icon | image_url: width: 24 | image_tag: alt: custom_icon.alt }}
+    {% elsif custom_icon == blank and icon != blank %}
+      {% render 'icon', icon_name: icon %}
+    {% endif %}
+    {% unless is_description %}
+      <span>{{- heading -}}</span>
+    {% else %}
+      {% if heading != blank %}
+        <span>{{- heading -}}</span>
+      {% else %}
+        <span>{{ 'product.description' | t }}</span>
+      {% endif %}
+    {% endunless %}
+  </button>
+{% elsif type == 'content' %}
+  <div id="{{- tab_id -}}" class="product__tab-content">
+    {% unless is_description %}
+      {%- if page != blank and page.content != blank -%}
+        {{- page.content -}}
+      {%- elsif content != blank -%}
+        {{- content -}}
+      {%- endif -%}
+    {% else %}
+      {{- product.description -}}
+    {% endunless %}
+  </div>
+{% endif %}

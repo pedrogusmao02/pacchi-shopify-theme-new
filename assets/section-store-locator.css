@@ -1,0 +1,562 @@
+/* LAYOUT * GRID */
+
+.store-locator-page .grid,
+.store-locator .grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media screen and (min-width: 750px) {
+  .store-locator-page .grid,
+  .store-locator .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .store-locator .grid.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .store-locator .grid.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.store-locator-page .store-locator-page__title,
+.store-locator-page .store-locator-page__breadcrumbs {
+  text-align: center;
+  padding-block-end: 6.4rem;
+}
+
+.store-locator .store-locator__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block-end: 3.6rem;
+}
+
+.store-locator .store-locator__swiper-buttons {
+  position: static;
+  padding: 0;
+}
+
+.store-locator store-locator-slider {
+  overflow: hidden;
+}
+/* fix: default swiper class styles */
+store-locator-slider.swiper:not(.store-locator__map-cards) {
+  margin: 0 -1.6rem 0 0;
+}
+
+@media screen and (min-width: 750px) {
+  .store-locator store-locator-slider:not(.store-locator__map-cards) {
+    grid-column: var(--slider-grid-column, span 2 / span 2);
+  }
+
+  store-locator-slider.swiper:not(.store-locator__map-cards) {
+    margin: 0 -3.6rem 0 0;
+  }
+}
+
+/* MAP LAYOUT */
+
+.store-locator__map-layout {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  position: relative;
+}
+
+@media screen and (min-width: 750px) {
+  .store-locator__map-layout {
+    grid-column: span 2 / span 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--section-gap-between-tiles);
+  }
+  .store-locator-page .store-locator-card:nth-of-type(even)>div:first-child {
+    order: 2;
+  }
+}
+
+
+.store-locator__map-container {
+  position: relative;
+  z-index: 1;
+  height: var(--section-card-height);
+  width: 100%;
+  background-color: rgb(var(--color-background));
+  border-radius: var(--card-corner-radius);
+}
+
+.store-locator__map,
+#google_map {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 1;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: var(--card-corner-radius);
+}
+
+/* hide goggle labels & infos */
+img[alt="Google"],
+.gmnoprint {
+  display: none !important;
+}
+
+/* HTML marker styles */
+.store-locator__map--custom-marker {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  transform: translateY(1rem);
+}
+
+.store-locator__map--custom-marker--label {
+  font-family: var(--font-heading-family);
+  background-color: #fff;
+  color: #000;
+  border-radius: .8rem;
+  padding: 1.2em;
+  position: relative;
+  font-size: var(--font-size-static-md);
+  line-height: var(--line-height-static-sm);
+  letter-spacing: -.064rem;
+}
+
+.store-locator__map--custom-marker--label::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, 0);
+  width: 0;
+  height: 0;
+  border-inline: 0.8rem solid transparent;
+  border-block-start: 0.8rem solid rgba(var(--color-white-rgb), 1);
+}
+[dir='rtl'] .store-locator__map--custom-marker--label::after {
+  transform: translate(50%, 0);
+}
+
+.store-locator__map--custom-marker--point {
+  position: relative;
+  display: block !important;
+  width: 2rem;
+  height: 2rem;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.store-locator__map--custom-marker--point::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: -1.4rem;
+  width: 4.8rem;
+  height: 4.8rem;
+  background-color: #fff;
+  border-radius: 50%;
+  opacity: .5;
+  z-index: -1;
+}
+
+.store-locator__map--custom-marker--hours {
+  display: none;
+}
+
+.store-locator__map--custom-marker--buttons {
+  display: none;
+}
+
+.store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--label {
+  background-color: #5E5A59;
+  color: #fff;
+}
+
+.store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--label::after {
+  border-block-start: 0.8rem solid #5E5A59;
+}
+
+.store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--point {
+  background-color: #5E5A59;
+}
+
+.store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--point::after {
+  background-color: #5E5A59;
+}
+
+.store-locator__map-cards.swiper {
+  width: 100%;
+}
+
+@media screen and (min-width: 750px) {
+  .store-locator__map-layout--with-search .store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--label .store-locator__map--custom-marker--hours {
+    display: block;
+    color: #fff;
+    padding: 1.6rem 0;
+    font-size: var(--font-size-static-sm);
+  }
+
+    .store-locator__map-layout--with-search .store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--label .store-locator__map--custom-marker--buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+    .store-locator__map-layout--with-search .store-locator__map--custom-marker.store-locator__map--custom-marker--active .store-locator__map--custom-marker--label .store-locator__map--custom-marker--buttons .button {
+    --color-button-background: #fff;
+    text-transform: uppercase;
+  }
+
+  .store-locator__map--custom-marker--label {
+    font-size: var(--font-size-static-lg);
+  }
+}
+
+/* PIN CARDS */
+.store-locator-card {
+  position: relative;
+  height: var(--section-card-height);
+}
+
+.store-locator__map-cards.swiper .swiper-wrapper .store-locator-card {
+  width: 100%;
+}
+
+.store-locator-card__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 2.4rem 4.8rem;
+  border-radius: var(--card-corner-radius);
+}
+
+.store-locator-card__image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--card-corner-radius);
+}
+
+.store-locator-card__cross {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  color: #fff;
+  inset-block-start: 2.2rem;
+  inset-inline-end: 1.6rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  cursor: pointer;
+}
+
+.store-locator-card__cross svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.store-locator-card__image img,
+.store-locator-card__image svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.store-locator-card.store-locator-card__without-image .store-locator-card__image {
+  display: none;
+}
+
+.store-locator-card.store-locator-card__without-image .store-locator-card__content,
+.store-locator-card:not(.store-locator-card__with-image):not(.store-locator-card__with-image--overlay) .store-locator-card__content {
+  padding-block-start: 10.8rem;
+}
+
+.store-locator
+.store-locator-card.store-locator-card__with-image .store-locator-card__image + .store-locator-card__content,
+.store-locator
+.store-locator-card.store-locator-card__with-image--overlay .store-locator-card__image + .store-locator-card__content {
+  width: calc(100% - 4.8rem);
+  max-width: 36rem;
+  height: auto;
+  position: absolute;
+  inset-block-end: 2.4rem;
+  inset-inline-start: 2.4rem;
+}
+
+.store-locator-card.store-locator-card__with-image {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media screen and (min-width: 750px) {
+  .store-locator-card.store-locator-card__with-image {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-column: span 2 / span 2;
+    gap: var(--section-gap-between-tiles);
+  }
+
+  .store-locator-card.store-locator-card__with-image
+    .store-locator-card__image
+    + .store-locator-card__content {
+    width: initial;
+    max-width: initial;
+    position: initial;
+    inset-block-end: initial;
+    inset-inline-start: initial;
+  }
+
+  .store-locator-card__cross {
+    display: none;
+  }
+}
+
+
+.store-locator-card__text-content {
+  display: flex;
+  gap: .8rem;
+  margin-block-end: 0.8rem;
+  align-items: center;
+}
+
+.store-locator-card__text-content svg {
+  width: 1em; height: 1em;
+}
+
+.store-locator-cards__single-tile .store-locator-card__text-content {
+  gap: 1.4rem;
+}
+
+.store-locator-card__title,
+h2.store-locator-card__title {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-size: var(--font-size-static-md);
+  letter-spacing: 2px;
+  line-height: var(--line-height-static-sm);
+  color: rgb(var(--color-heading-text));
+}
+
+.store-locator-cards__single-tile .store-locator-card__title,
+.store-locator-cards__single-tile h2.store-locator-card__title {
+  font-family: var(--font-heading-family);
+  font-size: var(--font-size-static-xxl);
+}
+
+.store-locator-card__schedule-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-locator-card__schedule-container-actions-gap {
+  margin-block-end: 1rem;
+}
+
+.store-locator-card__paragraph,
+p.store-locator-card__paragraph, .store-locator-card__paragraph p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--font-size-static-sm);
+  color: rgb(var(--color-heading-text));
+}
+
+.store-locator-card__actions {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-2);
+  margin-block-start: var(--spacing-5);
+}
+
+.store-locator-card__button {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.store-locator-card__button-tel {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 749px) {
+  .store-locator-card__actions {
+    flex-flow: column;
+  }
+
+  .store-locator-card__button {
+    width: 100%;
+  }
+}
+
+.store-locator-card__coordinate-title,
+.store-locator-card__longitude,
+.store-locator-card__latitude {
+  display: none;
+}
+
+/* IMAGE CARD */
+
+.store-locator__image-title {
+  margin-block-end: 3.6rem;
+}
+
+.store-locator__image-title span {
+  display: block;
+  text-align: center;
+  font-size: var(--font-size-static-xs);
+  font-family: var(--font-heading-family);
+  color: rgb(var(--color-heading-text));
+  text-transform: uppercase;
+  letter-spacing: 0.24rem;
+}
+
+.store-locator-image-card {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  border-radius: var(--card-corner-radius);
+  overflow: hidden;
+}
+
+.store-locator-card__content {
+  inset-block-end: 2.4rem;
+  inset-inline-start: 2.4rem;
+}
+
+.store-locator-card__opening-hour {
+  margin-block-start: 0.4rem;
+}
+
+.store-locator-card__opening-hour > * {
+  margin: 0;
+}
+
+/* SEE MORE CARD */
+.store-locator-card.store-locator-card__see-more .store-locator-card__title {
+  padding: 0;
+  margin-block-end: 6.4rem;
+}
+
+.store-locator__map-layout--with-search .store-locator__map-cards .store-locator-card__see-more .store-locator-card__title {
+  margin-block-end: 3.6rem;
+}
+
+/* MAP CARDS */
+.store-locator__map-cards {
+  position: relative;
+}
+
+@media screen and (max-width: 749px) {
+  .store-locator__map-cards {
+    position: absolute;
+    inset-block-end: 0;
+    z-index: 1;
+    width: 100%;
+    padding: .8rem;
+  }
+  .store-locator__map-cards .store-locator-card {
+    height: fit-content;
+  }
+  .store-locator__map-cards .store-locator-card__content {
+    padding: 2.4rem 1.6rem !important;
+  }
+  .store-locator__map-cards .store-locator-card.store-locator-card__see-more .store-locator-card__title {
+    margin-block-end: 2.4rem;
+  }
+}
+
+.store-locator__map-layout--with-search .store-locator__map-cards .store-locator-card .store-locator-card__content {
+  padding-block: 18.5rem;
+}
+
+.store-locator__map-cards .store-locator-card.store-locator-card__see-more .button {
+  width: fit-content;
+}
+
+.store-locator__map-cards:not(.store-locator__map-cards--no-see-more) .store-locator-card:not(.store-locator-card__see-more) {
+  display: none;
+}
+
+.store-locator__map-cards.store-locator__map-cards--no-see-more .store-locator-card:not(.store-locator-card:first-child) {
+  display: none;
+}
+
+.store-locator__map-cards.swiper .store-locator-card.swiper-slide {
+  display: block;
+  height: auto;
+}
+
+/* Card background styles*/
+.store-locator-card.store-locator-card__with-image--overlay.store-locator-card--blurred .store-locator-card__content {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.10);
+  backdrop-filter: blur(1.2rem);
+}
+
+.store-locator-card.store-locator-card__with-image--overlay.store-locator-card--transparent .store-locator-card__content {
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+@media screen and (max-width: 749px) {
+  .store-locator__map-cards .store-locator-card.store-locator-card--blurred .store-locator-card__content {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.10);
+    backdrop-filter: blur(1.2rem);
+  }
+
+  .store-locator__map-cards .store-locator-card.store-locator-card--transparent .store-locator-card__content {
+    border: 1px solid transparent;
+    background: transparent;
+  }
+}
+
+/* Search box */
+
+.store-locator__search-controls {
+  position: relative;
+  margin-block-end: 3.6rem;
+}
+
+.store-locator__map-layout--with-search .store-locator__map-cards .store-locator-card .store-locator-card__content .store-locator__search-controls {
+  margin-block-end: 0;
+}
+
+/* clears default ‘X’ appears on search input from Chrome */
+.store-locator__search-controls input[type="search"]::-webkit-search-decoration,
+.store-locator__search-controls input[type="search"]::-webkit-search-cancel-button,
+.store-locator__search-controls input[type="search"]::-webkit-search-results-button,
+.store-locator__search-controls input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+.store-locator__search-controls .store-locator__search-button {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: unset;
+  inset-inline-end: 1.6rem;
+  transform: translate(0, -50%);
+  text-transform: uppercase;
+}
+
+.store-locator__search-controls .store-locator__search-button svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.store-locator input[type="search"] {
+  border-radius: 4rem;
+}
+
+.store-locator-card.store-locator-card__search .store-locator-card__content {
+  padding-inline: 8.8rem;
+  justify-content: center;
+  text-align: center;
+}
+
+@media screen and (min-width: 990px) {
+  store-locator-slider.swiper .swiper-slide .store-locator-card.store-locator-card__see-more {
+    height: inherit;
+  }
+}

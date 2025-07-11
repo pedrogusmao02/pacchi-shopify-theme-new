@@ -1,0 +1,236 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} > div  {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+  }
+  #shopify-section-{{ section.id }} > div .section__heading {
+    margin-block-end: calc(var(--section-spacing-unit-size) * 1.5);
+  }
+  #shopify-section-{{ section.id }} > div > div.gradient {
+    padding: calc(var(--spacing-unit-size) * {{ section.settings.spacing_inner }});
+    border-radius: var(--card-corner-radius);
+  }
+{%- endstyle -%}
+
+<div class="{%- if section.settings.section_layout == 'boxed' -%}container {{ section.settings.section_width }}{%- else -%}color-{{ section.settings.color_scheme }} gradient{%- endif -%}">
+  <div class="{%- if section.settings.section_layout == 'normal' -%}container {{ section.settings.section_width }}{%- else -%}color-{{ section.settings.color_scheme }} gradient{%- endif -%}">
+    <div class="seo-content js-animation-fade-in">
+      <div class="text-{{ section.settings.content_alignment }}">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="section__heading {{ section.settings.heading_size }}">
+            {{- section.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        <div class="rte">
+          {{- section.settings.text -}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "t:sections.seo-content.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_layout",
+      "label": "t:sections.global.section.layout.label",
+      "options": [
+        {
+          "value": "normal",
+          "label": "t:sections.global.section.layout.options.normal.label"
+        },
+        {
+          "value": "boxed",
+          "label": "t:sections.global.section.layout.options.boxed.label"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Heading for SEO Content"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.global.element.text.label",
+      "default": "<p>Enter your long text content here. This can include your store description or more detailed description of your brand.</p>"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.global.content.alignment.label",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:sections.global.content.alignment.options.start.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.global.content.alignment.options.center.label"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.global.content.alignment.options.end.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section_width.label",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section_width.options.page.label"
+        },
+        {
+          "value": "max-w-narrower",
+          "label": "t:sections.global.section_width.options.narrower.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section_width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-narrower"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_inner",
+      "label": "t:sections.global.spacing.inner.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "t:sections.global.spacing.options.none.label"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.seo-content.name"
+    }
+  ]
+}
+{% endschema %}

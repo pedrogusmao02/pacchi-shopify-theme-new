@@ -1,0 +1,123 @@
+#recover {
+  display: none;
+}
+
+#recover:target {
+  display: block;
+}
+
+#recover:target ~ #login {
+  display: none;
+}
+
+.account {
+  color: rgb(var(--color-foreground));
+  background-color: rgb(var(--color-background));
+}
+
+.account .recover-link {
+  color: rgb(var(--color-foreground));
+  font-size: var(--font-size-static-xs);
+  line-height: var(--line-height-static-sm);
+  text-transform: var(--font-button-text-transform);
+  letter-spacing: var(--letter-spacing-small);
+  display: block;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.account .media {
+  border-radius: 0;
+}
+
+.form-customer--login,
+.form-customer--recover,
+.form-customer--register,
+.form-customer--reset,
+.form-customer--activate {
+  padding-block-start: 4rem;
+}
+
+.account .form-customer.form-customer--reset {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.form-customer--recover {
+  padding-block-end: 6.4rem;
+}
+
+.form-customer__title {
+  margin: 0;
+}
+
+.form-customer__head {
+  margin-block-end: 2.4rem;
+}
+
+.form-customer .form-row + .form-row {
+  margin-block-start: 2.4rem;
+}
+
+.form-customer__callout {
+  margin-block-start: 4.2rem;
+  padding: 4rem 0 6.4rem;
+  border-block-start: 0.1rem solid rgba(var(--color-border), var(--alpha-border));
+}
+
+.form-customer__callout-title {
+  margin: 0 0 2.4rem;
+}
+
+@media screen and (min-width: 990px) {
+  .form-customer--login,
+  .form-customer--recover,
+  .form-customer--register {
+    padding-block-start: 8.8rem;
+  }
+
+  .account {
+    display: flex;
+  }
+
+  .account__col {
+    min-width: 50%;
+    flex: 1;
+    min-height: 100%;
+  }
+  .account__col .media {
+    height: calc(100vh - var(--header-height) + var(--announcement-bars-before-header-heights));
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .account .form-customer {
+    max-width: calc(43.2rem + calc(var(--page-gutter) * 2));
+    margin-inline-start: calc(12rem - var(--page-gutter));
+  }
+}
+
+/* centered layout */
+.account__col.account__col--center {
+  display: flex;
+  justify-content: center;
+  padding-block: 12.8rem;
+}
+
+.account__col.account__col--center .form-customer__title,
+.account__col.account__col--center .form-customer__callout-title {
+  text-align: center;
+}
+
+.account__col.account__col--center .form-customer {
+  padding-block-start: 0;
+}
+
+.account__col.account__col--center .button {
+  display: block;
+  margin: 0 auto;
+}
+
+.account__col.account__col--center .button:not(.button--text) {
+  width: 100%;
+}

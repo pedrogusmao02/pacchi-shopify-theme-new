@@ -1,0 +1,72 @@
+{%- render 'cart-drawer' -%}
+
+{% schema %}
+{
+  "name": "t:sections.cart-drawer.name",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.cart-drawer.settings.product_card_head.label"
+    },
+    {
+      "type": "select",
+      "id": "card_media_aspect_ratio",
+      "label": "t:settings_schema.cards.settings.card_media_aspect_ratio.label",
+      "options": [
+        {
+          "value": "1\/1",
+          "label": "1:1"
+        },
+        {
+          "value": "3\/4",
+          "label": "3:4"
+        },
+        {
+          "value": "5\/6",
+          "label": "5:6"
+        }
+      ],
+      "default": "3\/4"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.cart-drawer.settings.empty_cart_head.label",
+      "info": "Empty cart content can be updated from locales, under cart section."
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "t:sections.global.element.button.link.label",
+      "default": "/collections"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info-bar",
+      "name": "t:sections.cart-drawer.blocks.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "t:sections.global.element.icon.label",
+          "info": "t:sections.global.element.icon.info",
+          "default": "theme-box"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "t:sections.global.element.icon.custom_icon.label",
+          "info": "t:sections.global.element.icon.custom_icon.info"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.element.title.label",
+          "default": "Information title goes here"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

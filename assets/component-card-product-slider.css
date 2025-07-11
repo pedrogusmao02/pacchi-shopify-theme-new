@@ -1,0 +1,282 @@
+card-product-slider,
+recently-viewed-products,
+complementary-products {
+  display: block;
+}
+
+html .card-product-slider {
+  overflow: visible;
+}
+
+.card-product-slider__buttons {
+  position: static;
+  padding: 0;
+  transform: none;
+  justify-content: flex-end;
+}
+
+/* .card-product-slider .card-product-slider__slide {
+  width: calc(100% - 16.666%);
+} */
+
+html.no-js .card-product-slider__wrapper {
+  overflow-x: auto;
+  margin: 0 calc(0rem - var(--page-gutter));
+  padding: 0 var(--page-gutter) 2rem;
+}
+
+html.no-js .card-product-slider__slide + .card-product-slider__slide {
+  margin-inline-start: .2rem;
+}
+
+.card-product-slider--secondary {
+  width: 72.5%;
+  margin-inline-start: 0;
+}
+
+.product-feed .section__title {
+  word-break: break-all;
+}
+
+.product-feed:not(.section-featured-products) .section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-feed:not(.section-featured-products).layout-1 .section__head .button {
+  display: none;
+}
+
+.product-feed:not(.section-featured-products).layout-2 .section__foot {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  .swiper.card-product-slider {
+    margin-inline-start: 0;
+    margin-inline-end: auto;
+  }
+
+  .swiper-wrapper.card-product-slider__wrapper {
+    max-width: 80%;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  html.js .card-product-slider {
+    overflow: hidden;
+  }
+
+  html.js .card-product-slider.overflow-unset {
+    overflow: unset;
+  }
+
+  .card-product-slider__buttons > :not(.swiper-button-lock) {
+    margin-block-start: 3.2rem;
+  }
+
+  html.js .card-product-slider--secondary,
+  html.no-js .card-product-slider--secondary {
+    overflow: visible;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .card-product-slider--secondary {
+    width: 100%;
+  }
+}
+
+/* section: featured-products */
+.products-feed__tab {
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  padding-block-end: 3.6rem;
+  overflow-x: scroll;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.products-feed__tab-spacer {
+  flex: 1;
+}
+.products-feed__tab-spacer:empty {
+  display: block;
+}
+
+.products-feed__card-text--heading h5 {
+  line-height: 95%
+}
+
+.products-feed__card-text--button {
+  margin-block-start: var(--spacing-5);
+}
+
+.products-feed__card-text-custom-slide {
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--color-placeholder));
+}
+
+@media screen and (max-width: 990px) {
+  .products-feed__card-text--heading h5 {
+    font-size: var(--font-size-static-h6);
+  }
+
+  .products-feed__card-text-custom-slide {
+    padding: var(--spacing-5);
+  }
+}
+
+.products-feed__tab button {
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.products-feed__tab button:not(.active) {
+  border-color: transparent;
+}
+
+.products-feed__tab button.button--filled.active:hover {
+  --color-button-hover-text: rgb(var(--color-filled-button-text));
+  --color-button-hover-background: rgb(var(--color-filled-button));
+  --color-button-hover-outline: rgb(var(--color-filled-button));
+}
+
+.products-feed__tab button.tab-btn-filled {
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.products-feed__tab button.tab-btn-filled:hover {
+  background-color: rgba(var(--color-foreground), .25);
+  color: rgb(var(--color-foreground));
+}
+
+.products-feed__tab button.tab-btn-outlined {
+  border-color: rgb(var(--color-foreground));
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+.products-feed__tab button.tab-btn-outlined:hover {
+  background-color: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+}
+
+.products-feed__tab button.tab-btn-text {
+  font-size: var(--font-size-static-h4);
+  text-transform: capitalize;
+  border-color: transparent;
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+.products-feed__tab button.tab-btn-text:hover {
+  color: rgba(var(--color-foreground), .25);
+}
+
+.products-feed__tab button.tab-btn-text.active {
+  color: rgba(var(--color-foreground), .5);
+}
+
+.products-feed__tab button.tab-btn-filled.active,
+.products-feed__tab button.tab-btn-outlined.active {
+  border-color: transparent;
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+.products-feed__tabcontent {
+  display: none;
+  animation: fadeEffect 1s;
+  /* Fading effect takes 1 second */
+}
+
+.products-feed__tab .button--filled:not(.active),
+.products-feed__tab .button--outlined:not(.active) {
+  background-color: transparent;
+  color: rgb(var(--color-foreground));
+}
+
+.products-feed__tab .button--filled:not(.active):hover,
+.products-feed__tab .button--outlined:not(.active):hover {
+  background-color: rgba(var(--color-foreground), 0.05);
+  color: rgb(var(--color-foreground));
+  border-color: transparent;
+}
+
+.products-feed__tab button.button--text {
+  font-family: var(--font-heading-family);
+  font-size: calc(var(--font-heading-scale) * var(--h3-multiplier));
+  padding: unset;
+  outline: none;
+  cursor: pointer;
+  border: 0;
+  line-height: var(--line-height-static-xs);
+  letter-spacing: var(--font-heading-letter-spacing);
+  text-transform: capitalize;
+  background-color: transparent;
+}
+
+.products-feed__tab button.button--text:not(.active) {
+  color: rgba(var(--color-foreground), 0.25);
+}
+
+.products-feed__tab button.button--text:not(.active):hover {
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+.products-feed__tab button.button--text::after {
+  display: none;
+}
+
+.products-feed__tab button:not(.button--text) {
+  font-size: var(--font-size-static-sm);
+}
+
+.section-featured-products.section {
+  padding: unset;
+  background-color: unset;
+}
+
+.section-featured-products .text--label {
+  font-size: var(--font-size-static-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-static-sm);
+  letter-spacing: 0.15rem;
+}
+
+.section-featured-products.layout-2 .text--label {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.24rem;
+}
+
+@keyframes fadeEffect {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .products-feed__tab {
+    gap: 2.4rem;
+  }
+
+  .products-feed__tab:not(:has(.button--text)) {
+    gap: 0.8rem;
+  }
+
+  .products-feed__tab button:not(.button--text) {
+    font-size: var(--font-size-static-sm);
+  }
+}

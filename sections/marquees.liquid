@@ -1,0 +1,545 @@
+{%- if section.blocks.size > 0 -%}
+  {{- 'section-marquees.css' | asset_url | stylesheet_tag -}}
+	{% liquid
+		assign marquee_duration_rate = section.settings.marquee_duration_rate | times: 5
+		assign marquee_duration = section.blocks.size | times: marquee_duration_rate
+
+    assign marquee_font_size = section.settings.marquee_font_size | times: 1.35
+		assign marquee_icon_height = marquee_font_size | times: 2 | times: 10
+		assign marquee_image_width = section.settings.marquee_font_size | times: 20 | divided_by: 10
+
+    assign marquee_font_size_mobile = section.settings.marquee_font_size | times: 1.35
+    assign marquee_image_width_mobile = section.settings.marquee_font_size | times: 20 | divided_by: 10
+
+    if section.settings.marquee_font_size > 2
+      assign marquee_element_svg_margin_inline_end = marquee_font_size | divided_by: 2
+      assign marquee_font_size_mobile = marquee_font_size_mobile | divided_by: 2
+      assign marquee_image_width_mobile = marquee_image_width_mobile | divided_by: 2
+      assign marquee_element_svg_margin_inline_end_mobile = marquee_font_size_mobile | divided_by: 2
+      assign marquee_items_spacing_mobile = section.settings.marquee_items_spacing | divided_by: 2
+    else
+      assign marquee_element_svg_margin_inline_end = marquee_font_size
+      assign marquee_font_size_mobile = marquee_font_size_mobile
+      assign marquee_image_width_mobile = marquee_image_width_mobile
+      assign marquee_element_svg_margin_inline_end_mobile = marquee_font_size_mobile
+      assign marquee_items_spacing_mobile = section.settings.marquee_items_spacing
+    endif
+	%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('.marquee__content img');
+      const altCounts = {};
+
+      images.forEach(function(image) {
+        const alt = image.getAttribute('alt');
+        if (alt) {
+          const count = altCounts[alt] || 0;
+          image.setAttribute('alt', alt + ' (' + (count + 1) + ')');
+          altCounts[alt] = count + 1;
+        }
+      });
+    });
+  </script>
+
+  {%- style -%}
+    #shopify-section-{{ section.id }} > div {
+			--marquee-duration: {{ marquee_duration | times: 1.5 }}s;
+			--marquee-element-size: {{ marquee_font_size_mobile }}rem;
+			--marquee-element-svg-margin-inline-end: {{ marquee_element_svg_margin_inline_end_mobile }}rem;
+
+      padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+      padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+    }
+    .marquee__product-card-image {
+      width: {{ marquee_image_width_mobile }}rem;
+      height: {{ marquee_image_width_mobile }}rem;
+    }
+    #shopify-section-{{ section.id }} .marquee__content,
+    #shopify-section-{{ section.id }} .marquee {
+      --gap: {{- marquee_items_spacing_mobile -}}rem;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} > div {
+        --marquee-duration: {{ marquee_duration }}s;
+        --marquee-element-size: {{ marquee_font_size }}rem;
+			  --marquee-element-svg-margin-inline-end: {{ marquee_element_svg_margin_inline_end }}rem;
+      }
+      #shopify-section-{{ section.id }} .marquee__content,
+      #shopify-section-{{ section.id }} .marquee {
+        --gap: {{- section.settings.marquee_items_spacing -}}rem;
+      }
+      .marquee__product-card-image {
+        width: {{ marquee_image_width }}rem;
+        height: {{ marquee_image_width }}rem;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="marquees js-animation-fade-in {% if section.settings.enable_animation %} enable-animation {% endif %}">
+      <div class="marquee marquee--hover-pause">
+
+        {% capture marquee_items %}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'item' -%}
+                {%- if block.settings.title -%}
+                <li class="marquee__item">
+
+                  {%- if block.settings.link -%}
+                    <a href="{{ block.settings.link }}" title="{{ block.settings.title }}" class="marquee__link">
+                  {%- endif -%}
+                    {% liquid
+                      assign icon_alt = block.settings.title | default: shop.name
+                      if block.settings.custom_icon
+                        echo block.settings.custom_icon | image_url: height: marquee_icon_height | image_tag: alt: icon_alt
+                      elsif block.settings.icon != blank
+                        render 'icon', icon_name: block.settings.icon
+                      endif
+                    %}
+                    <span class="marquee__title">{{ block.settings.title }}</span>
+                  {%- if block.settings.link -%}
+                    </a>
+                  {%- endif -%}
+
+                </li>
+                {%- endif -%}
+              {%- when 'product-item' -%}
+                {%- if block.settings.product != blank -%}
+                {%- liquid
+                  assign product_item = block.settings.product
+                  assign product_image = block.settings.product_image | default: product_item.featured_media
+                  assign product_title = block.settings.product_title | default: product_item.title
+
+                -%}
+                <li class="marquee__item">
+                  <div class="marquee__product-card">
+                    <a href="{{- product_item.url -}}">
+                      <div class="marquee__product-card-image media media--1-1">
+                        {%- render 'image', image: product_image, alt: product_title -%}
+                      </div>
+                      {%- if block.settings.show_product_title or block.settings.button_label != blank -%}
+                        <div class="marquee__product-card-content">
+                          <span>{{- product_title -}}</span>
+                          {%- if block.settings.button_label != blank -%}
+                            <button class="button button--outlined">
+                              {{- block.settings.button_label -}}
+                            </button>
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    </a>
+                  </div>
+
+                </li>
+                {%- endif -%}
+
+              {%- when 'timer' -%}
+                <li class="marquee__item" {{ block.shopify_attributes }}>
+                  {%- render 'countdown-timer',
+                    id: block.id,
+                    class: 'marquee__countdown-timer',
+                    column_type: 'row',
+                    custom_text: 'Ends in',
+                    timer_text_first_letter: true,
+                    timezone: settings.timezone,
+                    timer_year: block.settings.timer_year,
+                    timer_month: block.settings.timer_month,
+                    timer_day: block.settings.timer_day,
+                    timer_hour: block.settings.timer_hour,
+                    timer_minute: block.settings.timer_minute,
+                    show_timer_days: block.settings.show_timer_days,
+                    show_timer_hours: block.settings.show_timer_hours,
+                    show_timer_minutes: block.settings.show_timer_minutes,
+                    show_timer_seconds: block.settings.show_timer_seconds
+                  -%}
+                </li>
+
+            {%- endcase -%}
+          {%- endfor -%}
+        {% endcapture %}
+
+        {% liquid
+          assign marquee_items_size = section.blocks.size | times: 1.0
+          assign marquee_items_size_shoud_be = 12
+          assign lower_limit = 1
+          assign upper_limit = marquee_items_size_shoud_be | divided_by: marquee_items_size | ceil
+        %}
+
+        <ul class="marquee__content">
+          {% for i in (lower_limit..upper_limit) -%}
+            {{ marquee_items }}
+          {%- endfor %}
+        </ul>
+        <ul aria-hidden="true" class="marquee__content">
+          {% for i in (lower_limit..upper_limit) -%}
+            {{ marquee_items }}
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.marquees.name",
+  "tag": "section",
+  "class": "section-marquees",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "t:sections.marquees.settings.enable_animation.label",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "marquee_duration_rate",
+      "label": "t:sections.marquees.settings.marquee_duration_rate.label",
+      "info": "t:sections.marquees.settings.marquee_duration_rate.info",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "marquee_font_size",
+      "label": "t:sections.marquees.settings.marquee_font_size.label",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "t:sections.marquees.settings.desktop_layout_settings.label"
+    },
+    {
+      "type": "range",
+      "id": "marquee_items_spacing",
+      "label": "t:sections.marquees.settings.marquee_items_spacing.label",
+      "info": "t:sections.marquees.settings.marquee_items_spacing.info",
+      "min": 0,
+      "max": 6,
+      "step": 0.4,
+      "default": 4.8
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "t:sections.global.color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.settings.spacing.settings.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "0"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.settings.spacing.settings.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "0"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "t:sections.marquees.blocks.item.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "t:sections.global.element.icon.label",
+          "info": "t:sections.global.element.icon.info",
+          "default": "theme-box"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "t:sections.global.element.icon.custom_icon.label",
+          "info": "t:sections.global.element.icon.custom_icon.info"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.element.heading.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.global.element.link.label"
+        }
+      ]
+    },
+    {
+      "type": "product-item",
+      "name": "t:sections.marquees.blocks.product_item.name",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.marquees.blocks.product_item.settings.product.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "t:sections.marquees.blocks.product_item.settings.product_image.label"
+        },
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "t:sections.marquees.blocks.product_item.settings.product_title.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_product_title",
+          "label": "t:sections.marquees.blocks.product_item.settings.show_product_title.label",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:sections.global.element.button_label.label",
+          "info": "t:sections.global.element.button_label.info",
+          "default": "Learn more"
+        }
+      ]
+    },
+    {
+      "type": "timer",
+      "name": "t:sections.announcement-bar.blocks.timer.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "show_on",
+          "label": "t:sections.global.settings.show_on.label",
+          "options": [
+            {
+              "value": "desktop",
+              "label": "t:sections.global.settings.show_on.options.desktop.label"
+            },
+            {
+              "value": "mobile",
+              "label": "t:sections.global.settings.show_on.options.mobile.label"
+            },
+            {
+              "value": "both",
+              "label": "t:sections.global.settings.show_on.options.both.label"
+            }
+          ],
+          "default": "desktop"
+        },
+        {
+          "type": "number",
+          "id": "timer_year",
+          "label": "t:sections.global.settings.timer.settings.timer_year.label",
+          "default": 2024
+        },
+        {
+          "type": "select",
+          "id": "timer_month",
+          "label": "t:sections.global.settings.timer.settings.timer_month.label",
+          "options": [
+            {
+              "value": "01",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__1"
+            },
+            {
+              "value": "02",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__2"
+            },
+            {
+              "value": "03",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__3"
+            },
+            {
+              "value": "04",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__4"
+            },
+            {
+              "value": "05",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__5"
+            },
+            {
+              "value": "06",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__6"
+            },
+            {
+              "value": "07",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__7"
+            },
+            {
+              "value": "08",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__8"
+            },
+            {
+              "value": "09",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__9"
+            },
+            {
+              "value": "10",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__10"
+            },
+            {
+              "value": "11",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__11"
+            },
+            {
+              "value": "12",
+              "label": "t:sections.global.settings.timer.settings.timer_month.options.options__12"
+            }
+          ],
+          "default": "01"
+        },
+        {
+          "type": "range",
+          "id": "timer_day",
+          "label": "t:sections.global.settings.timer.settings.timer_day.label",
+          "min": 1,
+          "max": 31,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "timer_hour",
+          "label": "t:sections.global.settings.timer.settings.timer_hour.label",
+          "min": 0,
+          "max": 23,
+          "step": 1,
+          "default": 0,
+          "unit": "h"
+        },
+        {
+          "type": "range",
+          "id": "timer_minute",
+          "label": "t:sections.global.settings.timer.settings.timer_minute.label",
+          "min": 0,
+          "max": 59,
+          "step": 1,
+          "default": 0,
+          "unit": "m"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.global.header.parts_display_settings.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_timer_days",
+          "label": "t:sections.global.settings.timer.settings.show_timer_days.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_timer_hours",
+          "label": "t:sections.global.settings.timer.settings.show_timer_hours.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_timer_minutes",
+          "label": "t:sections.global.settings.timer.settings.show_timer_minutes.label",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_timer_seconds",
+          "label": "t:sections.global.settings.timer.settings.show_timer_seconds.label",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.marquees.name",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Store Specification 1",
+            "link": ""
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Store Specification 2",
+            "link": ""
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Store Specification 3",
+            "link": ""
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Store Specification 4",
+            "link": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

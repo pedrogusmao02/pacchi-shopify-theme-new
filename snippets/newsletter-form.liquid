@@ -1,0 +1,69 @@
+{%- comment -%}
+  render 'newsletter-form',
+    namespace: 'Newsletter',
+    class: 'newsletter-form',
+    js_class: 'js-newsletter-form',
+    submit_button_text: 'theme.newsletter.submit',
+    submit_button_style: 'text'
+  ###
+
+  Accepts:
+  - namespace {String} - an unique id for the form fields.
+  - js_class? {String} - JS selector class
+  - submit_button_text {String} - Submit button text
+  Usage:
+  {% render 'newsletter-form' %}
+
+{%- endcomment -%}
+
+{%- liquid
+  assign class = 'newsletter-form ' | append: js_class
+  assign namespace = namespace | default: 'Newsletter'
+  assign submit_button_text_default = 'theme.newsletter.button_label' | t
+  assign submit_button_text = submit_button_text | default: submit_button_text_default
+-%}
+
+{%- form 'customer', id: namespace, class: class -%}
+  <input type="hidden" name="contact[tags]" value="newsletter">
+
+  <div class="newsletter__controls">
+    {%-
+      liquid
+      assign label = 'theme.newsletter.label' | t
+      assign placeholder = 'theme.newsletter.email_placeholder' | t
+      capture attr
+        echo 'aria-required="true" '
+        echo 'autocapitalize="off" '
+        echo 'autocomplete="email" '
+        if form.errors
+          echo 'autofocus '
+        endif
+      endcapture
+      if form.errors
+        assign message = form.errors.translated_fields.email | capitalize | append: ' ' | append: form.errors.messages.email
+        assign has_error = true
+      elsif form.posted_successfully?
+        assign message = 'theme.newsletter.success' | t
+      endif
+      assign id = 'NewsletterForm--' | append: section.id
+
+      render 'text-input', id: id, label: label, type: 'email', name: 'contact[email]', placeholder: placeholder, attr: attr, message: message, has_error: has_error, required: true, value: form.email, hide_label: true, class: 'newsletter__field'
+    -%}
+
+    {% if settings.show_newsletter_form_terms %}
+      {%- assign terms_text = settings.newsletter_form_terms | replace: '<p>', '' | replace: '</p>', '' -%}
+      <div class="newsletter__terms">
+        <div class="checkbox checkbox--plain">
+          <input type="checkbox" name="terms" required id="Terms-Conditions-{{- section.id -}}">
+          <label for="Terms-Conditions-{{- section.id -}}">
+            {{- terms_text -}}
+          </label>
+        </div>
+      </div>
+    {% endif %}
+
+    <button type="submit" class="button-reset newsletter__button" id="Subscribe-{{- section.id -}}" name="commit" aria-label="{{- submit_button_text -}}">
+      {{- submit_button_text -}}
+    </button>
+  </div>
+{%- endform -%}

@@ -1,0 +1,252 @@
+{%- if section.blocks.size > 0 -%}
+  {{- 'section-accordions.css' | asset_url | stylesheet_tag -}}
+
+  {%- style -%}
+    #shopify-section-{{ section.id }} > div {
+      padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+      padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+    }
+  {%- endstyle -%}
+
+  <div class="accordions color-{{ section.settings.color_scheme }} gradient js-animation-fade-in">
+    <div class="container {{ section.settings.section_width }}">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section__heading {{ section.settings.heading_size }}">
+          {{- section.settings.heading -}}
+        </h2>
+      {%- endif -%}
+
+      <accordion-default class="accordion" data-hide-multiple>
+        {%- for block in section.blocks -%}
+          {%- liquid
+            if block.settings.title == blank
+              continue
+            elsif block.settings.text == blank and block.settings.page == blank
+              continue
+            endif
+
+            if block.settings.is_open
+              assign details_class = ' is-active default-active'
+              assign details_attr = 'open'
+            else
+              assign details_class = blank
+              assign details_attr = blank
+            endif
+          -%}
+
+          <details class="accordion__section{{ details_class }}" id="Details-{{- block.id -}}" {{ details_attr }} {{- block.shopify_attributes -}}>
+            <summary class="accordion__button h6 js-btn" id="Details-Summary-{{- block.id -}}">
+              <div class="accordion__button-text">
+                {{- block.settings.title | escape -}}
+              </div>
+              <div class="accordion__icon">
+                {% render 'icon', icon_name: 'theme-chevron-down' %}
+              </div>
+            </summary>
+
+            <div class="accordion__body" id="Details-Content-{{- block.id -}}">
+              <div class="accordion__body-inner">
+                {%- if block.settings.page != blank and block.settings.page.content != blank -%}
+                  {{- block.settings.page.content -}}
+                {%- elsif block.settings.text != blank -%}
+                  {{- block.settings.text -}}
+                {%- endif -%}
+              </div>
+            </div>
+          </details>
+        {%- endfor -%}
+      </accordion-default>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.accordions.name",
+  "tag": "section",
+  "class": "section-accordions",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.global.element.heading.label",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "t:sections.global.element.heading_size.label",
+      "options": [
+        {
+          "value": "h6",
+          "label": "XS"
+        },
+        {
+          "value": "h5",
+          "label": "S"
+        },
+        {
+          "value": "h4",
+          "label": "M"
+        },
+        {
+          "value": "h3",
+          "label": "L"
+        },
+        {
+          "value": "h2",
+          "label": "XL"
+        }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.global.header.settings.content",
+      "info": "t:sections.global.header.settings.info"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.global.section_width.label",
+      "options": [
+        {
+          "value": "max-w-page",
+          "label": "t:sections.global.section_width.options.page.label"
+        },
+        {
+          "value": "max-w-narrower",
+          "label": "t:sections.global.section_width.options.narrower.label"
+        },
+        {
+          "value": "max-w-fluid",
+          "label": "t:sections.global.section_width.options.fluid.label"
+        }
+      ],
+      "default": "max-w-narrower"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.global.color_scheme.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "t:sections.global.spacing.spacing_top.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "t:sections.global.spacing.spacing_bottom.label",
+      "options": [
+        {
+          "value": "0",
+          "label": "No"
+        },
+        {
+          "value": "1",
+          "label": "S"
+        },
+        {
+          "value": "2",
+          "label": "M"
+        },
+        {
+          "value": "4",
+          "label": "L"
+        },
+        {
+          "value": "6",
+          "label": "XL"
+        }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "topic",
+      "name": "t:sections.accordions.blocks.topic.name",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "is_open",
+          "label": "t:sections.accordions.blocks.topic.settings.is_open.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.global.element.heading.label",
+          "default": "Topic heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.global.element.text.label",
+          "default": "<p>Descriptive topic content body text</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "t:sections.accordions.blocks.topic.settings.page.label",
+          "info": "t:sections.accordions.blocks.topic.settings.page.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.accordions.name",
+      "blocks": [
+        {
+          "type": "topic",
+          "settings": {
+            "is_open": true,
+            "title": "Shipping details",
+            "text": "<p>Add additional information about shipping policy.</p>"
+          }
+        },
+        {
+          "type": "topic",
+          "settings": {
+            "title": "Delivery details",
+            "text": "<p>Add additional information about delivery policy.</p>"
+          }
+        },
+        {
+          "type": "topic",
+          "settings": {
+            "title": "Refund details",
+            "text": "<p>Add additional information about refund policy.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

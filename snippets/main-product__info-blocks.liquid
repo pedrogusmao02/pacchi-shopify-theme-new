@@ -1,0 +1,812 @@
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<script src="{{ 'product-variants.js' | asset_url }}" defer="defer"></script>
+
+<section
+  id="ProductInfo-{{ section.id }}"
+  class="product__content product__content--{{ section.settings.grid_content_alignment }}"
+>
+  {% assign content_grid_settings = section.blocks | where: 'type', 'content_grid' %}
+
+  {%- for block in section.blocks -%}
+    {%- assign product_block_spacing = block.settings.spacing_bottom | default: '1' %}
+    {%- assign product_block_class = 'product__block product__block--gap-' | append: product_block_spacing -%}
+    {%- assign product_block_class = product_block_class | append: ' ' | append: block.settings.heading_size -%}
+    {%- case block.type -%}
+      {%- when 'divider' -%}
+        {%- assign product_block_class = 'product__divider' | append: ' ' | append: product_block_class -%}
+        <hr class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+      {%- when 'title' -%}
+        {%- assign product_block_class = 'product__title' | append: ' ' | append: product_block_class -%}
+        <h1 class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {{- product.title | escape -}}
+        </h1>
+      {%- when 'badge' -%}
+        {%- assign product_block_class = 'product__badges' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {% render 'product-badges', product: product, block: block %}
+        </div>
+      {%- when 'rating' -%}
+        {%- assign product_block_class = 'product__rating' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {%- if product.metafields.reviews.rating.value != blank or block.settings.rating != 0 -%}
+            {% liquid
+              assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.theme.rating.value.rating | default: block.settings.rating | times: 1
+              assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.theme.rating_count.value | default: 1 | times: 1
+              assign rating_max = product.metafields.reviews.rating.value.scale_max | default: 5 | times: 1
+
+              assign star_full_count = rating_value | floor
+              assign star_half_count = rating_value | minus: star_full_count | ceil
+              assign star_empty_count = rating_max | minus: star_full_count | minus: star_half_count
+            %}
+            {%- for i in (1..star_full_count) -%}
+              {%- render 'icon', icon_name: 'theme-star-filled' -%}
+            {%- endfor -%}
+            {%- for i in (1..star_half_count) -%}
+              {%- render 'icon', icon_name: 'theme-star-half' -%}
+            {%- endfor -%}
+            {%- for i in (1..star_empty_count) -%}
+              {%- render 'icon', icon_name: 'theme-star' -%}
+            {%- endfor -%}
+            <p class="rating-count">
+              <span aria-hidden="true">({{ rating_count }})</span>
+            </p>
+          {%- endif -%}
+        </div>
+      {%- when 'text' -%}
+        {%- if is_gift_card -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign product_block_class = 'product__text' | append: ' ' | append: product_block_class -%}
+        <div
+          class="{{ product_block_class }} product__text--{{- block.settings.link_to_resource }} {% unless block.settings.link_to_resource == 'none' %}product__text--link{% else %}product__text--body{% if block.settings.heading_secondary != blank %}-animated{% endif %}{% endunless %}{% if block.settings.text_before_link and block.settings.link_to_resource != 'none' %} product__text--before-link{% endif %} caption caption--small"
+          {{ block.shopify_attributes }}
+        >
+          {% capture metafield_for_product_variant %}
+            {% if block.settings.metafield_for_product_variant != blank %}
+              {%- liquid
+                assign metafield_for_product_variant_namespace = block.settings.metafield_for_product_variant | split: '.' | first
+                assign metafield_for_product_variant_key = block.settings.metafield_for_product_variant | split: '.' | last
+                assign metafield_object = current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key]
+              -%}
+              {% if metafield_object.value != blank %}
+                <div class="product__metafield_for_variant-block" data-block-id="{{ block.id }}">
+                  {{ current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key].value | newline_to_br }}
+                </div>
+                <script id="product__metafield_for_variant-block--{{ block.id }}" type="application/json">
+                  {
+                  {% for variant in product.variants %}
+                    "{{ variant.id }}": "{{ variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key] | newline_to_br | replace: '<br />', '\n' | strip_newlines }}" {% unless forloop.last %},{% endunless %}
+                  {% endfor %}
+                  }
+                </script>
+              {% endif %}
+            {% endif %}
+          {% endcapture %}
+
+          {%- liquid
+            if block.settings.link_to_resource == 'type'
+              if product.type != blank
+                if block.settings.text_before_link
+                  echo block.settings.heading | append: ': '
+                endif
+                echo product.type | link_to_type: class: 'button button--text'
+              endif
+            elsif block.settings.link_to_resource == 'vendor'
+              if block.settings.text_before_link
+                echo block.settings.heading | append: ': '
+              endif
+              echo product.vendor | link_to_vendor: class: 'button button--text'
+            else
+              echo '<div class="product__text--body-wrapper">'
+              if block.settings.heading_secondary != blank
+              echo '<div class="product__text--body">'
+              else
+              echo '<div class="product__text--body no-animation">'
+              endif
+
+
+              if block.settings.icon != blank
+                render 'icon', icon_name: block.settings.icon
+              endif
+              if block.settings.heading != blank or block.settings.metafield_for_product_variant != blank
+                echo '<div class="product__text--content">'
+                  echo metafield_for_product_variant
+                  if block.settings.show_block_content
+                    echo block.settings.heading
+                  endif
+                echo '</div>'
+              endif
+              echo '</div>'
+
+              if block.settings.heading_secondary != blank
+                echo '<div class="product__text--body">'
+                  if block.settings.icon != blank
+                    render 'icon', icon_name: block.settings.icon
+                  endif
+                  echo '<div class="product__text--content">'
+                    echo block.settings.heading_secondary
+                  echo '</div>'
+                echo '</div>'
+
+                echo '<div class="product__text--body">'
+                  if block.settings.icon != blank
+                    render 'icon', icon_name: block.settings.icon
+                  endif
+                  echo '<div class="product__text--content">'
+                    echo metafield_for_product_variant
+                    if block.settings.show_block_content
+                      echo block.settings.heading
+                    endif
+                  echo '</div>'
+                echo '</div>'
+              endif
+
+              echo '</div>'
+            endif
+          -%}
+        </div>
+      {%- when 'price' -%}
+        {%- liquid
+          unless is_gift_card
+            assign current_variant = product.selected_or_first_available_variant
+            assign current_selling_plan_allocation = current_variant.selected_selling_plan_allocation
+            if current_selling_plan_allocation == null and current_variant.requires_selling_plan
+              assign current_selling_plan_allocation = current_variant.selling_plan_allocations | first
+            endif
+          endunless
+        -%}
+        {%- assign product_block_class = 'product__price' | append: ' ' | append: product_block_class -%}
+        <div id="price-{{- section.id -}}" role="status" {{ block.shopify_attributes }} class="{{ product_block_class }}">
+          {%- unless is_gift_card -%}
+              {%- render 'price', product: product, use_variant: true -%}
+              {% if block.settings.show_price_custom_info != blank or block.settings.show_price_tax_info or block.settings.show_price_shipping_info -%}
+                <span class="product__price--info">
+                  {% liquid
+                    assign taxes_text = ''
+
+                    if cart.taxes_included and block.settings.show_price_tax_info
+                      assign taxes_text = 'product.taxes_included' | t | append: ' '
+                    endif
+
+                    if shop.shipping_policy.body != blank and block.settings.show_price_shipping_info
+                      assign shipping_text = 'product.shipping_policy_html' | t: link: shop.shipping_policy.url
+                      assign taxes_text = taxes_text | append: shipping_text
+                    endif
+
+                    if block.settings.show_price_custom_info != blank
+                      assign taxes_text = taxes_text |  append: '' | append: block.settings.show_price_custom_info
+                    endif
+                  %}
+                  {{- taxes_text -}}
+                </span>
+                <div class="tooltip hidden">
+                  <div class="tooltip__text">
+                    {{- taxes_text -}}
+                  </div>
+                  <div class="tooltip__trigger">
+                    {% render 'icon', icon_name: 'theme-info-circle' %}
+                  </div>
+                </div>
+                <script type="text/javascript">
+                  document.addEventListener('DOMContentLoaded', checkWidthsAndUpdateTooltip);
+                  window.addEventListener('resize', checkWidthsAndUpdateTooltip);
+                  function checkWidthsAndUpdateTooltip () {
+                    const priceInfo = document.querySelector('.product__content .product__price--info');
+                    const priceInfoTooltip = document.querySelector('.product__content .tooltip');
+                    // clear styles and classes
+                    priceInfo.style.width = '';
+                    priceInfoTooltip.classList.add('hidden');
+                    // get widths
+                    const productContentWidth = document.querySelector('.product__content').offsetWidth;
+                    const priceContainerWidth = document.querySelector('.product__content .product__price > .price').offsetWidth;
+                    // calculate max width for price info
+                    const infoWidth = productContentWidth - priceContainerWidth - 36;
+                    // check if info width is bigger than max width of the container
+                    const priceInfoWidth = document.querySelector('.product__price--info').offsetWidth;
+                    if (infoWidth > priceInfoWidth) { return; }
+                    // update width and show tooltip
+                    if (window.innerWidth < 750) {
+                      priceInfo.style.width = (infoWidth - 80) + 'px';
+                    } else {
+                      priceInfo.style.width = infoWidth + 'px';
+                    }
+                    priceInfoTooltip.classList.remove('hidden');
+                  }
+                </script>
+              {%- endif -%}
+          {%- else -%}
+            {%- render 'price', product: product, use_variant: true -%}
+          {%- endunless -%}
+
+          <div class="product__installments visually-hidden">
+            {%- form 'product', product, id: product_form_installments_id, class: 'installment' -%}
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              {{- form | payment_terms -}}
+            {%- endform -%}
+          </div>
+        </div>
+
+      {%- when 'description' -%}
+
+        {% capture metafield_for_product_variant %}
+          {% if block.settings.metafield_for_product_variant != blank %}
+            {%- liquid
+              assign metafield_for_product_variant_namespace = block.settings.metafield_for_product_variant | split: '.' | first
+              assign metafield_for_product_variant_key = block.settings.metafield_for_product_variant | split: '.' | last
+              assign metafield_object = current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key]
+            -%}
+            {% if metafield_object.value != blank %}
+              <div class="product__metafield_for_variant-block" data-block-id="{{ block.id }}">
+                {{ current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key].value | newline_to_br }}
+              </div>
+              <script id="product__metafield_for_variant-block--{{ block.id }}" type="application/json">
+                {
+                {% for variant in product.variants %}
+                  "{{ variant.id }}": "{{ variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key] | newline_to_br | replace: '<br />', '\n' | strip_newlines }}" {% unless forloop.last %},{% endunless %}
+                {% endfor %}
+                }
+              </script>
+            {% endif %}
+          {% endif %}
+        {% endcapture %}
+
+        {%- assign product_block_class = 'product__description' | append: ' ' | append: product_block_class -%}
+        {%- liquid
+          assign product_description = ''
+          assign show_block_content = false
+          if metafield_for_product_variant != blank
+            assign product_description = product_description | append: metafield_for_product_variant
+          endif
+          if block.settings.show_block_content and metafield_for_product_variant != blank
+            assign show_block_content = true
+          elsif metafield_for_product_variant == blank
+            assign show_block_content = true
+          endif
+          if show_block_content
+            assign product_description = product_description | append: product.description
+          endif
+        -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {% if block.settings.behaviour == 'plain' %}
+            {%- if product_description != blank -%}
+              <div class="rte">
+                {%- render 'text-truncator', text: product_description, max_lines: block.settings.text_truncate -%}
+              </div>
+            {%- endif -%}
+          {% elsif block.settings.behaviour == 'row' %}
+            {{- 'section-accordions.css' | asset_url | stylesheet_tag -}}
+            <accordion-default class="accordion product__accordion" data-hide-multiple>
+              <details class="accordion__section" id="Details-{{- block.id -}}" {{- block.shopify_attributes -}}>
+                <summary class="accordion__button h5 js-btn" id="Details-Summary-{{- block.id -}}">
+                  <span>
+                    {% liquid
+                      assign icon_alt = block.settings.heading
+                      if block.settings.custom_icon
+                        echo block.settings.custom_icon | image_url: width: 24 | image_tag: alt: icon_alt
+                      elsif block.settings.icon != blank
+                        render 'icon', icon_name: block.settings.icon
+                      endif
+                    %}
+                    {% if block.settings.heading != blank %}
+                      <span>{{- block.settings.heading -}}</span>
+                    {% else %}
+                      <span>{{ 'product.description' | t }}</span>
+                    {% endif %}
+                  </span>
+                  <div class="accordion__icon">
+                    {%- render 'icon', icon_name: 'theme-minus' -%}
+                    {%- render 'icon', icon_name: 'theme-minus' -%}
+                  </div>
+                </summary>
+
+                <div class="accordion__body" id="Details-Content-{{- block.id -}}">
+                  <div class="accordion__body-inner">
+                    {%- if product_description != blank -%}
+                      <div class="rte">
+                        {{- product_description -}}
+                      </div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </details>
+            </accordion-default>
+          {% endif %}
+        </div>
+      {%- when 'sku' -%}
+        {%- assign product_first_available_variant = product.selected_or_first_available_variant -%}
+        {%- if product_first_available_variant.sku != blank -%}
+          {%- assign product_block_class = 'product__sku' | append: ' ' | append: product_block_class -%}
+          <div
+            class="{{ product_block_class }}" {{ block.shopify_attributes }}
+            id="Sku-{{ section.id }}"
+            role="status"
+          >
+            <span>{{- product_first_available_variant.sku | prepend: '#' -}}</span>
+          </div>
+        {%- endif -%}
+      {%- when 'preorder' -%}
+        {%- if product.metafields.theme.preorder.value -%}
+          {%- assign product_block_class = 'product__preorder' | append: ' ' | append: product_block_class -%}
+          <div class="{{ product_block_class }}" {{ block.shopify_attributes }} role="status">
+            <span class="product__preorder-dot">&nbsp;</span><span>{{- 'product.preorder_info' | t -}}</span>
+          </div>
+        {%- endif -%}
+      {%- when 'custom_liquid' -%}
+        {%- if is_gift_card -%}
+          {%- continue -%}
+        {%- endif -%}
+        {{- block.settings.custom_liquid -}}
+
+      {%- when 'variant_picker' -%}
+        {%- assign product_block_class = 'product__variant-picker' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {%- render 'product-groups', product: product, on: 'page' -%}
+          {% render 'main-product__variant-picker', product: product, block: block, product_form_id: product_form_id %}
+        </div>
+
+      {%- when 'purchase_options' -%}
+        {%- render 'main-product__purchase-options',
+          product: product,
+          section: section,
+          block: block,
+          product_form_id: product_form_id,
+          product_block_class: product_block_class
+        -%}
+
+      {%- when 'buy_buttons' -%}
+        {%- assign product_block_class = 'product__buy-buttons' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {%- render 'main-product__buy-buttons',
+            block: block,
+            product: product,
+            product_form_id: product_form_id,
+            section_id: section.id,
+            show_pickup_availability: false
+          -%}
+        </div>
+      {%- when 'inventory_notice' -%}
+        {%- if is_gift_card -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign current_variant = product.selected_or_first_available_variant -%}
+        {%- assign product_block_class = 'product__inventory-notice' | append: ' ' | append: product_block_class -%}
+        <div
+          class="{{ product_block_class }} product__text product__text--body caption {% unless current_variant.inventory_quantity <= block.settings.inventory_threshold and current_variant.available and current_variant.inventory_management == 'shopify' %}hidden{% endunless %}"
+          id="Inventory-{{ section.id }}"
+          role="status"
+          data-inventory-notice
+          data-inventory-quantity="{{ current_variant.inventory_quantity }}"
+          data-inventory-threshold="{{ block.settings.inventory_threshold }}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if product.metafields.theme.preorder.value -%}
+            {% assign product_preorder_date = product.metafields.theme.preorder_shipping_date.value | date: '%b %d, %Y' %}
+            <div class="product__preorder-notice">
+              <span class="product__preorder-dot">&nbsp;</span>
+              <span>{{- 'product.preorder_notice' | t: date: product_preorder_date -}}</span>
+            </div>
+          {%- else -%}
+            {%- render 'icon', icon_name: 'theme-timer' -%}
+            {%- if block.settings.notice_just_text -%}
+              {{- 'product.inventory_low_stock' | t -}}
+            {%- else -%}
+              {{- 'product.inventory_low_stock_show_count' | t: quantity: current_variant.inventory_quantity -}}
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+        {%- if product.metafields.theme.preorder.value -%}
+          <div class="{{ product_block_class }} product__preorder-warning">
+            {{ 'product.preorder_warning_html' | t }}
+          </div>
+        {%- endif -%}
+      {%- when 'pickup-availability' -%}
+        {%- liquid
+          if is_gift_card
+            continue
+          endif
+        -%}
+        {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+        {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %}
+          {%- assign product_block_class = 'product__pickup-availabilities' | append: ' ' | append: product_block_class -%}
+          <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+            {{- 'component-pickup-availability.css' | asset_url | stylesheet_tag -}}
+            <pickup-availability
+              class="no-js-hidden"
+              available
+              data-root-url="{{ routes.root_url }}"
+              data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+              data-has-only-default-variant="{{ product.has_only_default_variant }}"
+            >
+              <template>
+                <pickup-availability-preview class="pickup-availability-preview">
+                  <div class="pickup-availability-info">
+                    <p class="pickup-availability-info__title">
+                      {{- 'product.pickup_unavailable' | t -}}
+                    </p>
+                    <span class="ink link--hover-none">
+                      {{- 'product.pickup_refresh_availability' | t -}}
+                    </span>
+                  </div>
+                </pickup-availability-preview>
+              </template>
+            </pickup-availability>
+            <script src="{{- 'pickup-availability.js' | asset_url -}}" defer></script>
+          </div>
+        {% endif %}
+
+      {%- when 'complementary_products' -%}
+        {%- assign product_block_class = 'product__complementaries' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {%- render 'product-recommendations', area: 'product', title: block.settings.heading, icon: block.settings.icon, limit: block.settings.limit -%}
+        </div>
+
+      {%- when 'content_block' -%}
+        {{- 'section-accordions.css' | asset_url | stylesheet_tag -}}
+        {%- assign product_block_class = 'product__accordion' | append: ' ' | append: product_block_class -%}
+        <accordion-default class="accordion {{ product_block_class }}" data-hide-multiple>
+          <details
+            class="accordion__section"
+            id="Details-{{- block.id -}}"
+            {{- block.shopify_attributes -}}
+          >
+            <summary class="accordion__button h5 js-btn" id="Details-Summary-{{- block.id -}}">
+              <span>
+                {% if block.settings.custom_icon != blank %}
+                  {{ block.settings.custom_icon | image_url: width: 24 | image_tag: alt: block.settings.custom_icon.alt }}
+                {% elsif block.settings.custom_icon == blank and block.settings.icon != blank %}
+                  {% render 'icon', icon_name: block.settings.icon %}
+                {% endif %}
+                {% unless block.type == 'description' %}
+                  {{- block.settings.heading | escape -}}
+                {% else %}
+                  {% if block.settings.heading != blank %}
+                    <span>{{- block.settings.heading -}}</span>
+                  {% else %}
+                    <span>{{ 'product.description' | t }}</span>
+                  {% endif %}
+                {% endunless %}
+              </span>
+              <div class="accordion__icon">
+                {%- render 'icon', icon_name: 'theme-minus' -%}
+                {%- render 'icon', icon_name: 'theme-minus' -%}
+              </div>
+            </summary>
+
+            <div class="accordion__body" id="Details-Content-{{- block.id -}}">
+              <div class="accordion__body-inner">
+                {% capture metafield_for_product_variant %}
+                  {% if block.settings.metafield_for_product_variant != blank %}
+                    {%- liquid
+                      assign metafield_for_product_variant_namespace = block.settings.metafield_for_product_variant | split: '.' | first
+                      assign metafield_for_product_variant_key = block.settings.metafield_for_product_variant | split: '.' | last
+                      assign metafield_object = current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key]
+                    -%}
+                    {% if metafield_object.value != blank %}
+                      <div class="product__metafield_for_variant-block" data-block-id="{{ block.id }}">
+                        {{ current_variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key].value | newline_to_br }}
+                      </div>
+                      <script id="product__metafield_for_variant-block--{{ block.id }}" type="application/json">
+                        {
+                        {% for variant in product.variants %}
+                          "{{ variant.id }}": "{{ variant.metafields[metafield_for_product_variant_namespace][metafield_for_product_variant_key] | newline_to_br | replace: '<br />', '\n' | strip_newlines }}" {% unless forloop.last %},{% endunless %}
+                        {% endfor %}
+                        }
+                      </script>
+                    {% endif %}
+                  {% endif %}
+                {% endcapture %}
+                {%- liquid
+                  assign show_block_content = false
+                  if metafield_for_product_variant != blank
+                    echo metafield_for_product_variant
+                  endif
+                  if block.settings.show_block_content and metafield_for_product_variant != blank
+                    assign show_block_content = true
+                  elsif metafield_for_product_variant == blank
+                    assign show_block_content = true
+                  endif
+                  if show_block_content
+                    unless block.type == 'description'
+                      if block.settings.page != blank
+                        echo block.settings.page.content
+                      elsif block.settings.page == blank and block.settings.row_content != blank
+                        echo block.settings.row_content
+                      endif
+                    else
+                      echo product.description
+                    endunless
+                  endif
+                -%}
+              </div>
+            </div>
+          </details>
+        </accordion-default>
+
+      {%- when 'content_tabs' -%}
+
+        <script src="{{- 'main-product__tabs.js' | asset_url -}}" defer="defer"></script>
+
+        {% liquid
+          assign tabs_alignment = section.settings.grid_content_alignment
+          if tabs_alignment == 'start'
+            assign main_product_tabs_justify_content = 'flex-start'
+          elsif tabs_alignment == 'center'
+            assign main_product_tabs_justify_content = 'center'
+          elsif tabs_alignment == 'end'
+            assign main_product_tabs_justify_content = 'flex-end'
+          endif
+
+          assign tabs_content_alignment = tabs_alignment
+        %}
+
+        {% style %}
+          #product__tabs-wrapper--{{ block.id }} .product__tabs {
+            justify-content: {{ main_product_tabs_justify_content }};
+          }
+          #product__tabs-wrapper--{{ block.id }} .product__tab-content {
+            text-align: {{ tabs_content_alignment }};
+          }
+        {% endstyle %}
+
+
+        {%- liquid
+          assign tabs_count = 0
+          assign tabs_start = 1
+          if block.settings.heading_01 != blank
+            assign tabs_count = tabs_count | plus: 1
+          endif
+          if block.settings.heading_02 != blank
+            assign tabs_count = tabs_count | plus: 1
+          endif
+          if block.settings.heading_03 != blank
+            assign tabs_count = tabs_count | plus: 1
+          endif
+          if block.settings.display_description == 'end'
+            assign tabs_count = tabs_count | plus: 1
+          elsif block.settings.display_description == 'start'
+            assign tabs_start = 0
+          endif
+
+          assign active_tab = block.settings.active_tab
+        -%}
+
+        {%- assign product_block_class = 'product__tabs-wrapper' | append: ' ' | append: product_block_class -%}
+        <product-tabs class="{{ product_block_class }}" id="product__tabs-wrapper--{{- block.id -}}" {{ block.shopify_attributes }}>
+          <div class="product__tabs">
+            {%- for item_index in (tabs_start..tabs_count) -%}
+              {%- liquid
+                assign item_index_str = '' | append: item_index
+                assign is_active = false
+                if active_tab == item_index_str
+                  assign is_active = true
+                elsif active_tab == 'description' and item_index == 0
+                  assign is_active = true
+                elsif active_tab == 'description' and item_index == 4
+                  assign is_active = true
+                endif
+                if active_tab == '0'
+                  assign is_active = false
+                endif
+                -%}
+              {% if item_index == 0 and block.settings.display_description == 'start'  %}
+                {%- render 'main-product__tab-item',
+                  type: 'trigger',
+                  index: item_index,
+                  heading: block.settings.heading_description,
+                  icon: block.settings.icon_description,
+                  custom_icon: block.settings.custom_icon_description,
+                  is_description: true,
+                  is_active: is_active,
+                  block: block
+                -%}
+              {% elsif item_index == 1 %}
+                {%- render 'main-product__tab-item',
+                  type: 'trigger',
+                  index: item_index,
+                  heading: block.settings.heading_01,
+                  icon: block.settings.icon_01,
+                  custom_icon: block.settings.custom_icon_01,
+                  is_description: false,
+                  is_active: is_active,
+                  block: block
+                -%}
+              {% elsif item_index == 2 %}
+                {%- render 'main-product__tab-item',
+                  type: 'trigger',
+                  index: item_index,
+                  heading: block.settings.heading_02,
+                  icon: block.settings.icon_02,
+                  custom_icon: block.settings.custom_icon_02,
+                  is_description: false,
+                  is_active: is_active,
+                  block: block
+                -%}
+              {% elsif item_index == 3 %}
+                {%- render 'main-product__tab-item',
+                  type: 'trigger',
+                  index: item_index,
+                  heading: block.settings.heading_03,
+                  icon: block.settings.icon_03,
+                  custom_icon: block.settings.custom_icon_03,
+                  is_description: false,
+                  is_active: is_active,
+                  block: block
+                -%}
+              {% elsif item_index == 4 and block.settings.display_description == 'end' %}
+                {%- render 'main-product__tab-item',
+                  type: 'trigger',
+                  index: item_index,
+                  heading: block.settings.heading_description,
+                  icon: block.settings.icon_description,
+                  custom_icon: block.settings.custom_icon_description,
+                  is_description: true,
+                  is_active: is_active,
+                  block: block
+                -%}
+              {% endif %}
+            {%- endfor -%}
+          </div>
+          {%- for item_index in (tabs_start..tabs_count) -%}
+            {% if item_index == 0 and block.settings.display_description == 'start' %}
+              {%- render 'main-product__tab-item',
+                type: 'content',
+                index: item_index,
+                is_description: true,
+                block: block
+              -%}
+            {% elsif item_index == 1 %}
+              {%- render 'main-product__tab-item',
+                type: 'content',
+                index: item_index,
+                content: block.settings.content_01,
+                page: block.settings.page_01,
+                is_description: false,
+                block: block
+              -%}
+            {% elsif item_index == 2 %}
+              {%- render 'main-product__tab-item',
+                type: 'content',
+                index: item_index,
+                content: block.settings.content_02,
+                page: block.settings.page_02,
+                is_description: false,
+                block: block
+              -%}
+            {% elsif item_index == 3 %}
+              {%- render 'main-product__tab-item',
+                type: 'content',
+                index: item_index,
+                content: block.settings.content_03,
+                page: block.settings.page_03,
+                is_description: false,
+                block: block
+              -%}
+            {% elsif item_index == 4 and block.settings.display_description == 'end'  %}
+              {%- render 'main-product__tab-item',
+                type: 'content',
+                index: item_index,
+                is_description: true,
+                block: block
+              -%}
+            {% endif %}
+          {%- endfor -%}
+        </product-tabs>
+
+      {%- when 'content_grid' -%}
+        {% assign content_grid_first = content_grid_settings | first %}
+        {% if block.id == content_grid_first.id %}
+          {%- assign product_block_class = 'product__content-grid' | append: ' ' | append: product_block_class -%}
+          <div class="{{ product_block_class }}{% if content_grid_settings.size == 1 %} product__content-grid--single{% endif %}" {{ block.shopify_attributes }}>
+            {% for item in content_grid_settings %}
+              <div class="product__content-grid-item icon {% if content_grid_settings.size > 1 %} small-hide{% endif %}">
+                {%- liquid
+                  assign icon_alt = item.settings.icon_alt | default: item.settings.heading
+                  if item.settings.custom_icon
+                    echo item.settings.custom_icon | image_url: width: 24 | image_tag: alt: icon_alt
+                  elsif item.settings.icon != blank
+                    render 'icon', icon_name: item.settings.icon
+                  endif
+                -%}
+                {% if item.settings.heading != blank %}
+                  <span>{{- item.settings.heading -}}</span>
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% if content_grid_settings.size > 1 %}
+              <div class="swiper swiper__content-grid small-up-hide">
+                <div class="swiper-wrapper">
+                  {% for item in content_grid_settings %}
+                    <div class="swiper-slide icon">
+                      {%- liquid
+                        assign icon_alt = item.settings.icon_alt | default: item.settings.heading
+                        if item.settings.custom_icon
+                          echo item.settings.custom_icon | image_url: width: 24 | image_tag: alt: icon_alt
+                        elsif item.settings.icon != blank
+                          render 'icon', icon_name: item.settings.icon
+                        endif
+                      -%}
+                      {% if item.settings.heading != blank %}
+                        <span>{{- item.settings.heading -}}</span>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", () => {
+                  function initSwiper() {
+                    const sliderContentGrid = document.querySelector(".swiper__content-grid");
+                    if (window.innerWidth < 750 &&sliderContentGrid) {
+                      const swiperContentGrid = new Swiper(sliderContentGrid, {
+                        slidesPerView: 1,
+                        spaceBetween: 16,
+                        autoplay: {
+                          delay: 3000
+                        },
+                        loop: true
+                      })
+                    }
+                  }
+                  initSwiper();
+                  window.addEventListener("resize", initSwiper);
+                });
+              </script>
+            {% endif %}
+          </div>
+        {% endif %}
+      {%- when 'richtext' -%}
+        {%- assign product_block_class = 'product__text' | append: ' ' | append: product_block_class -%}
+        <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+          {{- block.settings.text -}}
+        </div>
+      {%- when 'feature_rating' -%}
+        {% if block.settings.rating != blank %}
+          {%- assign product_block_class = 'product__feature-rating' | append: ' block-' | append: block.id | append: ' ' | append: product_block_class -%}
+          <div class="{{ product_block_class }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.heading -%}
+              <label class="label">
+                {{- block.settings.heading -}}
+              </label>
+              <div class="product__feature-rating-bar product__feature-rating-bar--{{ block.settings.rating_type }}">
+                {%- liquid
+                  assign scale_min = 1
+                  assign scale_max = block.settings.scale_max | default: 5
+                  assign rating = block.settings.rating | times: 1
+                  assign rating_type = block.settings.rating_type | default: 'progress'
+
+                  for i in (scale_min..scale_max)
+                    assign class_feature_rating_segment = 'product__feature-rating-segment'
+
+                    if rating_type == 'progress' and i <= rating
+                      assign class_feature_rating_segment = class_feature_rating_segment | append: ' active'
+                    elsif rating_type == 'single' and i == rating
+                      assign class_feature_rating_segment = class_feature_rating_segment | append: ' active'
+                    endif
+
+                    echo '<span class="' | append: class_feature_rating_segment | append: '">&nbsp;</span>'
+                  endfor
+                -%}
+              </div>
+              <div class="product__feature-rating-labels">
+                <span class="product__feature-rating-label">
+                  {{ block.settings.label_first }}
+                </span>
+                <span class="product__feature-rating-label">
+                  {{ block.settings.label_middle }}
+                </span>
+                <span class="product__feature-rating-label">
+                  {{ block.settings.label_last }}
+                </span>
+              </div>
+            {%- endif -%}
+          </div>
+        {% endif %}
+      {%- else -%}
+        <div class="product__app-block" {{ block.shopify_attributes }}>
+          {%- render block -%}
+        </div>
+    {%- endcase -%}
+  {%- endfor -%}
+</section>

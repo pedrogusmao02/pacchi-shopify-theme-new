@@ -1,0 +1,378 @@
+{%- liquid
+  # typography - body
+  assign body_font_normal = settings.type_body_font | font_modify: 'weight', 'normal'
+  assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
+  assign body_font_medium = settings.type_body_font | font_modify: 'weight', '500' | default: body_font_normal
+  assign body_font_semibold = settings.type_body_font | font_modify: 'weight', '600' | default: body_font_bold
+
+  # typography - body italic
+  assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
+  assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+
+  # typography - heading
+  assign heading_font_normal = settings.type_heading_font | font_modify: 'weight', 'normal'
+  assign heading_font_bold = settings.type_heading_font | font_modify: 'weight', 'bold'
+  assign heading_font_medium = settings.type_heading_font | font_modify: 'weight', '500' | default: heading_font_bold
+  assign heading_font_semibold = settings.type_heading_font | font_modify: 'weight', '600' | default: heading_font_bold
+
+  # typography - italic
+  assign italic_font_normal = settings.type_italic_font | font_modify: 'weight', 'normal'
+  assign italic_font_bold = settings.type_italic_font | font_modify: 'weight', 'bold'
+  assign italic_font_medium = settings.type_italic_font | font_modify: 'weight', '500' | default: italic_font_bold
+  assign italic_font_semibold = settings.type_italic_font | font_modify: 'weight', '600' | default: italic_font_bold
+
+  # typography - button
+  assign button_font_normal = settings.type_button_font | font_modify: 'weight', 'normal'
+  assign button_font_bold = settings.type_button_font | font_modify: 'weight', 'bold'
+  assign button_font_medium = settings.type_button_font | font_modify: 'weight', '500' | default: button_font_normal
+  assign button_font_semibold = settings.type_button_font | font_modify: 'weight', '600' | default: button_font_bold
+
+  # animations
+  assign theme_js_animations_on_mobile = 'fade-in 800ms forwards paused'
+  if settings.disable_animations_on_mobile
+    assign theme_js_animations_on_mobile = 'none'
+  endif
+-%}
+
+{%- style -%}
+  /* typography - body */
+  {{ settings.type_body_font | font_face: font_display: 'swap' }}
+  {{ body_font_normal | font_face: font_display: 'swap' }}
+  {{ body_font_medium | font_face: font_display: 'swap' }}
+  {{ body_font_semibold | font_face: font_display: 'swap' }}
+  {{ body_font_bold | font_face: font_display: 'swap' }}
+
+  /* typography - body italic */
+  {{ body_font_italic | font_face: font_display: 'swap' }}
+  {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+
+  /* typography - heading */
+  {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {{ heading_font_normal | font_face: font_display: 'swap' }}
+  {{ heading_font_medium | font_face: font_display: 'swap' }}
+  {{ heading_font_semibold | font_face: font_display: 'swap' }}
+  {{ heading_font_bold | font_face: font_display: 'swap' }}
+
+  /* typography - italic */
+  {{ settings.type_italic_font | font_face: font_display: 'swap' }}
+  {{ italic_font_normal | font_face: font_display: 'swap' }}
+  {{ italic_font_medium | font_face: font_display: 'swap' }}
+  {{ italic_font_semibold | font_face: font_display: 'swap' }}
+  {{ italic_font_bold | font_face: font_display: 'swap' }}
+
+  /* typography - button */
+  {{ settings.type_button_font | font_face: font_display: 'swap' }}
+  {{ button_font_normal | font_face: font_display: 'swap' }}
+  {{ button_font_medium | font_face: font_display: 'swap' }}
+  {{ button_font_semibold | font_face: font_display: 'swap' }}
+  {{ button_font_bold | font_face: font_display: 'swap' }}
+
+  {% for scheme in settings.color_schemes -%}
+  {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
+  {% if forloop.index == 1 -%}
+    :root,
+  {%- endif %}
+
+    {% liquid
+      assign color_background = scheme.settings.background
+      assign color_background_gradient = color_background
+      if scheme.settings.background_gradient != empty
+        assign color_background_gradient = scheme.settings.background_gradient
+      endif
+
+      assign color_background_brightness = color_background | color_brightness
+      if color_background_brightness <= 26
+        assign color_background_contrast = color_background | color_lighten: 50
+      elsif color_background_brightness <= 65
+        assign color_background_contrast = color_background | color_lighten: 5
+      else
+        assign color_background_contrast = color_background | color_darken: 25
+      endif
+
+      assign color_primary_text = scheme.settings.primary_text
+      assign color_secondary_text = scheme.settings.secondary_text
+      assign color_heading_text = scheme.settings.header_text
+
+      assign color_filled_button = scheme.settings.primary_button
+      assign color_filled_button_label = scheme.settings.primary_button_label
+      assign color_outlined_button = scheme.settings.background
+      assign color_outlined_button_label = scheme.settings.secondary_button_label
+    %}
+
+  .color-{{ scheme.id }} {
+    --color-background: {{ color_background.red }},{{ color_background.green }},{{ color_background.blue }};
+    --gradient-background: {{ color_background_gradient }};
+
+    --color-background-contrast: {{ color_background_contrast.red }},{{ color_background_contrast.green }},{{ color_background_contrast.blue }};
+    --color-shadow: {{ scheme.settings.shadow.red }},{{ scheme.settings.shadow.green }},{{ scheme.settings.shadow.blue }};
+
+    /* typography */
+    --color-primary-text: {{ color_primary_text.red }},{{ color_primary_text.green }},{{ color_primary_text.blue }};
+    --color-secondary-text: {{ color_secondary_text.red }},{{ color_secondary_text.green }},{{ color_secondary_text.blue }};
+    --color-heading-text: {{ color_heading_text.red }},{{ color_heading_text.green }},{{ color_heading_text.blue }};
+
+    --color-foreground: {{ scheme.settings.primary_text.red }},{{ scheme.settings.primary_text.green }},{{ scheme.settings.primary_text.blue }};
+
+    /* buttons */
+    --color-filled-button: {{ color_filled_button.red }},{{ color_filled_button.green }},{{ color_filled_button.blue }};
+    --color-filled-button-text: {{ color_filled_button_label.red }},{{ color_filled_button_label.green }},{{ color_filled_button_label.blue }};
+    --color-outlined-button: {{ color_outlined_button.red }},{{ color_outlined_button.green }},{{ color_outlined_button.blue }};
+    --color-outlined-button-text: {{ color_outlined_button_label.red }},{{ color_outlined_button_label.green }},{{ color_outlined_button_label.blue }};
+
+    --color-button-text: {{ color_filled_button_label.red }},{{ color_filled_button_label.green }},{{ color_filled_button_label.blue }};
+
+    /* other elements */
+    --color-link: {{ scheme.settings.link.red }},{{ scheme.settings.link.green }},{{ scheme.settings.link.blue }};
+    --color-border: {{ scheme.settings.border.red }},{{ scheme.settings.border.green }},{{ scheme.settings.border.blue }};
+    --alpha-border: 1;
+
+    --color-tag-foreground: {{ scheme.settings.tag_label.red }},{{ scheme.settings.tag_label.green }},{{ scheme.settings.tag_label.blue }};
+    --color-tag-background: {{ scheme.settings.tag.red }},{{ scheme.settings.tag.green }},{{ scheme.settings.tag.blue }};
+
+    --color-progress-bar: {{ scheme.settings.progress_bar.red }},{{ scheme.settings.progress_bar.green }},{{ scheme.settings.progress_bar.blue }};
+    --color-placeholder: {{ scheme.settings.placeholder.red }},{{ scheme.settings.placeholder.green }},{{ scheme.settings.placeholder.blue }};
+    --color-rating-stars: {{ scheme.settings.rating_stars.red }},{{ scheme.settings.rating_stars.green }},{{ scheme.settings.rating_stars.blue }};
+
+    --color-button-swiper: {{ color_filled_button.red }},{{ color_filled_button.green }},{{ color_filled_button.blue }};
+  }
+  {% endfor %}
+
+  {{ scheme_classes | prepend: 'body' }} {
+    color: rgba(var(--color-foreground), 1);
+    background-color: rgb(var(--color-background));
+  }
+
+  :root {
+    /* default values */
+    --announcement-bars-before-header-heights: 40px;
+    --announcement-bars-before-header-visible-heights: 40px;
+    --header-height: {{ settings.default_header_height }}px;
+    --announcement-bar-height: 40px;
+    --header-top-position: calc(var(--header-height) + var(--announcement-bars-before-header-heights));
+    --header-group-height: {{ settings.default_header_height }}px;
+
+    /* typography - heading */
+    --font-heading-family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-heading-style: {{ settings.type_heading_font.style }};
+    --font-heading-weight: {{ settings.type_heading_font.weight }};
+
+    --font-heading-scale: {{ settings.heading_font_scale | divided_by: 100.0 }};
+    --font-heading-letter-spacing: {{ settings.heading_letter_spacing }};
+    --font-heading-text-transform: {{ settings.heading_text_transform }};
+    --font-heading-word-break: {{ settings.heading_word_break }};
+
+    /* typography - body */
+    --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    --font-body-style: {{ settings.type_body_font.style }};
+    --font-body-weight: {{ settings.type_body_font.weight }};
+
+    --font-body-scale: {{ settings.body_font_scale | divided_by: 100.0 }};
+    --font-body-letter-spacing: {{ settings.body_letter_spacing }};
+
+    /* typography - italic */
+    --font-italic-family: {{ settings.type_italic_font.family }}, {{ settings.type_italic_font.fallback_families }};
+    --font-italic-style: {{ settings.type_italic_font.style }};
+    --font-italic-weight: {{ settings.type_italic_font.weight }};
+    --font-italic-scale: {{ settings.italic_font_scale | divided_by: 100.0 }};
+
+    /* typography - button */
+    --font-button-family: {{ settings.type_button_font.family }}, {{ settings.type_button_font.fallback_families }};
+    --font-button-style: {{ settings.type_button_font.style }};
+    --font-button-weight: {{ settings.type_button_font.weight }};
+
+    --font-button-scale: {{ settings.button_font_scale | divided_by: 100.0 }};
+    --font-button-letter-spacing: {{ settings.button_letter_spacing }};
+    --font-button-text-transform: {{ settings.button_text_transform }};
+
+    /* add 'arial' as a fallback font for rtl languages */
+    {%- if request.locale.iso_code == 'ar' or request.locale.iso_code == 'he' -%}
+      --font-body-family: {{ settings.type_body_font.family }}, Arial, {{ settings.type_body_font.fallback_families }};
+      --font-heading-family: {{ settings.type_heading_font.family }}, Arial, {{ settings.type_heading_font.fallback_families }};
+      --font-button-family: {{ settings.type_button_font.family }}, Arial, {{ settings.type_button_font.fallback_families }};
+      --font-italic-family: {{ settings.type_italic_font.family }}, Arial, {{ settings.type_italic_font.fallback_families }};
+    {%- endif -%}
+
+    /* font weights */
+    --font-weight-normal: {{ body_font_normal.weight }}; /* 400 */
+    --font-weight-medium: {{ body_font_medium.weight }}; /* 500 */
+    --font-weight-semibold: {{ body_font_semibold.weight }}; /* 600 */
+    --font-weight-bold: {{ body_font_bold.weight }}; /* 700 */
+
+    --font-weight-heading-normal: {{ heading_font_normal.weight }}; /* 400 */
+    --font-weight-heading-medium: {{ heading_font_medium.weight }}; /* 500 */
+    --font-weight-heading-semibold: {{ heading_font_semibold.weight }}; /* 600 */
+    --font-weight-heading-bold: {{ heading_font_bold.weight }}; /* 700 */
+
+    --font-weight-button-normal: {{ button_font_normal.weight }}; /* 400 */
+    --font-weight-button-medium: {{ button_font_medium.weight }}; /* 500 */
+
+    /* digi-note-kk - is it possible to remove these? */
+    --letter-spacing-extra-small: 0.05rem;
+    --letter-spacing-small: 0.1rem;
+    --letter-spacing-medium: 0.2rem;
+
+    --letter-spacing-xxs: -0.04em;
+    --letter-spacing-xs: -0.02em;
+    --letter-spacing-sm: -0.01em;
+    --letter-spacing-md: 0;
+    --letter-spacing-lg: 0.01em;
+    --letter-spacing-xl: 0.02em;
+    --letter-spacing-xxl: 0.04em;
+
+    /* typography - heading - start */
+    --h1-multiplier: 4.7rem;
+    --h2-multiplier: 3.6rem;
+    --h3-multiplier: 2.7rem;
+    --h4-multiplier: 2.1rem;
+    --h5-multiplier: 1.6rem;
+    --h6-multiplier: 1.2rem;
+
+    /* lowercase headings need more line-height */
+    {% if settings.heading_text_transform == 'uppercase' %}
+      --line-height-h1: 0.85;
+      --line-height-h2: 0.85;
+      --line-height-h3: 1.00;
+      --line-height-h4: 1.00;
+      --line-height-h5: 1.20;
+      --line-height-h6: 1.20;
+    {% else %}
+      --line-height-h1: 1.00;
+      --line-height-h2: 1.00;
+      --line-height-h3: 1.00;
+      --line-height-h4: 1.00;
+      --line-height-h5: 1.20;
+      --line-height-h6: 1.20;
+    {% endif %}
+    /* typography - heading - end */
+
+    --button-border-radius: {{ settings.button_border_radius }};
+    --button-text-transform: {{ settings.button_text_transform }};
+    --input-border-radius: {{ settings.input_border_radius }};
+    --button-action-border-radius: {{ settings.input_border_radius }};
+    --badge-border-radius: 0.4rem;
+
+    --section-spacing-unit-size: {{ settings.section_spacing_unit_size | times: 0.75 | round: 1 }}rem;
+    --spacing-unit-size: {{ settings.spacing_mobile }}rem;
+    --grid-spacing: {{ settings.spacing_mobile }}rem;
+
+
+    /* common colors */
+    --color-success: #E45F5F;
+    --color-alert: #F0B743;
+    --color-error: #C25151;
+    --color-price-accent: #EAF7FC;
+
+    --color-white: #FFFFFF;
+    --color-white-rgb: 255, 255, 255;
+    --color-black: #111111;
+    --color-black-rgb: 17, 17, 17;
+    --color-light: #EBEBEB;
+    --color-light-rgb: 235, 235, 235;
+
+    --media-overlay-gradient: {{ settings.media_overlay_gradient_desktop }};
+    --media-overlay-gradient-mobile: {{ settings.media_overlay_gradient_mobile }};
+
+    --gradient-black: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%);
+    --gradient-overlay-horizontal: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+    --color-popup-overlay: rgba(0, 0, 0, 0.5);
+
+    --page-width: {{ settings.page_width }}px;
+    --page-gutter: {{ settings.section_spacing_unit_size | times: 1.0 | round: 1 }}rem;
+
+    --max-w-xxs-multiplier: 0.4694; /* 676px / 1440px = 0.4694 */
+    --max-w-xs-multiplier: 0.5333;  /* 768px / 1440px = 0.5333 */
+    --max-w-sm-multiplier: 0.6292;  /* 906px / 1440px = 0.6292 */
+    --max-w-md-multiplier: 0.7111;  /* 1024px / 1440px = 0.7111 */
+    --max-w-lg-multiplier: 0.7903;  /* 1138px / 1440px = 0.7903 */
+    --max-w-xxl-multiplier: 0.9194; /* 1324px / 1440px = 0.9194 */
+
+    --duration-short: 200ms;
+    --duration-default: 300ms;
+    --duration-long: 400ms;
+    --duration-extra-long: 600ms;
+
+    --z-header: 800;
+    --z-modals: 900;
+    --z-fab: 750;
+
+    /* cards */
+    --card-corner-radius: {{ settings.card_corner_radius }}rem;
+    --card-text-align: {{ settings.card_text_alignment }};
+
+    --card-aspect-ratio: {{ settings.card_aspect_ratio }};
+    --card-media-aspect-ratio: {{ settings.card_media_aspect_ratio }};
+    --card-media-object-fit: {{ settings.card_media_object_fit }};
+
+    --theme-js-animations-on-mobile: {{ theme_js_animations_on_mobile }};
+
+    /* static values - start */
+    --font-size-static-h1: 8.0rem;
+    --font-size-static-h2: 6.1rem;
+    --font-size-static-h3: 4.7rem;
+    --font-size-static-h4: 3.6rem;
+    --font-size-static-h5: 2.7rem;
+    --font-size-static-h6: 2.1rem;
+    --font-size-static-h7: 1.6rem;
+
+    --font-size-static-xxs: 0.8rem;
+    --font-size-static-xs: 1.0rem;
+    --font-size-static-sm: 1.2rem;
+    --font-size-static-md: 1.4rem;
+    --font-size-static-lg: 1.6rem;
+    --font-size-static-xl: 1.8rem;
+    --font-size-static-xxl: 2.4rem;
+
+    --line-height-static-xs: 1.00; /* don't use this value unless must */
+    --line-height-static-sm: 1.25; /* most common and secure value */
+    --line-height-static-md: 1.50;
+    --line-height-static-lg: 2.25;
+    --line-height-static-xl: 2.50;
+
+    --spacing-unit-size-static: 1.6rem;
+    /* static values - end */
+
+    --product-card-option-button-size: {{ settings.product_card_option_button_size }}rem;
+
+    /* drawer */
+    --drawer-transition-timing-function: cubic-bezier(0.74, -0.01, 0.26, 1);
+    --drawer-transition-duration: 450ms;
+  }
+
+  @media screen and (min-width: 750px) {
+    :root {
+      --section-spacing-unit-size: {{ settings.section_spacing_unit_size }}rem;
+      --spacing-unit-size: {{ settings.spacing_desktop }}rem;
+      --grid-spacing: {{ settings.spacing_desktop }}rem;
+
+      --page-gutter: {{ settings.section_spacing_unit_size | times: 2.25 | round: 1 }}rem;
+
+      /* typography - heading - start */
+      --h1-multiplier: 8.0rem;
+      --h2-multiplier: 6.1rem;
+      --h3-multiplier: 4.7rem;
+      --h4-multiplier: 3.6rem;
+      --h5-multiplier: 2.7rem;
+      --h6-multiplier: 2.1rem;
+
+    /* lowercase headings need more line-height */
+    {% if settings.heading_text_transform == 'uppercase' %}
+      --line-height-h1: 0.85;
+      --line-height-h2: 0.85;
+      --line-height-h3: 0.85;
+      --line-height-h4: 0.85;
+      --line-height-h5: 1.00;
+      --line-height-h6: 1.00;
+    {% else %}
+      --line-height-h1: 1.00;
+      --line-height-h2: 1.00;
+      --line-height-h3: 1.00;
+      --line-height-h4: 1.00;
+      --line-height-h5: 1.00;
+      --line-height-h6: 1.00;
+    {% endif %}
+      /* typography - heading - end */
+    }
+  }
+
+  {% if settings.disable_animations_on_mobile %} disable-animations{% endif %}
+{%- endstyle -%}
