@@ -9,17 +9,18 @@
  */
 {
   "sections": {
+    "troca_genius_ehQ3mz": {
+      "type": "troca-genius",
+      "settings": {}
+    },
     "main": {
       "type": "main-page",
-      "settings": {
-        "breadcrumbs": true,
-        "show_page_title": true,
-        "info_title": "",
-        "info_content": ""
-      }
+      "disabled": true,
+      "settings": {}
     }
   },
   "order": [
+    "troca_genius_ehQ3mz",
     "main"
   ]
 }
