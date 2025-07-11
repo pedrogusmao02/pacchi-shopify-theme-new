@@ -1,0 +1,109 @@
+<div id="planet">
+
+{%- for block in section.blocks -%}
+    {%- case block.type -%}
+      {%- when 'planet_image' -%}
+        <div class="imageBanner">
+        <img src="{{block.settings.image | image_url: width: 3080}}" />
+        </div>
+      {% endcase %}
+    {% endfor %}
+    <div class="content-wrapper">
+    {%- for block in section.blocks -%}
+      <div class="content-block">
+      {%- case block.type -%}
+      {%- when 'planet_title' -%}
+        <h2>{{block.settings.title}}</h2>
+        {%- when 'planet_content' -%}
+        <h3>{{block.settings.content_title}}</h3>
+        <p>{{block.settings.content_text}}</p>
+      {% endcase %}
+      </div>
+    {% endfor %}
+    </div>
+
+{% style %}
+
+#planet {
+}
+
+
+@media only screen and (min-width: 1100px) {
+
+#planet {
+
+}
+
+.imageBanner {
+
+}
+
+#planet .content-wrapper {
+  column-count: 2;
+  margint-top: 20px;
+}
+
+
+}
+
+{% endstyle %}
+
+
+
+</div>
+
+
+{% schema %}
+    {
+      "name": "For the Planet",
+      "settings": [],
+      "blocks": [
+        {
+          "type": "planet_image",
+          "name": "Planet Featured Image",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "image_picker",
+              "id": "image",
+              "label": "Imagem de destaque"
+            }
+          ]
+        },
+        {
+            "type": "planet_title",
+            "name": "Planet intro text",
+            "limit": 2,
+            "settings": [
+            {
+                "type": "inline_richtext",
+                "label": "Texto introdutório",
+                "id": "title"
+            }    
+            ]
+        },
+        {
+            "type": "planet_content",
+            "name": "Planet content",
+            "settings": [
+            {
+                "id": "content_title",
+                "type": "inline_richtext",
+                "label": "Título da seção"
+            },
+            {
+                "id": "content_text",
+                "type": "inline_richtext",
+                "label": "Conteúdo da seção"
+            }
+            ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "For the Planet",
+          "category": "Custom"
+        }
+      ]
+    }
+    {% endschema %}
