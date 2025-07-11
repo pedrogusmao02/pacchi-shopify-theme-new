@@ -1,4 +1,12 @@
- 
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "1658995208ad05f95f": {
@@ -6,7 +14,6 @@
       "blocks": {
         "8d591e0b-d408-44f1-8bd2-9b71f529aa90": {
           "type": "slide",
-          "disabled": true,
           "settings": {
             "banner_layout": "hero-banner--full",
             "color_scheme": "scheme-2",
@@ -15,75 +22,22 @@
             "subheading": "Discover SS24 essence",
             "subheading_link": "",
             "text": "",
+            "button_link_1": "/",
             "button_link_1_type": "button",
             "button_label_1": "Discover now",
             "button_style_1": "button--filled",
+            "button_link_2": "/",
             "button_label_2": "Explore",
             "button_style_2": "button--outlined",
             "content_position": "center",
             "content_alignment": "center",
+            "video": "shopify://files/videos/pacchi.mp4",
             "video_external": "",
             "show_controls_on_video": false,
             "enable_media_overlay_desktop": false,
             "content_position_mobile": "center",
             "content_alignment_mobile": "center",
-            "video_external_mobile": "",
-            "show_controls_on_video_mobile": false,
-            "enable_media_overlay_mobile": true
-          }
-        },
-        "slide_xb6hhz": {
-          "type": "slide",
-          "disabled": true,
-          "settings": {
-            "banner_layout": "hero-banner--full",
-            "color_scheme": "scheme-6",
-            "header_menu_text_color": "#ffffff",
-            "heading": "<p>Cuddle season</p><p><em>The Winter Collection</em></p>",
-            "subheading": "Enjoy cozy winter nights",
-            "subheading_link": "",
-            "text": "",
-            "button_link_1_type": "button",
-            "button_label_1": "Discover now",
-            "button_style_1": "button--filled",
-            "button_label_2": "",
-            "button_style_2": "button--outlined",
-            "content_position": "center",
-            "content_alignment": "center",
-            "video_external": "",
-            "show_controls_on_video": false,
-            "enable_media_overlay_desktop": true,
-            "content_position_mobile": "center",
-            "content_alignment_mobile": "center",
-            "video_external_mobile": "",
-            "show_controls_on_video_mobile": false,
-            "enable_media_overlay_mobile": true
-          }
-        },
-        "slide_F3fJWR": {
-          "type": "slide",
-          "settings": {
-            "banner_layout": "hero-banner--full",
-            "color_scheme": "scheme-2",
-            "header_menu_text_color": "#ffffff",
-            "heading": "<p>Bold by design</p>",
-            "subheading": "SS25 statement pieces",
-            "subheading_link": "",
-            "text": "",
-            "button_link_1": "/",
-            "button_link_1_type": "button",
-            "button_label_1": "Discover more",
-            "button_style_1": "button--outlined",
-            "button_link_2": "/",
-            "button_label_2": "",
-            "button_style_2": "button--outlined",
-            "content_position": "end",
-            "content_alignment": "center",
-            "video_external": "",
-            "show_controls_on_video": false,
-            "enable_media_overlay_desktop": true,
-            "content_position_mobile": "center",
-            "content_alignment_mobile": "center",
+            "video_mobile": "shopify://files/videos/video-home-mobile-min.mp4",
             "video_external_mobile": "",
             "show_controls_on_video_mobile": false,
             "enable_media_overlay_mobile": true
@@ -91,9 +45,7 @@
         }
       },
       "block_order": [
-        "8d591e0b-d408-44f1-8bd2-9b71f529aa90",
-        "slide_xb6hhz",
-        "slide_F3fJWR"
+        "8d591e0b-d408-44f1-8bd2-9b71f529aa90"
       ],
       "custom_css": [],
       "settings": {
@@ -144,6 +96,7 @@
         "heading_size": "h3",
         "subheading": "",
         "button_label": "View all",
+        "button_link": "",
         "button_style": "button--text",
         "max_products": 8,
         "enable_slideshow_overflow": false,
@@ -169,6 +122,7 @@
             "heading_size": "h6",
             "text": "<h3>Timeless <em>classics</em></h3>",
             "button_label": "Explore",
+            "button_link": "",
             "button_style": "button--text",
             "product": "",
             "product_width": 24,
@@ -199,6 +153,7 @@
             "heading_size": "h3",
             "text": "",
             "button_label": "",
+            "button_link": "",
             "button_style": "button--text",
             "product": "",
             "product_width": 24,
@@ -250,6 +205,7 @@
         "buttons_7BWxeA": {
           "type": "buttons",
           "settings": {
+            "button_link_1": "/",
             "button_link_1_type": "button",
             "button_label_1": "Lookbook",
             "button_style_1": "button--outlined",
@@ -331,6 +287,7 @@
         "subheading": "",
         "content_padding": "0",
         "button_label": "Explore all",
+        "button_link": "shopify://collections",
         "button_style": "button--text",
         "card_layout": "collection",
         "card_style": "normal",
@@ -505,6 +462,7 @@
         "heading_size": "h5",
         "subheading": "What's new",
         "button_label": "View all",
+        "button_link": "",
         "button_style": "button--text",
         "max_products": 8,
         "enable_slideshow_overflow": false,
@@ -537,10 +495,12 @@
         "buttons_YCULAK": {
           "type": "buttons",
           "settings": {
+            "button_link_1": "/",
             "button_link_1_type": "button",
             "button_label_1": "Shop now",
             "button_style_1": "button--filled",
             "color_scheme_first_button": "scheme-6",
+            "button_link_2": "/",
             "button_label_2": "Explore",
             "button_style_2": "button--outlined",
             "color_scheme_second_button": "scheme-6"
@@ -586,6 +546,7 @@
         "text": "",
         "action_preference": "button",
         "button_label": "Explore",
+        "button_link": "",
         "newsletter_button_label": "Submit",
         "button_style": "button--outlined",
         "show_timer": true,
@@ -777,6 +738,7 @@
             "heading_size": "h3",
             "text": "",
             "button_label": "Discover now",
+            "button_link": "",
             "button_style": "button--text",
             "video_external": "",
             "show_controls_on_video": false,
@@ -822,6 +784,7 @@
         "heading": "",
         "heading_size": "h3",
         "heading_alignment": "start",
+        "spacing_tile": "default",
         "color_scheme": "scheme-8",
         "section_width": "max-w-full",
         "spacing_top": "4",
@@ -835,6 +798,7 @@
           "type": "subheading",
           "settings": {
             "subheading": "Timeless staples, redefined for everyday sophistication",
+            "link": ""
           }
         },
         "heading_C37iat": {
@@ -853,6 +817,7 @@
         "buttons_i9pppL": {
           "type": "buttons",
           "settings": {
+            "button_link_1": "/",
             "button_link_1_type": "button",
             "button_label_1": "Discover now",
             "button_style_1": "button--outlined",
@@ -1024,6 +989,7 @@
             "card_title": "<h3>Discover our <em>other stores</em></h3>",
             "button_style": "button--outlined",
             "button_label": "See all stores",
+            "button_link": "",
             "search": false,
             "color_scheme": ""
           }
@@ -1102,6 +1068,7 @@
             "heading_size": "h3",
             "text": "",
             "button_label": "Discover now",
+            "button_link": "",
             "button_style": "button--filled",
             "product": "",
             "product_width": 24,
@@ -1297,6 +1264,7 @@
         "show_read_more": true,
         "content_alignment": "text-start",
         "button_style": "button--text",
+        "spacing_inner": "4",
         "section_width": "max-w-fluid",
         "color_scheme": "scheme-1",
         "spacing_grid": "2",
@@ -1347,6 +1315,7 @@
       ],
       "settings": {
         "layout": "default",
+        "remove_desktop_spacing": false,
         "heading": "Join the <em>family</em>",
         "heading_size": "h3",
         "subheading": "",
