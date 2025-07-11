@@ -11,15 +11,24 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
+      "custom_css": [],
+      "settings": {}
+    },
+    "troca_genius_VVmNNa": {
+      "type": "troca-genius",
       "settings": {
-        "breadcrumbs": true,
-        "show_page_title": true,
-        "info_title": "",
-        "info_content": ""
+        "image": "shopify://shop_images/Snapinst.app_456438078_1166123474498962_3925010618482944189_n_1080Artboard-1.png",
+        "title": "Troca e devolução",
+        "text": "<p>Para fazer uma troca ou devolução, é um processo simples e intuitivo. </p><ol><li>Tenha em mãos o <strong>número do seu pedido ou o e-mail de cadastro </strong>da sua compra e siga o processo.</li><li>Selecione se você quer trocar ou devolver seu produto.</li><li>Você receberá um e-mail com seu código de logística reversa para postagem nos <strong>Correios</strong> em até <strong>7 dias corridos.</strong></li><li>Assim que seu pedido chegar na Pacchi novamente e for aprovado pela <strong>Análise de Controle de Qualidade</strong>, você receberá automaticamente um e-mail com um cupom de troca, isto é, um <strong>código de desconto com o valor exato da sua compra, </strong>para você realizar uma nova compra no site com o produto que deseja trocar. Em caso de devolução, o valor de compra tem um prazo de até <strong>30 dias úteis para ser estornado</strong> e você receberá o comprovante por e-mail.</li></ol><p>Clique no botão abaixo para realizar o processo: </p><p></p>",
+        "text2": "<p></p><ul><li>O prazo para devolução ou troca de produto é de 7 dias úteis contados a partir do recebimento do seu produto.</li><li>A Análise de Controle de Qualidade dos nossos produtos é feita considerando os seguintes pontos: sinais de uso na peça, presença de todos os acessórios eventuais da peça, presença das etiquetas e presença da tag.</li><li>A loja se responsabilizará pelo frete do produto devolvido. Em caso de troca, nos responsabilizamos pelo frete da primeira troca, a partir da segunda (<strong>do mesmo pedido</strong>), o frete sai por conta do cliente.</li><li>A troca por outro produto poderá ser feita desde que este esteja disponível em estoque.<br/></li></ul>",
+        "button_text": "Faça sua Troca ou Devolução aqui.",
+        "button_link": "https://front.geniusreturns.com.br/pages/default.aspx?alias=pacchi"
       }
     }
   },
   "order": [
-    "main"
+    "main",
+    "troca_genius_VVmNNa"
   ]
 }
