@@ -31,6 +31,7 @@
     "product_card_media_aspect_ratio": "1/1",
     "product_card_media_object_fit": "cover",
     "product_card_badge_position": "start",
+    "product_badge_background_color": "#000000",
     "product_card_action_buttons_color_scheme": "scheme-6",
     "product_card_add_to_cart_btn_content": "icon",
     "swatches_option": "Color",
