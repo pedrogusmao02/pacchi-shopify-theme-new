@@ -24,7 +24,7 @@
     "input_border_radius": "0.8rem",
     "spacing_desktop": 1.2,
     "spacing_mobile": 1.2,
-    "card_corner_radius": 0,
+    "card_corner_radius": 0.8,
     "card_text_alignment": "center",
     "card_media_aspect_ratio": "3/4",
     "product_card_media_aspect_ratio": "1/1",
@@ -78,38 +78,6 @@
           "color_scheme": "scheme-1",
           "spacing_top": "0",
           "spacing_bottom": "0"
-        }
-      },
-      "ezfy-custom-fonts": {
-        "type": "ezfy-custom-fonts",
-        "blocks": {
-          "image_mak8XR": {
-            "type": "image",
-            "settings": {
-              "name": "Acid",
-              "custom_font_weight": "none",
-              "custom_font_style": "none",
-              "custom_font_url": "https://cdn.shopify.com/s/files/1/0878/1938/7172/files/AcidGrotesk-Regular.otf?v=1725457334",
-              "custom_font_url_bold": "https://cdn.shopify.com/s/files/1/0878/1938/7172/files/AcidGrotesk-Bold.otf?v=1726853782",
-              "apply_h1": true,
-              "apply_h2": true,
-              "apply_h3": true,
-              "apply_h4": true,
-              "apply_h5": true,
-              "apply_h6": true,
-              "apply_span": true,
-              "apply_p": true,
-              "apply_a": true,
-              "apply_button": true,
-              "apply_custom": ""
-            }
-          }
-        },
-        "block_order": [
-          "image_mak8XR"
-        ],
-        "settings": {
-          "enable": true
         }
       }
     },
