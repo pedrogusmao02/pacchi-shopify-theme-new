@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "theme": {
     "accessibility": {
@@ -145,7 +154,7 @@
     "quantity_maximum_of": "Máximo de {{quantity}}",
     "selling_plan_subscription_type": "Tipo de assinatura",
     "discount_badge": "{{percentage}} % de desconto",
-    "discount_badge_html": "<span class=\"percentage\">{{percentage}}</span>% de desconto",
+    "discount_badge_html": "<span class=\"percentage\">{{percentage}}</span>% OFF",
     "variant_info": "Disponível em ",
     "variant_info_one_option": "Disponível em {{ option_count_and_name }}",
     "variant_info_multiple_options": "Disponível em {{ options_count_and_name }} e {{ option_last_count_and_name }}",
