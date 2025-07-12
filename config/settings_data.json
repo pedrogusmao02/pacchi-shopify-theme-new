@@ -28,7 +28,7 @@
     "card_text_alignment": "center",
     "card_aspect_ratio": "1/1",
     "card_media_aspect_ratio": "1/1",
-    "product_card_media_aspect_ratio": "1/1",
+    "product_card_media_aspect_ratio": "3/4",
     "product_card_media_object_fit": "cover",
     "product_card_badge_position": "start",
     "product_badge_background_color": "#000000",
