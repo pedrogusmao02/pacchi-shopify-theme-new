@@ -401,14 +401,9 @@
         "collection_JBz4Aj": {
           "type": "collection",
           "settings": {
-            "title": "Jackets",
-            "collection": "",
-            "products": [
-              "hydrophobic-wind-resistant-padded-jacket",
-              "jas-3",
-              "jas-2",
-              "waterproof-insulated-down-jacket"
-            ],
+            "title": "Blusas & Tops",
+            "collection": "blusas-tops",
+            "products": [],
             "vendor": "",
             "collection_of_products": "",
             "show_unavailable_products": false,
@@ -423,8 +418,8 @@
         "collection_kTG7cF": {
           "type": "collection",
           "settings": {
-            "title": "Hoodies",
-            "collection": "hoodies-sweatshirts",
+            "title": "Bodies",
+            "collection": "bodies",
             "products": [],
             "vendor": "",
             "collection_of_products": "",
@@ -440,8 +435,8 @@
         "collection_WMqXU7": {
           "type": "collection",
           "settings": {
-            "title": "T-shirts",
-            "collection": "t-shirts",
+            "title": "Coleção Forza",
+            "collection": "colecao-forza",
             "products": [],
             "vendor": "",
             "collection_of_products": "",
@@ -522,6 +517,7 @@
         "section_height": "full",
         "content_position": "center",
         "content_alignment": "center",
+        "video": "shopify://files/videos/pacchi.mp4",
         "video_external": "",
         "show_controls_on_video": false,
         "aspect_ratio": "auto",
