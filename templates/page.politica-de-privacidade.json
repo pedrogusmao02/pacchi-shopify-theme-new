@@ -11,11 +11,24 @@
   "sections": {
     "main": {
       "type": "main-page",
-      "disabled": true,
-      "settings": {}
+      "custom_css": [
+        "h1 {font-size: 50px;}"
+      ],
+      "settings": {
+        "breadcrumbs": true,
+        "show_page_title": true,
+        "page_title_alignment": "text-center",
+        "info_title": "",
+        "info_content": "",
+        "section_width": "max-w-narrower",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
     },
     "troca_genius_3TpQ8q": {
       "type": "troca-genius",
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/IMG_1336.jpg",
         "title": "Política de privacidade",
@@ -24,10 +37,34 @@
         "button_text": "",
         "button_link": ""
       }
+    },
+    "custom_liquid_TcWm3p": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.name",
+      "settings": {
+        "custom_liquid": "",
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
+    },
+    "custom_liquid_4k8qar": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.name",
+      "settings": {
+        "custom_liquid": "<p>Nós da Pacchi temos o compromisso de respeitar a privacidade e a segurança dos nossos clientes. Aqui, você tem a certeza de que está navegando em uma estrutura planejada para garantir total segurança e privacidade em cada compra realizada.\n<br>\nEm todas as formas de pagamento existem ferramentas eficientes para a proteção de seus dados; proporcionando um padrão sólido de segurança. Ou seja, além de grandes ofertas, você conta com um processo de compra muito tranquilo. Você também pode comprovar a nossa eficiência em segurança através dos nossos Certificados, presentes no fim de cada página (rodapé).\n<br><br>\n<strong>Cookies</strong>\n<br><br>\nNosso site instala cookies* no seu computador com o objetivo de possibilitar a identificação do seu browser após a sua primeira visita. Com isso, o atendimento virtual fica mais personalizado. Fique tranquilo, você não terá problemas com a sua privacidade; não existem informações pessoais de segurança nesses cookies. Assim, quando você já fora outra vez cadastrado e acessa o site da Mobile Maníacos mais de uma vez pelo mesmo computador, o seu browser é identificado e automaticamente são buscado os dados já informados, oferecendo a você uma experiência de navegação única e personalizada.\n<br><br>\nComputador compartilhado por mais de um usuário: Se você compartilha o mesmo computador com outra pessoa e ambos são cadastrados em um mesmo site que trabalhe com o mesmo cookie, é natural que o site o identifique com o nome daquela pessoa, quando você acessá-lo. Neste caso, desconecte-se do seu login no site e o faça novamente para obter a identificação correta. Caso tente navegar no site sem efetuar o logout, quando for entrar em páginas seguras serão solicitados o login e senha para confirmação de identidade.\n\n*Cookie é um arquivo criado para armazenar informações em seu computador e deixar a experiência de navegação mais personalizada. Os cookies podem armazenar informações pessoais para identificá-lo. Quando um cookie é salvo no seu computador, somente o site que o criou poderá lê-lo.\n\nE-mails\n\nATENÇÃO! Nunca solicitamos nenhum tipo de confirmação de dados ou informação no corpo do e-mail, tampouco algum cadastro é realizado através de e-mails. Principalmente alteração ou confirmação de senha, que só podem ser solicitadas pelos próprios clientes que efetuaram o cadastro.\n</p>",
+        "section_width": "max-w-page",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
     }
   },
   "order": [
     "main",
-    "troca_genius_3TpQ8q"
+    "troca_genius_3TpQ8q",
+    "custom_liquid_TcWm3p",
+    "custom_liquid_4k8qar"
   ]
 }
