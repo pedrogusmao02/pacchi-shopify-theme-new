@@ -1,4 +1,12 @@
- 
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "t:sections.header.name",
   "type": "header",
@@ -91,6 +99,7 @@
             "content_position_vertical": "justify-center",
             "title": "Transient Echoes",
             "subtitle": "SPOTLIGHT",
+            "link": ""
           }
         },
         "37cd2d1d-2b56-4ed5-93d6-934e97ab2ca2": {
@@ -104,6 +113,7 @@
             "content_position_vertical": "justify-center",
             "title": "Get ready for the sun",
             "subtitle": "SS25",
+            "link": ""
           }
         }
       },
@@ -116,6 +126,8 @@
         "sticky": true,
         "nav_items_border": false,
         "drawer_layer": true,
+        "logo": "shopify://shop_images/Ativo_3.png",
+        "logo_transparent": "shopify://shop_images/branco.png",
         "logo_svg_code": "",
         "logo_width": 100,
         "logo_width_mobile": 100,
@@ -130,7 +142,7 @@
         "second_additional_link_url": "",
         "menu": "main-menu",
         "menu_mobile": "",
-        "submenu": "search-suggestions",
+        "submenu": "",
         "menu_mobile_card_column_count": "2",
         "parent_link_size": "md",
         "parent_without_submenu_size": "lg",
