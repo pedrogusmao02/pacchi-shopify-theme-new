@@ -1,1 +1,186 @@
- 
+{%- render 'css', css: 'section-blog.css' -%}
+{%- render 'css', css: 'component-card-article.css' -%}
+{%- render 'css', css: 'component-card-text.css' -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} > div {
+    padding-block-start: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_top }});
+    padding-block-end: calc(var(--section-spacing-unit-size) * {{ section.settings.spacing_bottom }});
+    --blog-grid-spacing: calc(var(--grid-spacing) * {{ section.settings.spacing_grid }});
+    --card-article-media-aspect-ratio: {{ section.settings.card_media_aspect_ratio }};
+    --h6-multiplier: 2.1rem;
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="blog">
+    {%- if section.settings.show_breadcrumbs -%}
+      {%- render 'breadcrumbs' -%}
+    {%- endif -%}
+
+    <div class="container {{ section.settings.section_width }}">
+      {%- if section.settings.show_category_square -%}
+        <div class="blog__head no-scrollbar">
+          <div class="blog__filters">
+            <ul class="blog__filters-items list-unstyled h3">
+              <li class="blog__filters-item is-active">
+                <span>{{ section.settings.page_title | default: page.title }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="blog__articles" id="ProductGridContainer">
+        <div class="blog__articles-grid text-center" id="product-grid">
+          {%- if section.settings.featured_image != blank -%}
+            <div class="blog__card-article blog__card-article--featured">
+              <img src="{{ section.settings.featured_image | img_url: 'master' }}" alt="{{ section.settings.page_title | default: page.title }}" class="blog__featured-image" loading="lazy" width="1200" height="600">
+            </div>
+          {%- endif -%}
+
+          <h1 class="blog__title h2 {{ section.settings.content_alignment }}">
+            {{ section.settings.page_title | default: page.title }}
+          </h1>
+
+          {%- for block in section.blocks -%}
+            <div class="blog__card-article {{ section.settings.content_alignment }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <div class="blog__card-article-media">
+                  <img src="{{ block.settings.image | img_url: '720x' }}" alt="{{ block.settings.image.alt | escape }}" loading="lazy" width="720" height="480">
+                </div>
+              {%- endif -%}
+              <div class="blog__card-article-content">
+                {{ block.settings.content }}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Default Content Page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "default": true,
+      "label": "Show breadcrumbs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category_square",
+      "default": true,
+      "label": "Show category square with page title"
+    },
+    {
+      "type": "text",
+      "id": "page_title",
+      "label": "Page title (leave blank to use page title)",
+      "default": "Page title"
+    },
+    {
+      "type": "image_picker",
+      "id": "featured_image",
+      "label": "Featured image"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "text-start", "label": "Left" },
+        { "value": "text-center", "label": "Center" },
+        { "value": "text-end", "label": "Right" }
+      ],
+      "default": "text-center"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        { "value": "max-w-page", "label": "Page width" },
+        { "value": "max-w-narrow", "label": "Narrow" },
+        { "value": "max-w-fluid", "label": "Full width" }
+      ],
+      "default": "max-w-narrow",
+      "label": "Section width"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "scheme-1",
+      "label": "Color scheme"
+    },
+    {
+      "type": "select",
+      "id": "spacing_grid",
+      "label": "Grid spacing",
+      "options": [
+        { "value": "0", "label": "No" },
+        { "value": "1", "label": "S" },
+        { "value": "2", "label": "M" },
+        { "value": "4", "label": "L" },
+        { "value": "6", "label": "XL" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_top",
+      "label": "Top spacing",
+      "options": [
+        { "value": "0", "label": "No" },
+        { "value": "1", "label": "S" },
+        { "value": "2", "label": "M" },
+        { "value": "4", "label": "L" },
+        { "value": "6", "label": "XL" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "spacing_bottom",
+      "label": "Bottom spacing",
+      "options": [
+        { "value": "0", "label": "No" },
+        { "value": "1", "label": "S" },
+        { "value": "2", "label": "M" },
+        { "value": "4", "label": "L" },
+        { "value": "6", "label": "XL" }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content",
+      "name": "Content block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Default Content Page",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %} 
