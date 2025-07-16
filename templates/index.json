@@ -401,9 +401,14 @@
         "collection_JBz4Aj": {
           "type": "collection",
           "settings": {
-            "title": "Blusas & Tops",
-            "collection": "blusas-tops",
-            "products": [],
+            "title": "Jackets",
+            "collection": "",
+            "products": [
+              "hydrophobic-wind-resistant-padded-jacket",
+              "jas-3",
+              "jas-2",
+              "waterproof-insulated-down-jacket"
+            ],
             "vendor": "",
             "collection_of_products": "",
             "show_unavailable_products": false,
@@ -418,8 +423,8 @@
         "collection_kTG7cF": {
           "type": "collection",
           "settings": {
-            "title": "Bodies",
-            "collection": "bodies",
+            "title": "Hoodies",
+            "collection": "hoodies-sweatshirts",
             "products": [],
             "vendor": "",
             "collection_of_products": "",
@@ -435,8 +440,8 @@
         "collection_WMqXU7": {
           "type": "collection",
           "settings": {
-            "title": "Coleção Forza",
-            "collection": "colecao-forza",
+            "title": "T-shirts",
+            "collection": "t-shirts",
             "products": [],
             "vendor": "",
             "collection_of_products": "",
@@ -517,7 +522,6 @@
         "section_height": "full",
         "content_position": "center",
         "content_alignment": "center",
-        "video": "shopify://files/videos/pacchi.mp4",
         "video_external": "",
         "show_controls_on_video": false,
         "aspect_ratio": "auto",
@@ -1249,6 +1253,29 @@
         "spacing_bottom": "4"
       }
     },
+    "blog_articles_ThCgzt": {
+      "type": "blog-articles",
+      "settings": {
+        "heading": "Blog",
+        "heading_size": "h3",
+        "blog": "news",
+        "button_text": "Visit Blog",
+        "layout": "layout-2",
+        "card_media_aspect_ratio": "4/3",
+        "show_excerpt": false,
+        "show_date": true,
+        "show_author": true,
+        "show_read_more": true,
+        "content_alignment": "text-start",
+        "button_style": "button--text",
+        "spacing_inner": "4",
+        "section_width": "max-w-fluid",
+        "color_scheme": "scheme-1",
+        "spacing_grid": "2",
+        "spacing_top": "6",
+        "spacing_bottom": "6"
+      }
+    },
     "social_media_highlights_fVaa73": {
       "type": "social-media-highlights",
       "blocks": {
@@ -1330,6 +1357,7 @@
     "dual_tiles_BLjNMb",
     "interactive_banner_z99HMq",
     "testimonials_CMyt3F",
+    "blog_articles_ThCgzt",
     "social_media_highlights_fVaa73"
   ]
 }
