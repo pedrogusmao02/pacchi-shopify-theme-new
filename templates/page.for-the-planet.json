@@ -12,7 +12,17 @@
     "main": {
       "type": "main-page",
       "disabled": true,
-      "settings": {}
+      "settings": {
+        "breadcrumbs": true,
+        "show_page_title": true,
+        "page_title_alignment": "text-center",
+        "info_title": "",
+        "info_content": "",
+        "section_width": "max-w-narrower",
+        "color_scheme": "",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
     },
     "planet_template_zknpkE": {
       "type": "planet-template",
@@ -89,11 +99,28 @@
         "planet_content_gd9kyD",
         "planet_content_AjYyeK"
       ],
+      "disabled": true,
       "settings": {}
+    },
+    "default_content_page_RyTg7m": {
+      "type": "default-content-page",
+      "name": "Default Content Page",
+      "settings": {
+        "show_breadcrumbs": true,
+        "show_category_square": true,
+        "page_title": "Page title",
+        "content_alignment": "text-center",
+        "section_width": "max-w-narrow",
+        "color_scheme": "",
+        "spacing_grid": "2",
+        "spacing_top": "2",
+        "spacing_bottom": "2"
+      }
     }
   },
   "order": [
     "main",
-    "planet_template_zknpkE"
+    "planet_template_zknpkE",
+    "default_content_page_RyTg7m"
   ]
 }
