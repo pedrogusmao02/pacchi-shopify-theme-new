@@ -436,9 +436,6 @@ h1, h2, h3, h4, h5, h6,
 /* italic heading styling -- start */
 h1 em, h2 em, h3 em, h4 em, h5 em, h6 em,
 .h1 em, .h2 em, .h3 em, .h4 em, .h5 em, .h6 em {
-  font-style: var(--font-italic-style);
-  font-weight: var(--font-italic-weight);
-  line-height: 0;
 }
 /* italic heading styling -- end */
 
