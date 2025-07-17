@@ -24,18 +24,18 @@
         </ul>
       {%- endif -%}
 
+      <div class="article__head container {{ section.settings.section_width }}">
+        <h1 class="article__title h2" itemprop="headline">
+          {{ section.settings.page_title }}
+        </h1>
+      </div>
+
       <div class="article__hero js-article-hero-media max-w-narrow">
         {%- if section.settings.featured_image != blank -%}
           <div class="article__media media">
             <img src="{{ section.settings.featured_image | img_url: '1200x600' }}" alt="{{ section.settings.page_title }}" loading="lazy" width="1200" height="600">
           </div>
         {%- endif -%}
-      </div>
-
-      <div class="article__head container {{ section.settings.section_width }}">
-        <h1 class="article__title h2" itemprop="headline">
-          {{ section.settings.page_title }}
-        </h1>
       </div>
 
       {%- for block in section.blocks -%}
