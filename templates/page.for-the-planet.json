@@ -108,7 +108,7 @@
         "content_eQdjGX": {
           "type": "content",
           "settings": {
-            "content": ""
+            "content": "<h2>Aqui estão todas as nossas ações para tornar a Pacchi o mais responsável socialmente e ambientalmente possível:<br/></h2><h3><strong>1 — 4 Matéria prima</strong></h3><p>l. Para o tingimento dos nossos tecidos é utilizado <strong>água de reuso</strong>, e não água potável. Isto foi possível graças a uma parceria do nosso fornecedor com a SABESP (Companhia de Saneamento do Estado de São Paulo), garantindo que a água do seu processo produtivo seja sempre tratada após o uso, retornando posteriormente ao processo em um <strong>sistema contínuo e cíclico.</strong></p><p>ll. Utilizamos a matéria prima Amni Soul Eco®, o <strong>primeiro fio de poliamida do mundo</strong> com aditivos que acelera a decomposição em aterros sanitários. Ela também <strong>reduz a descarga de microplásticos</strong> gerados em lavandarias que acabam em ambientes marinhos. Ela permite que sua decomposição seja até <strong>10 vezes mais rápida em aterros e cerca de 20 vezes mais rápida nos oceanos</strong>, reduzindo o acúmulo de resíduos têxteis no planeta e diminuindo o impacto ambiental da cadeia têxtil.</p><p>lll. Graças ao selo de CO2 Control®, os tecidos são produzidos com economia<strong> e redução da emissão de gás carbônico. </strong>Além disso, graças a sua <strong>tecnologia que não amassa</strong>, é evitado o gasto de energia com o ferro de passar.</p><h3><strong>2 — 4 Atemporalidade</strong></h3><p>l. Valorizamos peças duráveis e versáteis, que vão de encontro com produtos virais e momentâneos. Prezamos por peças que tenham um longo ciclo de vida no seu armário. Para a atemporalidade de uma peça, consideramos: design, mão de obra qualificada, matéria prima durável e tecnologia.</p><h3><strong>3 — 4 Slow Fashion</strong></h3><p>l. Queremos promover um consumo contrário às fast-fashions e às grandes tendências. Nos comprometemos com um <strong>consumo consciente e desacelerado, promovendo qualidade ao invés de quantidade.</strong> Vamos diretamente contra modas passageiras, priorizando peças com design minimalistas e sem estampas. </p><h3><strong>4 — 4 Transparência</strong></h3><p>l. Para uma marca consciente e transparente, nos certificamos com uma <strong>produção brasileira, ética, regional e qualificada</strong>. Divulgamos em nossas redes todo l nosso time envolvido em toda cadeia de produção das peças.</p>"
           }
         }
       },
@@ -119,8 +119,9 @@
       "settings": {
         "show_breadcrumbs": true,
         "show_category_square": true,
-        "page_title": "{{ page.title }}",
-        "featured_image": "shopify://shop_images/IMG_1057.jpg",
+        "page_title_box": "{{ page.title }}",
+        "page_title": "Para uma marca ser intitulada sustentável e consciente, deve-se considerar inúmeros fatores. Buscamos aprimorar cada vez mais nossas práticas conforme nosso crescimento financeiro permite.",
+        "featured_image": "shopify://shop_images/Plenty_Amb-001_camiseta_rev-007_IMG-001_RGB_WEB_1_32622fbc-98fd-48ce-b79f-498ddf83a39e.png",
         "section_width": "max-w-narrow",
         "color_scheme": "",
         "spacing_top": "2",
