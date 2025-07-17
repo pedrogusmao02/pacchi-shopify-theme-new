@@ -199,7 +199,6 @@ html.no-js .hero__swiper-slide {
 }
 
 .hero__heading p em {
-  font-family: var(--font-italic-family);
   font-size: calc(var(--font-italic-scale) * var(--h1-multiplier));
   font-style: var(--font-italic-style);
   font-weight: var(--font-italic-weight);
