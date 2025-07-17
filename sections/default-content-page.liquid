@@ -19,7 +19,7 @@
       {%- if section.settings.show_category_square -%}
         <ul class="article__tags list-unstyled text-navigation-button">
           <li class="article__tags-item">
-            <span>{{ section.settings.page_title }}</span>
+            <span>{{ section.settings.page_title_box }}</span>
           </li>
         </ul>
       {%- endif -%}
@@ -67,7 +67,13 @@
       "type": "checkbox",
       "id": "show_category_square",
       "default": true,
-      "label": "Show category square with page title"
+      "label": "Page title box"
+    },
+    {
+      "type": "text",
+      "id": "page_title_box",
+      "label": "Page title box text",
+      "default": "{{ page.title }}"
     },
     {
       "type": "text",
