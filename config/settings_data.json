@@ -81,6 +81,38 @@
           "spacing_top": "0",
           "spacing_bottom": "0"
         }
+      },
+      "ezfy-custom-fonts": {
+        "type": "ezfy-custom-fonts",
+        "blocks": {
+          "image_yAeHNw": {
+            "type": "image",
+            "settings": {
+              "name": "Acid",
+              "custom_font_weight": "normal",
+              "custom_font_style": "none",
+              "custom_font_url": "https://cdn.shopify.com/s/files/1/0878/1938/7172/files/AcidGrotesk-Regular.otf?v=1725457334",
+              "custom_font_url_bold": "https://cdn.shopify.com/s/files/1/0878/1938/7172/files/AcidGrotesk-Bold.otf?v=1726853782",
+              "apply_h1": true,
+              "apply_h2": true,
+              "apply_h3": true,
+              "apply_h4": true,
+              "apply_h5": true,
+              "apply_h6": true,
+              "apply_span": true,
+              "apply_p": true,
+              "apply_a": true,
+              "apply_button": true,
+              "apply_custom": ""
+            }
+          }
+        },
+        "block_order": [
+          "image_yAeHNw"
+        ],
+        "settings": {
+          "enable": true
+        }
       }
     },
     "content_for_index": [],
