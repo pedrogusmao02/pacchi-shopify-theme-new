@@ -104,11 +104,23 @@
     },
     "default_content_page_wB3nqw": {
       "type": "default-content-page",
+      "blocks": {
+        "content_eQdjGX": {
+          "type": "content",
+          "settings": {
+            "content": ""
+          }
+        }
+      },
+      "block_order": [
+        "content_eQdjGX"
+      ],
       "name": "Default Content Page",
       "settings": {
         "show_breadcrumbs": true,
         "show_category_square": true,
         "page_title": "{{ page.title }}",
+        "featured_image": "shopify://shop_images/IMG_1057.jpg",
         "section_width": "max-w-narrow",
         "color_scheme": "",
         "spacing_top": "2",
