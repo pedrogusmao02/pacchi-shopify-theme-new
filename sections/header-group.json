@@ -81,8 +81,8 @@
         "timer_UXXqcR"
       ],
       "settings": {
-        "text_block_behaviour": "marquee",
-        "slider_autoplay_interval": 5,
+        "text_block_behaviour": "slider",
+        "slider_autoplay_interval": 3,
         "font_weight": "700",
         "section_width": "max-w-fluid",
         "color_scheme": "scheme-6"
