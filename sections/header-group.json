@@ -16,6 +16,7 @@
       "blocks": {
         "localization_FXcM4j": {
           "type": "localization",
+          "disabled": true,
           "settings": {
             "show_on": "desktop"
           }
@@ -45,6 +46,7 @@
         },
         "link_h8t4xz": {
           "type": "link",
+          "disabled": true,
           "settings": {
             "show_on": "desktop",
             "link_label": "New Products",
@@ -54,6 +56,7 @@
         },
         "timer_UXXqcR": {
           "type": "timer",
+          "disabled": true,
           "settings": {
             "show_on": "desktop",
             "timer_year": 2025,
