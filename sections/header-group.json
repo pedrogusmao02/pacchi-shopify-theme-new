@@ -32,15 +32,15 @@
         "cee0c4f6-5546-43a3-bfc3-2f3afa36d9d5": {
           "type": "text-slide",
           "settings": {
-            "content": "<p>FREE SHIPPING ON US ORDERS OVER $150</p>",
-            "icon": "theme-box"
+            "content": "<p>Frete grátis acima de R$600</p>",
+            "icon": ""
           }
         },
         "5e0cad2e-d931-416e-ac29-51a4a683ade2": {
           "type": "text-slide",
           "settings": {
-            "content": "<p>Welcome to Our Store</p>",
-            "icon": "theme-box"
+            "content": "<p>CUPOM 5% OFF NA PRIMEIRA COMPRA: <strong>PRIMEIRA5</strong></p>",
+            "icon": ""
           }
         },
         "link_h8t4xz": {
@@ -78,7 +78,7 @@
         "timer_UXXqcR"
       ],
       "settings": {
-        "text_block_behaviour": "slider",
+        "text_block_behaviour": "marquee",
         "slider_autoplay_interval": 5,
         "font_weight": "700",
         "section_width": "max-w-fluid",

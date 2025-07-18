@@ -120,8 +120,8 @@
             "custom_background_color": "",
             "heading": "",
             "heading_size": "h6",
-            "text": "<h3>Timeless <em>classics</em></h3>",
-            "button_label": "Explore",
+            "text": "<h4>Blusas com efeito Body</h4>",
+            "button_label": "Veja todas",
             "button_link": "",
             "button_style": "button--text",
             "product": "",
@@ -152,8 +152,8 @@
             "custom_background_color": "",
             "heading": "",
             "heading_size": "h3",
-            "text": "",
-            "button_label": "",
+            "text": "<h4>Vestidos</h4>",
+            "button_label": "Veja Todos",
             "button_link": "",
             "button_style": "button--text",
             "product": "",
@@ -200,8 +200,8 @@
         "heading_Ymr9i7": {
           "type": "heading",
           "settings": {
-            "heading": "The brand designs clothing to make everyone feel <em>unique</em>",
-            "heading_size": "h2"
+            "heading": "Coleção Reflexo",
+            "heading_size": "h4"
           }
         },
         "buttons_7BWxeA": {
@@ -209,7 +209,7 @@
           "settings": {
             "button_link_1": "/",
             "button_link_1_type": "button",
-            "button_label_1": "Lookbook",
+            "button_label_1": "40% off em tudo",
             "button_style_1": "button--outlined",
             "color_scheme_first_button": "scheme-6",
             "button_link_2": "/",
