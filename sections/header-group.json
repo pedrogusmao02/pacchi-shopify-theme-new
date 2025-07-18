@@ -23,6 +23,7 @@
         },
         "link_pEAxig": {
           "type": "link",
+          "disabled": true,
           "settings": {
             "show_on": "desktop",
             "link_label": "Our Stores",

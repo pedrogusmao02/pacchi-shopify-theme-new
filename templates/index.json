@@ -253,7 +253,7 @@
         "collection_slide_RnfaVr": {
           "type": "collection-slide",
           "settings": {
-            "collection": "hoodies-sweatshirts",
+            "collection": "best-sellers",
             "heading": "Tops",
             "heading_size": "h4",
             "subheading": ""
@@ -262,7 +262,7 @@
         "collection_slide_t4ydXM": {
           "type": "collection-slide",
           "settings": {
-            "collection": "tops",
+            "collection": "bodies",
             "heading": "Accessories",
             "heading_size": "h4",
             "subheading": ""
@@ -271,7 +271,7 @@
         "collection_slide_QyRTDj": {
           "type": "collection-slide",
           "settings": {
-            "collection": "t-shirts",
+            "collection": "colecao-forza",
             "heading": "Bottoms",
             "heading_size": "h4",
             "subheading": ""
@@ -285,16 +285,17 @@
       ],
       "settings": {
         "layout": "layout-1",
-        "heading": "Our <em>special</em> collections",
-        "heading_size": "h3",
+        "heading": "Compre pelas categorias:",
+        "heading_size": "h5",
         "subheading": "",
-        "content_padding": "0",
-        "button_label": "Explore all",
-        "button_style": "button--text",
+        "content_padding": "2",
+        "button_label": "Comprar agora",
+        "button_link": "shopify://collections",
+        "button_style": "button--filled",
         "card_layout": "collection",
-        "card_style": "normal",
+        "card_style": "compact",
         "image_aspect_ratio": "3/4",
-        "card_content_alignment": "center",
+        "card_content_alignment": "start",
         "card_title_style": "card-single-text",
         "collection_product_count": "show",
         "slides_per_view": 3,
@@ -351,10 +352,10 @@
             "show_on": "both",
             "color_scheme": "scheme-6",
             "custom_background_color": "",
-            "heading": "Classic Meets Contemporary",
-            "heading_size": "h3",
-            "text": "<p>Redefine timeless styles with a modern twist—explore the Heritage Collection and the Future Edit.</p>",
-            "button_label": "Discover more",
+            "heading": "“Pulso”",
+            "heading_size": "h4",
+            "text": "<p> Inspirado na obra My Red Homeland, de Amish Kapoor, o Vestido Pulso foi lançado como forma de manifestação do mais visceral que temos dentro de nós - um simbolismo do amor mais puro e interior.</p>",
+            "button_label": "SOBRE “PULSO”",
             "button_link": "",
             "button_style": "button--filled",
             "product": "",
