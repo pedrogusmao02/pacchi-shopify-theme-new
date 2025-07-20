@@ -108,7 +108,7 @@
         "content_eQdjGX": {
           "type": "content",
           "settings": {
-            "content": "<p>Assim que você adquirir um de nossos produtos, teremos um prazo de<strong> 7 dias para enviá-lo.</strong> Após isso, é só esperar ele chegar até você!</p><p>Os nossos prazos de entrega dependem de algumas variáveis:</p><ul><li>Quantidade de peças escolhidas;</li><li>Endereço de entrega;</li><li>Tipo de envio escolhido.</li></ul><p>Para escolher a melhor opção para você, preencha seu CEP no momento do check out e consulte os prazos disponíveis com seus respectivos valores.</p><p>Os prazos de entrega são informados pelos Correios e começam a contar a partir da confirmação de pagamento realizada pela administradora do cartão de crédito / débito.</p>"
+            "content": "<p>“Eu criei a Pacchi movida por um incômodo. Desde muito cedo, me chamou atenção como a sustentabilidade na área da moda no Brasil era sempre representada da mesma forma.  Por muito tempo, vestir-se de forma consciente parecia algo reservado a um estereótipo: roupas neutras, modelagens largas e uma estética “natureba” que muitas vezes mais afastava do que aproximava muitas mulheres.</p><p>A ideia de que vestir-se de forma consciente precisava seguir um certo “padrão visual” nunca fez sentido pra mim. Eu acredito que é possível unir responsabilidade ambiental e social com estilo e modernidade. A Pacchi é exatamente isso: consumir de forma mais consciente sem abrir mão da própria identidade e do conforto no corpo. Afinal, Sustentabilidade não deve ser sobre estética, ela é escolha, é valor, é compromisso com o futuro. E pra mim, isso sempre teve que caminhar junto com a forma como me visto.</p><p>Além disso, sempre fui contra os excessos da fast fashion — tanto pelo impacto ambiental quanto pelo desrespeito humano que ela sustenta. Nunca aceitei que fosse preciso fechar os olhos para os bastidores da indústria: exploração, mão de obra precarizada, invisibilidade e ciclos de consumo abusivos. </p><p>A Pacchi surgiu como uma resposta a isso. Uma marca feita com consciência, com peças que duram, com produção local, justa e transparente. O slow fashion não é apenas um conceito, mas uma prática real, possível e acessível durante todo seu processo. Quis construir uma marca ética, justa e transparente — todo o processo de modelagem e costura é e deve ser conhecido por cada pessoa que consome Pacchi.</p><p>A Pacchi é, para mim, mais do que um negócio. É um reflexo daquilo em que acredito. É o meu jeito de participar da moda e do mundo com mais responsabilidade, e também um convite para que outras mulheres façam parte disso - seja espelhando nossas práticas em seus próprios negócios ou na suas formas de consumir moda. Num futuro não tão distante, quero que a Pacchi se torne uma referência brasileira em sustentabilidade. Não pela rigidez, mas justamente pela leveza e pela liberdade com que se propõe a fazer diferente.”</p><p><strong>Camila Pacheco,<br/>Fundadora & Diretora Criativa.</strong></p>"
           }
         }
       },
@@ -120,7 +120,7 @@
         "show_breadcrumbs": true,
         "show_category_square": true,
         "page_title_box": "{{ page.title }}",
-        "page_title": "Conceito Pacchi",
+        "page_title": "Sobre a Pacchi",
         "section_width": "max-w-narrow",
         "color_scheme": "",
         "spacing_top": "2",
