@@ -254,6 +254,7 @@
           "type": "collection-slide",
           "settings": {
             "collection": "hoodies-sweatshirts",
+            "image": "shopify://shop_images/DSC04515_6170c731-7b1e-471b-ae1e-1a48965d22e6.jpg",
             "heading": "Tops",
             "heading_size": "h4",
             "subheading": ""
@@ -263,6 +264,7 @@
           "type": "collection-slide",
           "settings": {
             "collection": "tops",
+            "image": "shopify://shop_images/DSC04010.jpg",
             "heading": "Accessories",
             "heading_size": "h4",
             "subheading": ""
@@ -272,6 +274,7 @@
           "type": "collection-slide",
           "settings": {
             "collection": "t-shirts",
+            "image": "shopify://shop_images/regata-1-4-scaled-e1711230191712.jpg",
             "heading": "Bottoms",
             "heading_size": "h4",
             "subheading": ""
@@ -290,6 +293,7 @@
         "subheading": "",
         "content_padding": "0",
         "button_label": "Explore all",
+        "button_link": "shopify://collections",
         "button_style": "button--text",
         "card_layout": "collection",
         "card_style": "normal",
