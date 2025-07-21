@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "theme": {
     "accessibility": {
@@ -334,7 +343,12 @@
     "heading_total": "Total",
     "quantity_error_html": "You can only add {{quantity}} of this item to your cart.",
     "free_shipping_text_html": "Spend <span class=\"money\">{{amount}}</span> more for free shipping",
-    "free_shipping_text_success": "Congrats! You're qualified for free shipping!"
+    "free_shipping_text_success": "Congrats! You're qualified for free shipping!",
+    "discount_code": "Discount code",
+    "discount_code_placeholder": "Enter code",
+    "discount_apply": "Apply",
+    "discount_success": "Discount applied!",
+    "discount_error": "Could not apply discount."
   },
   "search": {
     "label": "Search",

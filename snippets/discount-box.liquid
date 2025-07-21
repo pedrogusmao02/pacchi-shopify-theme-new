@@ -1,0 +1,92 @@
+<div class="discount-box">
+  <form id="DiscountForm" autocomplete="off">
+    <label for="discount-code" class="discount-box__label">{{ 'cart.discount_code' | t: default: 'Discount code' }}</label>
+    <div class="discount-box__input-group">
+      <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="{{ 'cart.discount_code_placeholder' | t: default: 'Enter code' }}" required>
+      <button type="submit" class="discount-box__button">{{ 'cart.discount_apply' | t: default: 'Apply' }}</button>
+    </div>
+    <div id="DiscountMessage" class="discount-box__message" style="display:none;"></div>
+  </form>
+</div>
+
+<script>
+(function() {
+  var form = document.getElementById('DiscountForm');
+  var input = document.getElementById('discount-code');
+  var message = document.getElementById('DiscountMessage');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var code = input.value.trim();
+    if (!code) return;
+    message.style.display = 'none';
+    message.textContent = '';
+    form.classList.add('is-loading');
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ attributes: {}, discount: code })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.status && data.status !== 200) {
+        throw new Error(data.description || 'Error applying discount');
+      }
+      message.textContent = '{{ "cart.discount_success" | t: default: "Discount applied!" }}';
+      message.style.display = 'block';
+      message.className = 'discount-box__message discount-box__message--success';
+      // Reload cart sections
+      if (window.location.pathname.indexOf('/cart') !== -1) {
+        window.location.reload();
+      } else if (window.CartDrawer && window.CartDrawer.prototype.renderContents) {
+        window.CartDrawer.prototype.renderContents();
+      } else {
+        // fallback: reload
+        window.location.reload();
+      }
+    })
+    .catch(function(err) {
+      message.textContent = err.message || '{{ "cart.discount_error" | t: default: "Could not apply discount." }}';
+      message.style.display = 'block';
+      message.className = 'discount-box__message discount-box__message--error';
+    })
+    .finally(function() {
+      form.classList.remove('is-loading');
+    });
+  });
+})();
+</script>
+
+<style>
+.discount-box {
+  margin-bottom: 1.5rem;
+}
+.discount-box__input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+.discount-box__input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.discount-box__button {
+  padding: 0.5rem 1rem;
+  background: var(--color-button, #222);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.discount-box__message {
+  margin-top: 0.5rem;
+  font-size: 0.95em;
+}
+.discount-box__message--success {
+  color: green;
+}
+.discount-box__message--error {
+  color: red;
+}
+</style> 
