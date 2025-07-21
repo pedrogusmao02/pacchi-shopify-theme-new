@@ -253,7 +253,7 @@
         "collection_slide_RnfaVr": {
           "type": "collection-slide",
           "settings": {
-            "collection": "best-sellers",
+            "collection": "hoodies-sweatshirts",
             "heading": "Tops",
             "heading_size": "h4",
             "subheading": ""
@@ -262,7 +262,7 @@
         "collection_slide_t4ydXM": {
           "type": "collection-slide",
           "settings": {
-            "collection": "bodies",
+            "collection": "tops",
             "heading": "Accessories",
             "heading_size": "h4",
             "subheading": ""
@@ -271,7 +271,7 @@
         "collection_slide_QyRTDj": {
           "type": "collection-slide",
           "settings": {
-            "collection": "colecao-forza",
+            "collection": "t-shirts",
             "heading": "Bottoms",
             "heading_size": "h4",
             "subheading": ""
@@ -285,17 +285,16 @@
       ],
       "settings": {
         "layout": "layout-1",
-        "heading": "Compre pelas categorias:",
-        "heading_size": "h5",
+        "heading": "Our <em>special</em> collections",
+        "heading_size": "h3",
         "subheading": "",
-        "content_padding": "2",
-        "button_label": "Comprar agora",
-        "button_link": "shopify://collections",
-        "button_style": "button--filled",
+        "content_padding": "0",
+        "button_label": "Explore all",
+        "button_style": "button--text",
         "card_layout": "collection",
-        "card_style": "compact",
+        "card_style": "normal",
         "image_aspect_ratio": "3/4",
-        "card_content_alignment": "start",
+        "card_content_alignment": "center",
         "card_title_style": "card-single-text",
         "collection_product_count": "show",
         "slides_per_view": 3,
