@@ -121,6 +121,7 @@
         "show_category_square": true,
         "page_title_box": "{{ page.title }}",
         "page_title": "Sobre a Pacchi",
+        "featured_image": "shopify://shop_images/Snapinst.app_456438078_1166123474498962_3925010618482944189_n_1080Artboard-1.png",
         "section_width": "max-w-narrow",
         "color_scheme": "",
         "spacing_top": "2",
