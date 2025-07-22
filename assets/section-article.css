@@ -45,7 +45,7 @@
 
 .article__hero {
   margin-block-end: 2rem;
-  max-width: calc(var(--page-width) * 0.6666);
+  max-width: 100%;
   padding: 0;
 }
 
