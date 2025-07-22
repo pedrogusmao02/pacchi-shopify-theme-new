@@ -67,14 +67,8 @@
           "type": "collection",
           "settings": {
             "title": "",
-            "collection": "",
-            "products": [
-              "fluido",
-              "body-tiras",
-              "body-alcas",
-              "blusa-manga-longa",
-              "blusa-manga-curta"
-            ],
+            "collection": "best-sellers",
+            "products": [],
             "vendor": "",
             "collection_of_products": "",
             "show_unavailable_products": false,
