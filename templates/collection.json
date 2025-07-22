@@ -1,4 +1,12 @@
- 
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "page_banner_jWtyM4": {
@@ -16,6 +24,7 @@
         "page_menu": "",
         "enable_breadcrumbs": true,
         "section_height": "50svh",
+        "content_width": "100%",
         "video_external": "",
         "show_controls_on_video": false,
         "section_height_mobile": "50svh",
@@ -52,6 +61,7 @@
         "subheading": "",
         "content_padding": "0",
         "button_label": "",
+        "button_link": "shopify://collections",
         "button_style": "button--filled",
         "card_layout": "product",
         "card_style": "compact",
@@ -77,6 +87,7 @@
       "blocks": {
         "text_card_J6n8hm": {
           "type": "text-card",
+          "disabled": true,
           "settings": {
             "color_scheme": "scheme-2",
             "text": "<h3>Beauty in the <em>imperfections</em></h3>",
@@ -90,14 +101,16 @@
             "content_alignment_mobile": "center",
             "position": 7,
             "column_factor": 2,
-            "row_factor": 1,
+            "row_factor": 1
           }
         },
         "text_card_NeqRrh": {
           "type": "text-card",
+          "disabled": true,
           "settings": {
             "color_scheme": "scheme-6",
             "text": "<h3>Cruelty-free fashion</h3>",
+            "button_link": "",
             "link_type": "button",
             "button_label": "Learn more",
             "button_style": "button--text",
