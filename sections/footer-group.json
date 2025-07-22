@@ -79,18 +79,6 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "newsletter_wT8pfn": {
-          "type": "newsletter",
-          "settings": {
-            "column_factor": 3,
-            "row_factor": 1,
-            "heading": "Newsletter",
-            "text": "<p>Sign up to receive 10% off your first order</p>",
-            "content_position_vertical": "start",
-            "content_alignment": "start",
-            "content_alignment_for_mobile": "center"
-          }
-        },
         "link_list_6FaNjd": {
           "type": "link_list",
           "settings": {
@@ -130,22 +118,9 @@
             "show_first_menu_on_mobile": true
           }
         },
-        "brand_TLymXh": {
-          "type": "brand",
-          "settings": {
-            "column_factor": 3,
-            "row_factor": 1,
-            "logo_svg_code": "",
-            "logo_width": 240,
-            "logo_width_mobile": 150,
-            "text": "<p>Release is a premium official Shopify theme designed by DigiFist.</p>",
-            "content_position_vertical": "start",
-            "content_alignment": "start",
-            "content_alignment_for_mobile": "start"
-          }
-        },
         "social_media_YeVfDQ": {
           "type": "social_media",
+          "disabled": true,
           "settings": {
             "column_factor": 3,
             "row_factor": 1,
@@ -159,11 +134,9 @@
         }
       },
       "block_order": [
-        "newsletter_wT8pfn",
         "link_list_6FaNjd",
         "link_list_YDgTgy",
         "link_list_NDtDLY",
-        "brand_TLymXh",
         "social_media_YeVfDQ"
       ],
       "settings": {
@@ -180,6 +153,7 @@
       "blocks": {
         "richtext_GWFib7": {
           "type": "richtext",
+          "disabled": true,
           "settings": {
             "column_factor": 3,
             "row_factor": 1,
@@ -192,6 +166,7 @@
         },
         "payment_icons_g4NcKc": {
           "type": "payment_icons",
+          "disabled": true,
           "settings": {
             "column_factor": 3,
             "row_factor": 1,
