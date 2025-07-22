@@ -249,7 +249,7 @@
           "settings": {
             "collection": "hoodies-sweatshirts",
             "image": "shopify://shop_images/DSC04515_6170c731-7b1e-471b-ae1e-1a48965d22e6.jpg",
-            "heading": "Tops",
+            "heading": "Blusas",
             "heading_size": "h4",
             "subheading": ""
           }
@@ -282,11 +282,11 @@
       ],
       "settings": {
         "layout": "layout-1",
-        "heading": "Our <em>special</em> collections",
-        "heading_size": "h3",
+        "heading": "Compre por categorias",
+        "heading_size": "h4",
         "subheading": "",
         "content_padding": "0",
-        "button_label": "Explore all",
+        "button_label": "",
         "button_link": "shopify://collections",
         "button_style": "button--text",
         "card_layout": "collection",
