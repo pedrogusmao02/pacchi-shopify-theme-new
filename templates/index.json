@@ -463,6 +463,7 @@
         "collection_kTG7cF",
         "collection_WMqXU7"
       ],
+      "disabled": true,
       "settings": {
         "layout": "layout-2",
         "heading": "",
@@ -519,6 +520,7 @@
         "heading_U8BzAK",
         "buttons_YCULAK"
       ],
+      "disabled": true,
       "settings": {
         "enable_transparent_header": true,
         "media_position": "background",
@@ -544,6 +546,7 @@
     },
     "callout_banner_zjrrc9": {
       "type": "callout-banner",
+      "disabled": true,
       "settings": {
         "section_layout": "horizontal",
         "media_position": "full",
@@ -642,6 +645,7 @@
         "buy_buttons_GYAyze",
         "product_link_gT4g9z"
       ],
+      "disabled": true,
       "settings": {
         "highlighted_product": "jas-5",
         "heading": "<p>Item of the <em>week</em></p>",
@@ -682,6 +686,7 @@
         "slide_eQiKqa",
         "slide_EtGd4e"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Shop the look",
         "heading_size": "h4",
@@ -786,6 +791,7 @@
         "tile_je8hV3",
         "tile_nymJct"
       ],
+      "disabled": true,
       "settings": {
         "block_order_mobile": false,
         "heading": "",
@@ -842,6 +848,7 @@
         "content_EJD6a7",
         "buttons_i9pppL"
       ],
+      "disabled": true,
       "settings": {
         "enable_transparent_header": true,
         "media_position": "background",
@@ -1047,6 +1054,7 @@
         "image_before_slide_Lwx4kW",
         "image_after_slide_3zTBFn"
       ],
+      "disabled": true,
       "settings": {
         "section_layout": "shrink",
         "heading": "Before / <em>After</em>",
@@ -1132,6 +1140,7 @@
         "tile_c9Rqek",
         "tile_TAbJLq"
       ],
+      "disabled": true,
       "settings": {
         "section_layout": "stacked",
         "block_size": "half",
@@ -1239,6 +1248,7 @@
         "testimonial_tRUMQj",
         "testimonial_7PmBAx"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Testimonials",
         "heading_size": "h3",
@@ -1258,6 +1268,7 @@
     },
     "blog_articles_ThCgzt": {
       "type": "blog-articles",
+      "disabled": true,
       "settings": {
         "heading": "Blog",
         "heading_size": "h3",
@@ -1317,6 +1328,7 @@
         "image_m9bXnL",
         "image_Y3B3TH"
       ],
+      "disabled": true,
       "custom_css": [
         ".swiper-slide {margin-right: 0px !important;}"
       ],
