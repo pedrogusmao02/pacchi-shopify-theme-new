@@ -320,6 +320,70 @@
   // INITIALIZATION & EVENT LISTENERS
   // ========================================
   
+  // Fallback refreshThemeCart function if theme functions snippet isn't loaded
+  if (typeof refreshThemeCart !== 'function' && typeof window.refreshThemeCart !== 'function') {
+    console.log('Creating fallback refreshThemeCart function...');
+    window.refreshThemeCart = function() {
+      console.log('Fallback refreshThemeCart function called!');
+      
+      if (typeof updateCartCounters === 'function') {
+        console.log('Calling updateCartCounters...');
+        updateCartCounters();
+      }
+      
+      if (typeof updateFreeShipping === 'function') {
+        console.log('Calling updateFreeShipping...');
+        updateFreeShipping();
+      }
+      
+      const cartDrawer = document.querySelector('cart-drawer');
+      if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
+        const cartDrawerItems = document.querySelector('cart-drawer-items');
+        if (cartDrawerItems) {
+          cartDrawerItems.classList.add('is-loading');
+          
+          fetch('/cart.js')
+            .then(response => response.json())
+            .then(cart => {
+              const firstQuantityInput = cartDrawerItems.querySelector('input[name="updates[]"]');
+              if (firstQuantityInput) {
+                const currentQuantity = firstQuantityInput.value;
+                const currentIndex = firstQuantityInput.dataset.index;
+                
+                const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
+                if (cartItems && typeof cartItems.updateQuantity === 'function') {
+                  cartItems.updateQuantity(currentIndex, currentQuantity, 'updates[]');
+                }
+              }
+              
+              cartDrawerItems.classList.remove('is-loading');
+              
+              setTimeout(() => {
+                if (typeof loadAppliedDiscounts === 'function') {
+                  loadAppliedDiscounts();
+                }
+              }, 500);
+            })
+            .catch(error => {
+              console.error('Error updating cart items:', error);
+              cartDrawerItems.classList.remove('is-loading');
+            });
+        }
+      }
+      
+      setTimeout(() => {
+        if (typeof initDiscountBox === 'function') {
+          initDiscountBox();
+        }
+        setTimeout(() => {
+          if (typeof loadAppliedDiscounts === 'function') {
+            loadAppliedDiscounts();
+          }
+        }, 100);
+      }, 200);
+    };
+  }
+  
   console.log('Discount box script loaded');
   console.log('Theme cart snippet provided:', '{{ theme_cart_snippet }}' !== '');
   console.log('Theme cart snippet value:', '{{ theme_cart_snippet }}');
