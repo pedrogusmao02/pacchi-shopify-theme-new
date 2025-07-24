@@ -107,9 +107,43 @@
           console.log(JSON.stringify(cart, null, 2));
           console.log('=== END CART OBJECT ===');
           console.log('Cart level discount applications:', cart.cart_level_discount_applications); // Debug log
+          console.log('Discount codes:', cart.discount_codes); // Debug log
+          
+          // Check for applied discounts in multiple places
+          let appliedDiscounts = [];
+          
+          // First check cart_level_discount_applications
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+            appliedDiscounts = cart.cart_level_discount_applications;
+          }
+          // Then check discount_codes
+          else if (cart.discount_codes && cart.discount_codes.length > 0) {
+            appliedDiscounts = cart.discount_codes.map(discount => ({
+              title: discount.code,
+              type: 'discount_code'
+            }));
+          }
+          // Finally check if any items have discounts
+          else if (cart.items && cart.items.length > 0) {
+            const itemDiscounts = new Set();
+            cart.items.forEach(item => {
+              if (item.discounts && item.discounts.length > 0) {
+                item.discounts.forEach(discount => {
+                  itemDiscounts.add(discount.title);
+                });
+              }
+            });
+            if (itemDiscounts.size > 0) {
+              appliedDiscounts = Array.from(itemDiscounts).map(title => ({
+                title: title,
+                type: 'discount_code'
+              }));
+            }
+          }
+          
+          if (appliedDiscounts.length > 0) {
             console.log('Found applied discounts, displaying them...'); // Debug log
-            displayAppliedDiscounts(cart.cart_level_discount_applications);
+            displayAppliedDiscounts(appliedDiscounts);
           } else {
             console.log('No applied discounts found, hiding display...'); // Debug log
             hideAppliedDiscounts();
