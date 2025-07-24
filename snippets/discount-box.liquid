@@ -1,17 +1,16 @@
-<div class="discount-box{% if class %} {{ class }}{% endif %}">
-  <div id="DiscountForm">
-    <label for="discount-code" class="discount-box__label">Aplicar código de desconto</label>
-    <div class="discount-box__input-group">
-      <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="Código de desconto" required>
-      <button type="button" id="apply-discount-btn" class="discount-box__button">Aplicar</button>
+<div class="discount_box{% if class %} {{ class }}{% endif %}">
+  <div id="DiscountForm" class="discount_box__form">
+    <label for="discount-code" class="discount_box__label">Aplicar código de desconto</label>
+    <div class="discount_box__input-group">
+      <input type="text" id="discount-code" name="discount" class="discount_box__input" placeholder="Código de desconto" required>
+      <button type="button" id="apply-discount-btn" class="discount_box__button">Aplicar</button>
     </div>
-    <div id="DiscountMessage" class="discount-box__message" style="display:none; opacity: 0;"></div>
+    <div id="DiscountMessage" class="discount_box__message" style="display:none; opacity: 0;"></div>
   </div>
   
-  <!-- Applied Discounts Display -->
-  <div id="AppliedDiscounts" class="discount-box__applied-discounts" style="display:none;">
-    <h4 class="discount-box__applied-title">Descontos aplicados:</h4>
-    <div id="AppliedDiscountsList" class="discount-box__applied-list"></div>
+  <div id="AppliedDiscounts" class="discount_box__applied-discounts" style="display:none;">
+    <h4 class="discount_box__applied-title">Descontos aplicados:</h4>
+    <div id="AppliedDiscountsList" class="discount_box__applied-list"></div>
   </div>
 </div>
 
@@ -79,13 +78,13 @@
     
     discounts.forEach(discount => {
       const discountItem = document.createElement('div');
-      discountItem.className = 'discount-box__applied-item';
+      discountItem.className = 'discount_box__applied-item';
       discountItem.innerHTML = `
-        <span class="discount-box__applied-code">${discount.title}</span>
-        <button type="button" class="discount-box__remove-discount" data-discount-code="${discount.title}">×</button>
+        <span class="discount_box__applied-code">${discount.title}</span>
+        <button type="button" class="discount_box__remove-discount" data-discount-code="${discount.title}">×</button>
       `;
       
-      const removeBtn = discountItem.querySelector('.discount-box__remove-discount');
+      const removeBtn = discountItem.querySelector('.discount_box__remove-discount');
       removeBtn.addEventListener('click', function() {
         removeDiscount(discount.title);
       });
