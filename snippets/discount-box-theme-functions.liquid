@@ -1,0 +1,62 @@
+{%- comment -%}
+  Theme-specific functions for discount box cart UI updates
+  This file contains functions that are specific to this theme's cart system
+  and should be replaced when using this discount box in other themes.
+{%- endcomment -%}
+
+<script>
+function refreshThemeCart() {
+  if (typeof updateCartCounters === 'function') {
+    updateCartCounters();
+  }
+  if (typeof updateFreeShipping === 'function') {
+    updateFreeShipping();
+  }
+  
+  const cartDrawer = document.querySelector('cart-drawer');
+  if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
+    const cartDrawerItems = document.querySelector('cart-drawer-items');
+    if (cartDrawerItems) {
+      cartDrawerItems.classList.add('is-loading');
+      
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          const firstQuantityInput = cartDrawerItems.querySelector('input[name="updates[]"]');
+          if (firstQuantityInput) {
+            const currentQuantity = firstQuantityInput.value;
+            const currentIndex = firstQuantityInput.dataset.index;
+            
+            const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
+            if (cartItems && typeof cartItems.updateQuantity === 'function') {
+              cartItems.updateQuantity(currentIndex, currentQuantity, 'updates[]');
+            }
+          }
+          
+          cartDrawerItems.classList.remove('is-loading');
+          
+          setTimeout(() => {
+            if (typeof loadAppliedDiscounts === 'function') {
+              loadAppliedDiscounts();
+            }
+          }, 500);
+        })
+        .catch(error => {
+          console.error('Error updating cart items:', error);
+          cartDrawerItems.classList.remove('is-loading');
+        });
+    }
+  }
+  
+  setTimeout(() => {
+    if (typeof initDiscountBox === 'function') {
+      initDiscountBox();
+    }
+    setTimeout(() => {
+      if (typeof loadAppliedDiscounts === 'function') {
+        loadAppliedDiscounts();
+      }
+    }, 100);
+  }, 200);
+}
+</script> 
