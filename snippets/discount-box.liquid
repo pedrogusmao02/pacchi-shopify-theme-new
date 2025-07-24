@@ -1,9 +1,9 @@
 <div class="discount-box{% if class %} {{ class }}{% endif %}">
   <form id="DiscountForm" autocomplete="off">
-    <label for="discount-code" class="discount-box__label">{{ 'cart.discount_code' | t: default: 'Discount code' }}</label>
+    <label for="discount-code" class="discount-box__label">Aplicar código de desconto</label>
     <div class="discount-box__input-group">
-      <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="{{ 'cart.discount_code_placeholder' | t: default: 'Enter code' }}" required>
-      <button type="submit" class="discount-box__button">{{ 'cart.discount_apply' | t: default: 'Apply' }}</button>
+      <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="Código de desconto" required>
+      <button type="submit" class="discount-box__button">Aplicar</button>
     </div>
     <div id="DiscountMessage" class="discount-box__message" style="display:none;"></div>
   </form>
@@ -47,7 +47,7 @@
           throw new Error(data.description || 'Error applying discount');
         }
         
-        message.textContent = '{{ "cart.discount_success" | t: default: "Discount applied!" }}';
+        message.textContent = 'Desconto aplicado!';
         message.style.display = 'block';
         message.className = 'discount-box__message discount-box__message--success';
         
