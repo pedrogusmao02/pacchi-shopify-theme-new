@@ -233,7 +233,7 @@
       
       message.style.display = 'none';
       message.textContent = '';
-      form.classList.add('is-loading');
+      form.classList.add('discount_box--is-loading');
       
       fetch('/cart/update.js', {
         method: 'POST',
@@ -287,7 +287,7 @@
         message.className = 'discount_box__message discount_box__message--error';
       })
       .finally(function() {
-        form.classList.remove('is-loading');
+        form.classList.remove('discount_box--is-loading');
       });
     }
     
@@ -378,21 +378,21 @@
 </script>
 
 <style>
-.discount-box {
+.discount_box {
   margin-bottom: 1.5rem;
 }
-.discount-box__label {
+.discount_box__label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 1.3rem;
   font-weight: 500;
   color: #000;
 }
-.discount-box__input-group {
+.discount_box__input-group {
   display: flex;
   gap: 0.5rem;
 }
-.discount-box__input {
+.discount_box__input {
   flex: 1;
   padding: 0.75rem;
   border: 1px solid #000;
@@ -401,12 +401,12 @@
   background: #fff;
   color: #000;
 }
-.discount-box__input:focus {
+.discount_box__input:focus {
   outline: none;
   border-color: #000;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
-.discount-box__button {
+.discount_box__button {
   padding: 0.75rem 1rem;
   background: #000;
   color: #fff;
@@ -418,31 +418,31 @@
   white-space: nowrap;
   transition: all 0.2s ease;
 }
-.discount-box__button:hover {
+.discount_box__button:hover {
   background: #fff;
   color: #000;
 }
-.discount-box__button:disabled {
+.discount_box__button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-.discount-box__message {
+.discount_box__message {
   margin-top: 0.5rem;
   font-size: 1.25rem;
   padding: 0.5rem;
   border-radius: 4px;
 }
-.discount-box__message--success {
+.discount_box__message--success {
   color: #059669;
   background: #d1fae5;
   border: 1px solid #a7f3d0;
 }
-.discount-box__message--error {
+.discount_box__message--error {
   color: #dc2626;
   background: #fee2e2;
   border: 1px solid #fecaca;
 }
-.discount-box.is-loading .discount-box__button {
+.discount_box--is-loading .discount_box__button {
   opacity: 0.6;
   cursor: not-allowed;
 }
