@@ -316,6 +316,11 @@
               
               // Remove loading state
               cartDrawerItems.classList.remove('is-loading');
+              
+              // After cart items are updated, check for applied discounts and display them
+              setTimeout(() => {
+                loadAppliedDiscounts();
+              }, 500); // Give the cart items time to update
             })
             .catch(error => {
               console.error('Error updating cart items:', error);
@@ -325,7 +330,11 @@
       }
       
       // Re-initialize discount box after a short delay
-      setTimeout(initDiscountBox, 200);
+      setTimeout(() => {
+        initDiscountBox();
+        // Also load applied discounts after initialization
+        setTimeout(loadAppliedDiscounts, 100);
+      }, 200);
     }
     
     function fallbackCartRefresh() {
