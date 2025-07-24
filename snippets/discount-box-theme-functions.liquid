@@ -5,7 +5,8 @@
 {%- endcomment -%}
 
 <script>
-function refreshThemeCart() {
+// Ensure function is in global scope
+window.refreshThemeCart = function() {
   console.log('refreshThemeCart function called!');
   
   if (typeof updateCartCounters === 'function') {
@@ -91,5 +92,10 @@ function refreshThemeCart() {
   }, 200);
   
   console.log('refreshThemeCart function completed');
+};
+
+// Also define it directly for backward compatibility
+function refreshThemeCart() {
+  return window.refreshThemeCart();
 }
 </script> 

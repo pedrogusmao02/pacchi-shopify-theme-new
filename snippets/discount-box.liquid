@@ -216,9 +216,13 @@
         input.value = '';
         
         console.log('Discount applied successfully, calling refreshThemeCart...');
-        if (typeof refreshThemeCart === 'function') {
+        if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
           console.log('refreshThemeCart function found, calling it...');
-          refreshThemeCart();
+          if (typeof refreshThemeCart === 'function') {
+            refreshThemeCart();
+          } else {
+            window.refreshThemeCart();
+          }
         } else {
           console.error('refreshThemeCart function not found!');
           console.log('Available functions:', Object.keys(window).filter(key => typeof window[key] === 'function'));
@@ -274,9 +278,13 @@
       
       if (discountRemoved) {
         console.log('Discount removed successfully, calling refreshThemeCart...');
-        if (typeof refreshThemeCart === 'function') {
+        if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
           console.log('refreshThemeCart function found, calling it...');
-          refreshThemeCart();
+          if (typeof refreshThemeCart === 'function') {
+            refreshThemeCart();
+          } else {
+            window.refreshThemeCart();
+          }
         } else {
           console.error('refreshThemeCart function not found!');
         }
