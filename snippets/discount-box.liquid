@@ -314,8 +314,11 @@
   
   console.log('Discount box script loaded');
   console.log('Theme cart snippet provided:', '{{ theme_cart_snippet }}' !== '');
+  console.log('Theme cart snippet value:', '{{ theme_cart_snippet }}');
   console.log('refreshThemeCart function available (local):', typeof refreshThemeCart === 'function');
   console.log('refreshThemeCart function available (global):', typeof window.refreshThemeCart === 'function');
+  console.log('All window functions containing "refresh":', Object.keys(window).filter(key => key.includes('refresh')));
+  console.log('All window functions containing "Theme":', Object.keys(window).filter(key => key.includes('Theme')));
   
   initDiscountBox();
   
