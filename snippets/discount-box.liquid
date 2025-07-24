@@ -270,7 +270,7 @@
         if (discountApplied) {
           message.textContent = 'Desconto aplicado!';
           message.style.display = 'block';
-          message.className = 'discount-box__message discount-box__message--success';
+          message.className = 'discount_box__message discount_box__message--success';
           
           input.value = '';
           
@@ -278,7 +278,7 @@
         } else {
           message.textContent = 'Código de desconto inválido ou não aplicável.';
           message.style.display = 'block';
-          message.className = 'discount-box__message discount-box__message--error';
+          message.className = 'discount_box__message discount_box__message--error';
         }
       })
       .catch(function(err) {
