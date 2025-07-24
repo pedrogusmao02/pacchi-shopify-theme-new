@@ -257,30 +257,32 @@
 .discount-box__input {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid rgb(var(--color-border));
+  border: 1px solid #000;
   border-radius: 4px;
   font-size: 1.3rem;
-  background: rgb(var(--color-background));
-  color: rgb(var(--color-text));
+  background: #fff;
+  color: #000;
 }
 .discount-box__input:focus {
   outline: none;
-  border-color: rgb(var(--color-accent));
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
 }
 .discount-box__button {
   padding: 0.75rem 1rem;
-  background: rgb(var(--color-button));
-  color: rgb(var(--color-button-text));
-  border: none;
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
   white-space: nowrap;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 .discount-box__button:hover {
-  background: rgb(var(--color-button-hover));
+  background: #fff;
+  color: #000;
 }
 .discount-box__button:disabled {
   opacity: 0.6;
