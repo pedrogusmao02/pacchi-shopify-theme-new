@@ -21,12 +21,17 @@
     var form = document.getElementById('DiscountForm');
     var input = document.getElementById('discount-code');
     var message = document.getElementById('DiscountMessage');
+    var appliedDiscounts = document.getElementById('AppliedDiscounts');
+    var appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
     if (!form) return;
     
     // Clear any existing event listeners
     form.removeEventListener('submit', handleSubmit);
     form.addEventListener('submit', handleSubmit);
+    
+    // Load current applied discounts
+    loadAppliedDiscounts();
     
     function handleSubmit(e) {
       e.preventDefault();
@@ -57,35 +62,11 @@
         message.style.display = 'block';
         message.className = 'discount-box__message discount-box__message--success';
         
-        // Update cart sections
-        if (window.location.pathname.indexOf('/cart') !== -1) {
-          window.location.reload();
-        } else {
-          // Update cart drawer contents
-          const cartDrawer = document.querySelector('cart-drawer');
-          if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
-            // Fetch updated cart data and render
-            fetch('/?section_id=cart-drawer')
-              .then(response => response.text())
-              .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newCartDrawer = doc.querySelector('cart-drawer');
-                if (newCartDrawer) {
-                  cartDrawer.innerHTML = newCartDrawer.innerHTML;
-                  // Re-initialize the discount box in the updated drawer
-                  setTimeout(initDiscountBox, 100);
-                }
-              })
-              .catch(() => {
-                // Fallback to page reload
-                window.location.reload();
-              });
-          } else {
-            // fallback: reload
-            window.location.reload();
-          }
-        }
+        // Clear input
+        input.value = '';
+        
+        // Refresh cart and applied discounts
+        refreshCart();
       })
       .catch(function(err) {
         message.textContent = err.message || 'Não foi possível aplicar o desconto.';
@@ -95,6 +76,154 @@
       .finally(function() {
         form.classList.remove('is-loading');
       });
+    }
+    
+    function loadAppliedDiscounts() {
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+            displayAppliedDiscounts(cart.cart_level_discount_applications);
+          } else {
+            hideAppliedDiscounts();
+          }
+        })
+        .catch(error => {
+          console.error('Error loading applied discounts:', error);
+        });
+    }
+    
+    function displayAppliedDiscounts(discounts) {
+      appliedDiscountsList.innerHTML = '';
+      
+      discounts.forEach(discount => {
+        const discountItem = document.createElement('div');
+        discountItem.className = 'discount-box__applied-item';
+        discountItem.innerHTML = `
+          <span class="discount-box__applied-code">${discount.title}</span>
+          <button type="button" class="discount-box__remove-discount" data-discount-code="${discount.title}">×</button>
+        `;
+        
+        // Add remove event listener
+        const removeBtn = discountItem.querySelector('.discount-box__remove-discount');
+        removeBtn.addEventListener('click', function() {
+          removeDiscount(discount.title);
+        });
+        
+        appliedDiscountsList.appendChild(discountItem);
+      });
+      
+      appliedDiscounts.style.display = 'block';
+    }
+    
+    function hideAppliedDiscounts() {
+      appliedDiscounts.style.display = 'none';
+    }
+    
+    function removeDiscount(discountCode) {
+      // Remove discount by setting it to empty string
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ attributes: {}, discount: '' })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status && data.status !== 200) {
+          throw new Error(data.description || 'Error removing discount');
+        }
+        
+        // Refresh cart and applied discounts
+        refreshCart();
+      })
+      .catch(error => {
+        console.error('Error removing discount:', error);
+        message.textContent = 'Erro ao remover desconto.';
+        message.style.display = 'block';
+        message.className = 'discount-box__message discount-box__message--error';
+      });
+    }
+    
+    function refreshCart() {
+      // Use the same mechanism as the cart system
+      const sectionsToRender = [];
+      const cartDrawer = document.querySelector('cart-drawer');
+      
+      if (cartDrawer) {
+        const mainCartId = document.getElementById('main-cart-items')?.dataset.id;
+        if (mainCartId) {
+          sectionsToRender.push(
+            { id: `#shopify-section-${mainCartId}`, section: mainCartId, selector: `#shopify-section-${mainCartId} cart-items` },
+            { id: "#cart-counter", section: "cart-counter", selector: "#shopify-section-cart-counter" },
+            { id: "#CartDrawer-Body", section: "cart-drawer", selector: "#shopify-section-cart-drawer #CartDrawer-Body" }
+          );
+        } else {
+          sectionsToRender.push(
+            { id: "#CartDrawer-Body", section: "cart-drawer", selector: "#shopify-section-cart-drawer #CartDrawer-Body" }
+          );
+        }
+      } else {
+        const mainCartId = document.getElementById('main-cart-items')?.dataset.id;
+        if (mainCartId) {
+          sectionsToRender.push(
+            { id: `#shopify-section-${mainCartId}`, section: mainCartId, selector: `#shopify-section-${mainCartId} cart-items` },
+            { id: '#cart-counter', section: 'cart-counter', selector: '#shopify-section-cart-counter' }
+          );
+        }
+      }
+      
+      // Fetch updated sections
+      const body = JSON.stringify({
+        sections: sectionsToRender.map(section => section.section),
+        sections_url: window.location.pathname
+      });
+      
+      fetch(`${window.routes?.cart_change_url || '/cart/change.js'}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: body
+      })
+      .then(response => response.text())
+      .then(state => {
+        const parsedState = JSON.parse(state);
+        
+        // Update sections
+        sectionsToRender.forEach(section => {
+          const elementToReplace = document.querySelector(section.selector) || document.querySelector(section.id);
+          if (elementToReplace && parsedState.sections && parsedState.sections[section.section]) {
+            elementToReplace.innerHTML = getSectionInnerHTML(
+              parsedState.sections[section.section],
+              section.selector
+            );
+          }
+        });
+        
+        // Update cart counters
+        if (typeof updateCartCounters === 'function') {
+          updateCartCounters();
+        }
+        
+        // Update free shipping
+        if (typeof updateFreeShipping === 'function') {
+          updateFreeShipping();
+        }
+        
+        // Re-initialize discount box after cart update
+        setTimeout(initDiscountBox, 100);
+      })
+      .catch(error => {
+        console.error('Error refreshing cart:', error);
+        // Fallback to page reload
+        if (window.location.pathname.indexOf('/cart') !== -1) {
+          window.location.reload();
+        }
+      });
+    }
+    
+    function getSectionInnerHTML(html, selector) {
+      return new DOMParser()
+        .parseFromString(html, 'text/html')
+        .querySelector(selector).innerHTML;
     }
   }
   
