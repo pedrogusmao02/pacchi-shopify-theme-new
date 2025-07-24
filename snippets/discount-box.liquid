@@ -11,55 +11,92 @@
 
 <script>
 (function() {
-  var form = document.getElementById('DiscountForm');
-  var input = document.getElementById('discount-code');
-  var message = document.getElementById('DiscountMessage');
-  if (!form) return;
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    var code = input.value.trim();
-    if (!code) return;
-    message.style.display = 'none';
-    message.textContent = '';
-    form.classList.add('is-loading');
-    fetch('/cart/update.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ attributes: {}, discount: code })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      if (data.status && data.status !== 200) {
-        throw new Error(data.description || 'Error applying discount');
-      }
-      message.textContent = '{{ "cart.discount_success" | t: default: "Discount applied!" }}';
-      message.style.display = 'block';
-      message.className = 'discount-box__message discount-box__message--success';
-      // Update cart sections
-      if (window.location.pathname.indexOf('/cart') !== -1) {
-        window.location.reload();
-      } else {
-        // Update cart drawer contents
-        const cartDrawer = document.querySelector('cart-drawer');
-        if (cartDrawer && cartDrawer.renderContents) {
-          cartDrawer.renderContents();
-        } else if (window.CartDrawer && window.CartDrawer.prototype.renderContents) {
-          window.CartDrawer.prototype.renderContents();
-        } else {
-          // fallback: reload
-          window.location.reload();
+  function initDiscountBox() {
+    var form = document.getElementById('DiscountForm');
+    var input = document.getElementById('discount-code');
+    var message = document.getElementById('DiscountMessage');
+    
+    if (!form) return;
+    
+    // Clear any existing event listeners
+    form.removeEventListener('submit', handleSubmit);
+    form.addEventListener('submit', handleSubmit);
+    
+    function handleSubmit(e) {
+      e.preventDefault();
+      var code = input.value.trim();
+      if (!code) return;
+      
+      message.style.display = 'none';
+      message.textContent = '';
+      form.classList.add('is-loading');
+      
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ attributes: {}, discount: code })
+      })
+      .then(function(res) { 
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
         }
-      }
-    })
-    .catch(function(err) {
-      message.textContent = err.message || '{{ "cart.discount_error" | t: default: "Could not apply discount." }}';
-      message.style.display = 'block';
-      message.className = 'discount-box__message discount-box__message--error';
-    })
-    .finally(function() {
-      form.classList.remove('is-loading');
-    });
-  });
+        return res.json(); 
+      })
+      .then(function(data) {
+        if (data.status && data.status !== 200) {
+          throw new Error(data.description || 'Error applying discount');
+        }
+        
+        message.textContent = '{{ "cart.discount_success" | t: default: "Discount applied!" }}';
+        message.style.display = 'block';
+        message.className = 'discount-box__message discount-box__message--success';
+        
+        // Update cart sections
+        if (window.location.pathname.indexOf('/cart') !== -1) {
+          window.location.reload();
+        } else {
+          // Update cart drawer contents
+          const cartDrawer = document.querySelector('cart-drawer');
+          if (cartDrawer && typeof cartDrawer.renderContents === 'function') {
+            // Fetch updated cart data and render
+            fetch('/?section_id=cart-drawer')
+              .then(response => response.text())
+              .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newCartDrawer = doc.querySelector('cart-drawer');
+                if (newCartDrawer) {
+                  cartDrawer.innerHTML = newCartDrawer.innerHTML;
+                  // Re-initialize the discount box in the updated drawer
+                  setTimeout(initDiscountBox, 100);
+                }
+              })
+              .catch(() => {
+                // Fallback to page reload
+                window.location.reload();
+              });
+          } else {
+            // fallback: reload
+            window.location.reload();
+          }
+        }
+      })
+      .catch(function(err) {
+        message.textContent = err.message || '{{ "cart.discount_error" | t: default: "Could not apply discount." }}';
+        message.style.display = 'block';
+        message.className = 'discount-box__message discount-box__message--error';
+      })
+      .finally(function() {
+        form.classList.remove('is-loading');
+      });
+    }
+  }
+  
+  // Initialize on page load
+  initDiscountBox();
+  
+  // Re-initialize when cart drawer content is updated
+  document.addEventListener('cart:updated', initDiscountBox);
 })();
 </script>
 
@@ -152,5 +189,30 @@
 .cart-drawer__discount-box .discount-box__message {
   font-size: 0.8rem;
   margin-top: 0.4rem;
+}
+
+/* Main cart page specific styles */
+.cart__discount-box {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgb(var(--color-background-secondary));
+  border-radius: 8px;
+  border: 1px solid rgb(var(--color-border));
+}
+.cart__discount-box .discount-box__label {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+.cart__discount-box .discount-box__input {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+}
+.cart__discount-box .discount-box__button {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+.cart__discount-box .discount-box__message {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 </style> 
