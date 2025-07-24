@@ -99,13 +99,17 @@
     }
     
     function loadAppliedDiscounts() {
+      console.log('Loading applied discounts...'); // Debug log
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
           console.log('Cart data:', cart); // Debug log
+          console.log('Cart level discount applications:', cart.cart_level_discount_applications); // Debug log
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+            console.log('Found applied discounts, displaying them...'); // Debug log
             displayAppliedDiscounts(cart.cart_level_discount_applications);
           } else {
+            console.log('No applied discounts found, hiding display...'); // Debug log
             hideAppliedDiscounts();
           }
         })
@@ -218,6 +222,19 @@
   
   // Re-initialize when cart drawer content is updated
   document.addEventListener('cart:updated', initDiscountBox);
+  
+  // Also listen for cart drawer open events to ensure discounts are loaded
+  document.addEventListener('cart-drawer:opened', initDiscountBox);
+  
+  // Listen for any cart changes to reload applied discounts
+  document.addEventListener('cart:change', function() {
+    setTimeout(initDiscountBox, 100); // Small delay to ensure cart data is updated
+  });
+  
+  // Also run on DOMContentLoaded to ensure it loads when the page is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDiscountBox);
+  }
 })();
 </script>
 
