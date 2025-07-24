@@ -314,7 +314,8 @@
   
   console.log('Discount box script loaded');
   console.log('Theme cart snippet provided:', '{{ theme_cart_snippet }}' !== '');
-  console.log('refreshThemeCart function available:', typeof refreshThemeCart === 'function');
+  console.log('refreshThemeCart function available (local):', typeof refreshThemeCart === 'function');
+  console.log('refreshThemeCart function available (global):', typeof window.refreshThemeCart === 'function');
   
   initDiscountBox();
   
