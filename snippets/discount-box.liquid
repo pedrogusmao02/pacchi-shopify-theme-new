@@ -67,32 +67,90 @@
 .discount-box {
   margin-bottom: 1.5rem;
 }
+.discount-box__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgb(var(--color-heading-text));
+}
 .discount-box__input-group {
   display: flex;
   gap: 0.5rem;
 }
 .discount-box__input {
   flex: 1;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border: 1px solid rgb(var(--color-border));
   border-radius: 4px;
+  font-size: 0.9rem;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text));
+}
+.discount-box__input:focus {
+  outline: none;
+  border-color: rgb(var(--color-accent));
 }
 .discount-box__button {
-  padding: 0.5rem 1rem;
-  background: var(--color-button, #222);
-  color: #fff;
+  padding: 0.75rem 1rem;
+  background: rgb(var(--color-button));
+  color: rgb(var(--color-button-text));
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+.discount-box__button:hover {
+  background: rgb(var(--color-button-hover));
+}
+.discount-box__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .discount-box__message {
   margin-top: 0.5rem;
-  font-size: 0.95em;
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  border-radius: 4px;
 }
 .discount-box__message--success {
-  color: green;
+  color: #059669;
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
 }
 .discount-box__message--error {
-  color: red;
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+.discount-box.is-loading .discount-box__button {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Cart drawer specific styles */
+.cart-drawer__discount-box {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(var(--color-border));
+}
+.cart-drawer__discount-box .discount-box__label {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+.cart-drawer__discount-box .discount-box__input {
+  padding: 0.6rem;
+  font-size: 0.85rem;
+}
+.cart-drawer__discount-box .discount-box__button {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+.cart-drawer__discount-box .discount-box__message {
+  font-size: 0.8rem;
+  margin-top: 0.4rem;
 }
 </style> 
