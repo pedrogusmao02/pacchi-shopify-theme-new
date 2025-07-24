@@ -103,11 +103,7 @@
     }
   }
   
-  // Global function to refresh cart
   function refreshCart() {
-    console.log('Refreshing cart...'); // Debug log
-    
-    // Update cart counters and free shipping immediately
     if (typeof updateCartCounters === 'function') {
       updateCartCounters();
     }
@@ -115,45 +111,31 @@
       updateFreeShipping();
     }
     
-    // For cart drawer, update the cart items content
     const cartDrawer = document.querySelector('cart-drawer');
     if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
-      console.log('Cart drawer is open, updating cart items...'); // Debug log
-      
-      // Get the cart drawer items container
       const cartDrawerItems = document.querySelector('cart-drawer-items');
       if (cartDrawerItems) {
-        // Show loading spinner
         cartDrawerItems.classList.add('is-loading');
         
-        // Fetch updated cart data
         fetch('/cart.js')
           .then(response => response.json())
           .then(cart => {
-            console.log('Got updated cart data for items refresh'); // Debug log
-            
-            // Update cart items by triggering a quantity change on the first item
-            // This will force the theme to refresh the cart items
             const firstQuantityInput = cartDrawerItems.querySelector('input[name="updates[]"]');
             if (firstQuantityInput) {
               const currentQuantity = firstQuantityInput.value;
               const currentIndex = firstQuantityInput.dataset.index;
               
-              // Trigger a small quantity change to force refresh
-              // We'll change it to the same value, but this will trigger the theme's update mechanism
               const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
               if (cartItems && typeof cartItems.updateQuantity === 'function') {
                 cartItems.updateQuantity(currentIndex, currentQuantity, 'updates[]');
               }
             }
             
-            // Remove loading state
             cartDrawerItems.classList.remove('is-loading');
             
-            // After cart items are updated, check for applied discounts and display them
             setTimeout(() => {
               loadAppliedDiscounts();
-            }, 500); // Give the cart items time to update
+            }, 500);
           })
           .catch(error => {
             console.error('Error updating cart items:', error);
@@ -162,10 +144,8 @@
       }
     }
     
-    // Re-initialize discount box after a short delay
     setTimeout(() => {
       initDiscountBox();
-      // Also load applied discounts after initialization
       setTimeout(loadAppliedDiscounts, 100);
     }, 200);
   }
