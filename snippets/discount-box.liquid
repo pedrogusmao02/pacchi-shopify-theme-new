@@ -5,7 +5,7 @@
       <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="Código de desconto" required>
       <button type="button" id="apply-discount-btn" class="discount-box__button">Aplicar</button>
     </div>
-    <div id="DiscountMessage" class="discount-box__message" style="display:none;"></div>
+    <div id="DiscountMessage" class="discount-box__message" style="display:none; opacity: 0;"></div>
   </div>
   
   <!-- Applied Discounts Display -->
@@ -396,7 +396,7 @@
 
 .discount-box__applied-list {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
