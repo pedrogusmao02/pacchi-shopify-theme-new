@@ -188,14 +188,23 @@
     }
     
     function removeDiscount(discountCode) {
+      console.log('Removing discount:', discountCode); // Debug log
+      
       // Remove discount by setting it to empty string
       fetch('/cart/update.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ discount: '' })
       })
-      .then(response => response.json())
-      .then(data => {
+      .then(function(res) { 
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json(); 
+      })
+      .then(function(data) {
+        console.log('Remove discount response:', data); // Debug log
+        
         if (data.status && data.status !== 200) {
           throw new Error(data.description || data.message || 'Error removing discount');
         }
@@ -203,7 +212,7 @@
         // Refresh cart and applied discounts
         refreshCart();
       })
-      .catch(error => {
+      .catch(function(error) {
         console.error('Error removing discount:', error);
         message.textContent = 'Erro ao remover desconto.';
         message.style.display = 'block';
@@ -437,12 +446,12 @@
 
 /* Cart drawer specific applied discounts styles */
 .cart-drawer__discount-box .discount-box__applied-title {
-  font-size: 0.8rem;
+  font-size: 1.2rem;
 }
 
 .cart-drawer__discount-box .discount-box__applied-item {
   padding: 0.4rem;
-  font-size: 0.8rem;
+  font-size: 1.2rem;
 }
 
 .cart-drawer__discount-box .discount-box__remove-discount {
