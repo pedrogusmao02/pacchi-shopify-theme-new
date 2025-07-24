@@ -17,43 +17,28 @@
 
 <script>
 (function() {
-  // Global function to load applied discounts
   function loadAppliedDiscounts() {
-    console.log('Loading applied discounts...'); // Debug log
-    
-    // Check if the discount box elements exist
     const appliedDiscounts = document.getElementById('AppliedDiscounts');
     const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
     if (!appliedDiscounts || !appliedDiscountsList) {
-      console.log('Applied discounts elements not found, discount box may not be initialized yet'); // Debug log
       return;
     }
     
     fetch('/cart.js')
       .then(response => response.json())
       .then(cart => {
-        console.log('=== FULL CART OBJECT ===');
-        console.log(JSON.stringify(cart, null, 2));
-        console.log('=== END CART OBJECT ===');
-        console.log('Cart level discount applications:', cart.cart_level_discount_applications); // Debug log
-        console.log('Discount codes:', cart.discount_codes); // Debug log
-        
-        // Check for applied discounts in multiple places
         let appliedDiscounts = [];
         
-        // First check cart_level_discount_applications
         if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
           appliedDiscounts = cart.cart_level_discount_applications;
         }
-        // Then check discount_codes
         else if (cart.discount_codes && cart.discount_codes.length > 0) {
           appliedDiscounts = cart.discount_codes.map(discount => ({
             title: discount.code,
             type: 'discount_code'
           }));
         }
-        // Finally check if any items have discounts
         else if (cart.items && cart.items.length > 0) {
           const itemDiscounts = new Set();
           cart.items.forEach(item => {
@@ -72,10 +57,8 @@
         }
         
         if (appliedDiscounts.length > 0) {
-          console.log('Found applied discounts, displaying them...'); // Debug log
           displayAppliedDiscounts(appliedDiscounts);
         } else {
-          console.log('No applied discounts found, hiding display...'); // Debug log
           hideAppliedDiscounts();
         }
       })
@@ -84,25 +67,17 @@
       });
   }
   
-  // Global function to display applied discounts
   function displayAppliedDiscounts(discounts) {
-    console.log('Displaying discounts:', discounts); // Debug log
-    
     const appliedDiscounts = document.getElementById('AppliedDiscounts');
     const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
     if (!appliedDiscounts || !appliedDiscountsList) {
-      console.log('Applied discounts elements not found'); // Debug log
       return;
     }
-    
-    console.log('Applied discounts container:', appliedDiscounts); // Debug log
-    console.log('Applied discounts list:', appliedDiscountsList); // Debug log
     
     appliedDiscountsList.innerHTML = '';
     
     discounts.forEach(discount => {
-      console.log('Creating discount item for:', discount.title); // Debug log
       const discountItem = document.createElement('div');
       discountItem.className = 'discount-box__applied-item';
       discountItem.innerHTML = `
@@ -110,7 +85,6 @@
         <button type="button" class="discount-box__remove-discount" data-discount-code="${discount.title}">×</button>
       `;
       
-      // Add remove event listener
       const removeBtn = discountItem.querySelector('.discount-box__remove-discount');
       removeBtn.addEventListener('click', function() {
         removeDiscount(discount.title);
@@ -120,7 +94,6 @@
     });
     
     appliedDiscounts.style.display = 'block';
-    console.log('Applied discounts display set to block'); // Debug log
   }
   
   // Global function to hide applied discounts
