@@ -17,13 +17,190 @@
 
 <script>
 (function() {
+  // Global function to load applied discounts
+  function loadAppliedDiscounts() {
+    console.log('Loading applied discounts...'); // Debug log
+    
+    // Check if the discount box elements exist
+    const appliedDiscounts = document.getElementById('AppliedDiscounts');
+    const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
+    
+    if (!appliedDiscounts || !appliedDiscountsList) {
+      console.log('Applied discounts elements not found, discount box may not be initialized yet'); // Debug log
+      return;
+    }
+    
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cart => {
+        console.log('=== FULL CART OBJECT ===');
+        console.log(JSON.stringify(cart, null, 2));
+        console.log('=== END CART OBJECT ===');
+        console.log('Cart level discount applications:', cart.cart_level_discount_applications); // Debug log
+        console.log('Discount codes:', cart.discount_codes); // Debug log
+        
+        // Check for applied discounts in multiple places
+        let appliedDiscounts = [];
+        
+        // First check cart_level_discount_applications
+        if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+          appliedDiscounts = cart.cart_level_discount_applications;
+        }
+        // Then check discount_codes
+        else if (cart.discount_codes && cart.discount_codes.length > 0) {
+          appliedDiscounts = cart.discount_codes.map(discount => ({
+            title: discount.code,
+            type: 'discount_code'
+          }));
+        }
+        // Finally check if any items have discounts
+        else if (cart.items && cart.items.length > 0) {
+          const itemDiscounts = new Set();
+          cart.items.forEach(item => {
+            if (item.discounts && item.discounts.length > 0) {
+              item.discounts.forEach(discount => {
+                itemDiscounts.add(discount.title);
+              });
+            }
+          });
+          if (itemDiscounts.size > 0) {
+            appliedDiscounts = Array.from(itemDiscounts).map(title => ({
+              title: title,
+              type: 'discount_code'
+            }));
+          }
+        }
+        
+        if (appliedDiscounts.length > 0) {
+          console.log('Found applied discounts, displaying them...'); // Debug log
+          displayAppliedDiscounts(appliedDiscounts);
+        } else {
+          console.log('No applied discounts found, hiding display...'); // Debug log
+          hideAppliedDiscounts();
+        }
+      })
+      .catch(error => {
+        console.error('Error loading applied discounts:', error);
+      });
+  }
+  
+  // Global function to display applied discounts
+  function displayAppliedDiscounts(discounts) {
+    console.log('Displaying discounts:', discounts); // Debug log
+    
+    const appliedDiscounts = document.getElementById('AppliedDiscounts');
+    const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
+    
+    if (!appliedDiscounts || !appliedDiscountsList) {
+      console.log('Applied discounts elements not found'); // Debug log
+      return;
+    }
+    
+    console.log('Applied discounts container:', appliedDiscounts); // Debug log
+    console.log('Applied discounts list:', appliedDiscountsList); // Debug log
+    
+    appliedDiscountsList.innerHTML = '';
+    
+    discounts.forEach(discount => {
+      console.log('Creating discount item for:', discount.title); // Debug log
+      const discountItem = document.createElement('div');
+      discountItem.className = 'discount-box__applied-item';
+      discountItem.innerHTML = `
+        <span class="discount-box__applied-code">${discount.title}</span>
+        <button type="button" class="discount-box__remove-discount" data-discount-code="${discount.title}">×</button>
+      `;
+      
+      // Add remove event listener
+      const removeBtn = discountItem.querySelector('.discount-box__remove-discount');
+      removeBtn.addEventListener('click', function() {
+        removeDiscount(discount.title);
+      });
+      
+      appliedDiscountsList.appendChild(discountItem);
+    });
+    
+    appliedDiscounts.style.display = 'block';
+    console.log('Applied discounts display set to block'); // Debug log
+  }
+  
+  // Global function to hide applied discounts
+  function hideAppliedDiscounts() {
+    const appliedDiscounts = document.getElementById('AppliedDiscounts');
+    if (appliedDiscounts) {
+      appliedDiscounts.style.display = 'none';
+    }
+  }
+  
+  // Global function to remove discount
+  function removeDiscount(discountCode) {
+    console.log('Removing discount:', discountCode); // Debug log
+    
+    // Remove discount by setting it to empty string
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ discount: '' })
+    })
+    .then(function(res) { 
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json(); 
+    })
+    .then(function(data) {
+      console.log('Remove discount response:', data); // Debug log
+      
+      if (data.status && data.status !== 200) {
+        throw new Error(data.description || data.message || 'Error removing discount');
+      }
+      
+      // Check if discount was actually removed
+      let discountRemoved = true;
+      
+      // Check if any discounts are still present
+      if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+        discountRemoved = false;
+      }
+      else if (data.discount_codes && data.discount_codes.length > 0) {
+        discountRemoved = false;
+      }
+      else if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          if (item.discounts && item.discounts.length > 0) {
+            discountRemoved = false;
+          }
+        });
+      }
+      
+      if (discountRemoved) {
+        // Refresh cart and applied discounts
+        refreshCart();
+      } else {
+        console.error('Discount was not removed properly');
+        const message = document.getElementById('DiscountMessage');
+        if (message) {
+          message.textContent = 'Erro ao remover desconto.';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--error';
+        }
+      }
+    })
+    .catch(function(error) {
+      console.error('Error removing discount:', error);
+      const message = document.getElementById('DiscountMessage');
+      if (message) {
+        message.textContent = 'Erro ao remover desconto.';
+        message.style.display = 'block';
+        message.className = 'discount-box__message discount-box__message--error';
+      }
+    });
+  }
+  
   function initDiscountBox() {
     var form = document.getElementById('DiscountForm');
     var input = document.getElementById('discount-code');
     var applyBtn = document.getElementById('apply-discount-btn');
     var message = document.getElementById('DiscountMessage');
-    var appliedDiscounts = document.getElementById('AppliedDiscounts');
-    var appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
     if (!form || !input || !applyBtn) return;
     
