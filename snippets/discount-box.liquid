@@ -235,8 +235,33 @@
           throw new Error(data.description || data.message || 'Error removing discount');
         }
         
-        // Refresh cart and applied discounts
-        refreshCart();
+        // Check if discount was actually removed
+        let discountRemoved = true;
+        
+        // Check if any discounts are still present
+        if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+          discountRemoved = false;
+        }
+        else if (data.discount_codes && data.discount_codes.length > 0) {
+          discountRemoved = false;
+        }
+        else if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            if (item.discounts && item.discounts.length > 0) {
+              discountRemoved = false;
+            }
+          });
+        }
+        
+        if (discountRemoved) {
+          // Refresh cart and applied discounts
+          refreshCart();
+        } else {
+          console.error('Discount was not removed properly');
+          message.textContent = 'Erro ao remover desconto.';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--error';
+        }
       })
       .catch(function(error) {
         console.error('Error removing discount:', error);
