@@ -1,3 +1,35 @@
+{%- comment -%}
+  Discount Box Component
+  
+  A reusable discount code application component for Shopify themes.
+  
+  USAGE:
+  {%- render 'discount-box' -%}
+  
+  For themes that require custom cart UI updates, provide a theme functions snippet:
+  {%- render 'discount-box', theme_cart_snippet: 'discount-box-theme-functions' -%}
+  
+  The theme functions snippet should contain a `refreshThemeCart()` function that handles
+  updating the theme's cart UI elements (counters, drawer items, etc.).
+  
+  This component includes:
+  - Discount application/removal via Shopify API
+  - Applied discounts display with removal functionality
+  - Automatic cart state detection
+  - Theme integration via event listeners
+  
+  DISCOUNT-SPECIFIC FUNCTIONS (reusable across themes):
+  - loadAppliedDiscounts()
+  - displayAppliedDiscounts()
+  - hideAppliedDiscounts()
+  - handleApplyDiscount()
+  - removeDiscount()
+  
+  THEME-SPECIFIC FUNCTIONS (should be in separate snippet):
+  - refreshThemeCart() - Updates theme's cart UI
+  - Event listeners for cart updates
+{%- endcomment -%}
+
 <div class="discount_box">
   <div id="DiscountForm" class="discount_box__form">
     <label for="discount-code" class="discount_box__label">Aplicar código de desconto</label>
@@ -13,6 +45,10 @@
     <div id="AppliedDiscountsList" class="discount_box__applied-list"></div>
   </div>
 </div>
+
+{%- if theme_cart_snippet -%}
+  {%- render theme_cart_snippet -%}
+{%- endif -%}
 
 <script>
 (function() {
@@ -185,7 +221,9 @@
         
         input.value = '';
         
-        refreshThemeCart();
+        if (typeof refreshThemeCart === 'function') {
+          refreshThemeCart();
+        }
       } else {
         message.textContent = 'Código de desconto inválido ou não aplicável.';
         message.style.display = 'block';
@@ -236,7 +274,9 @@
       }
       
       if (discountRemoved) {
-        refreshThemeCart();
+        if (typeof refreshThemeCart === 'function') {
+          refreshThemeCart();
+        }
       } else {
         const message = document.getElementById('DiscountMessage');
         if (message) {
@@ -258,66 +298,14 @@
   }
   
   // ========================================
-  // THEME-SPECIFIC FUNCTIONS (Current theme only)
-  // ========================================
-  
-  function refreshThemeCart() {
-    if (typeof updateCartCounters === 'function') {
-      updateCartCounters();
-    }
-    if (typeof updateFreeShipping === 'function') {
-      updateFreeShipping();
-    }
-    
-    const cartDrawer = document.querySelector('cart-drawer');
-    if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
-      const cartDrawerItems = document.querySelector('cart-drawer-items');
-      if (cartDrawerItems) {
-        cartDrawerItems.classList.add('is-loading');
-        
-        fetch('/cart.js')
-          .then(response => response.json())
-          .then(cart => {
-            const firstQuantityInput = cartDrawerItems.querySelector('input[name="updates[]"]');
-            if (firstQuantityInput) {
-              const currentQuantity = firstQuantityInput.value;
-              const currentIndex = firstQuantityInput.dataset.index;
-              
-              const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
-              if (cartItems && typeof cartItems.updateQuantity === 'function') {
-                cartItems.updateQuantity(currentIndex, currentQuantity, 'updates[]');
-              }
-            }
-            
-            cartDrawerItems.classList.remove('is-loading');
-            
-            setTimeout(() => {
-              loadAppliedDiscounts();
-            }, 500);
-          })
-          .catch(error => {
-            console.error('Error updating cart items:', error);
-            cartDrawerItems.classList.remove('is-loading');
-          });
-      }
-    }
-    
-    setTimeout(() => {
-      initDiscountBox();
-      setTimeout(loadAppliedDiscounts, 100);
-    }, 200);
-  }
-  
-  // ========================================
   // INITIALIZATION & EVENT LISTENERS
   // ========================================
   
   initDiscountBox();
   
+  // Theme-specific event listeners - update these for your theme
   document.addEventListener('cart:updated', initDiscountBox);
-  
   document.addEventListener('cart-drawer:opened', initDiscountBox);
-  
   document.addEventListener('cart:change', function() {
     setTimeout(initDiscountBox, 100);
   });
