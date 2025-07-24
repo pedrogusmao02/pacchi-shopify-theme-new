@@ -82,7 +82,7 @@
         }
       })
       .catch(function(err) {
-        message.textContent = err.message || '{{ "cart.discount_error" | t: default: "Could not apply discount." }}';
+        message.textContent = err.message || 'Não foi possível aplicar o desconto.';
         message.style.display = 'block';
         message.className = 'discount-box__message discount-box__message--error';
       })
@@ -107,7 +107,7 @@
 .discount-box__label {
   display: block;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   font-weight: 500;
   color: rgb(var(--color-heading-text));
 }
@@ -120,7 +120,7 @@
   padding: 0.75rem;
   border: 1px solid rgb(var(--color-border));
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   background: rgb(var(--color-background));
   color: rgb(var(--color-text));
 }
@@ -175,12 +175,12 @@
   border-bottom: 1px solid rgb(var(--color-border));
 }
 .cart-drawer__discount-box .discount-box__label {
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   margin-bottom: 0.4rem;
 }
 .cart-drawer__discount-box .discount-box__input {
   padding: 0.6rem;
-  font-size: 0.85rem;
+  font-size: 1.05rem;
 }
 .cart-drawer__discount-box .discount-box__button {
   padding: 0.6rem 0.8rem;
