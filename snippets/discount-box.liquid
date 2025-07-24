@@ -76,17 +76,43 @@
           throw new Error(data.description || data.message || 'Error applying discount');
         }
         
-        // If we get here, the request was successful
-        // Show success message immediately
-        message.textContent = 'Desconto aplicado!';
-        message.style.display = 'block';
-        message.className = 'discount-box__message discount-box__message--success';
+        // Check if discount was actually applied by looking for discount applications
+        let discountApplied = false;
         
-        // Clear input
-        input.value = '';
+        // Check cart_level_discount_applications
+        if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+          discountApplied = true;
+        }
+        // Check discount_codes
+        else if (data.discount_codes && data.discount_codes.length > 0) {
+          discountApplied = true;
+        }
+        // Check if any items have discounts
+        else if (data.items && data.items.length > 0) {
+          data.items.forEach(item => {
+            if (item.discounts && item.discounts.length > 0) {
+              discountApplied = true;
+            }
+          });
+        }
         
-        // Refresh cart and applied discounts
-        refreshCart();
+        if (discountApplied) {
+          // Discount was successfully applied
+          message.textContent = 'Desconto aplicado!';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--success';
+          
+          // Clear input
+          input.value = '';
+          
+          // Refresh cart and applied discounts
+          refreshCart();
+        } else {
+          // No discount was applied - show error
+          message.textContent = 'Código de desconto inválido ou não aplicável.';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--error';
+        }
       })
       .catch(function(err) {
         message.textContent = err.message || 'Não foi possível aplicar o desconto.';
