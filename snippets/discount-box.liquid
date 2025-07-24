@@ -232,13 +232,9 @@
       var code = input.value.trim();
       if (!code) return;
       
-      console.log('Applying discount code:', code); // Debug log
-      
       message.style.display = 'none';
       message.textContent = '';
       form.classList.add('is-loading');
-      
-      console.log('Sending request to /cart/update.js with:', { discount: code }); // Debug log
       
       fetch('/cart/update.js', {
         method: 'POST',
@@ -252,25 +248,18 @@
         return res.json(); 
       })
       .then(function(data) {
-        console.log('Cart update response:', data); // Debug log
-        
-        // Check if the response indicates an error
         if (data.status && data.status !== 200) {
           throw new Error(data.description || data.message || 'Error applying discount');
         }
         
-        // Check if discount was actually applied by looking for discount applications
         let discountApplied = false;
         
-        // Check cart_level_discount_applications
         if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
           discountApplied = true;
         }
-        // Check discount_codes
         else if (data.discount_codes && data.discount_codes.length > 0) {
           discountApplied = true;
         }
-        // Check if any items have discounts
         else if (data.items && data.items.length > 0) {
           data.items.forEach(item => {
             if (item.discounts && item.discounts.length > 0) {
@@ -280,18 +269,14 @@
         }
         
         if (discountApplied) {
-          // Discount was successfully applied
           message.textContent = 'Desconto aplicado!';
           message.style.display = 'block';
           message.className = 'discount-box__message discount-box__message--success';
           
-          // Clear input
           input.value = '';
           
-          // Refresh cart and applied discounts
           refreshCart();
         } else {
-          // No discount was applied - show error
           message.textContent = 'Código de desconto inválido ou não aplicável.';
           message.style.display = 'block';
           message.className = 'discount-box__message discount-box__message--error';
