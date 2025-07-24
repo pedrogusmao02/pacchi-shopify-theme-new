@@ -103,7 +103,9 @@
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
-          console.log('Cart data:', cart); // Debug log
+          console.log('=== FULL CART OBJECT ===');
+          console.log(JSON.stringify(cart, null, 2));
+          console.log('=== END CART OBJECT ===');
           console.log('Cart level discount applications:', cart.cart_level_discount_applications); // Debug log
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
             console.log('Found applied discounts, displaying them...'); // Debug log
