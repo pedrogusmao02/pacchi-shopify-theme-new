@@ -304,6 +304,10 @@
   // INITIALIZATION & EVENT LISTENERS
   // ========================================
   
+  console.log('Discount box script loaded');
+  console.log('Theme cart snippet provided:', '{{ theme_cart_snippet }}' !== '');
+  console.log('refreshThemeCart function available:', typeof refreshThemeCart === 'function');
+  
   initDiscountBox();
   
   // Theme-specific event listeners - update these for your theme

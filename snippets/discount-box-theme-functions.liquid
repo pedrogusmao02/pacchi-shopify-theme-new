@@ -6,29 +6,51 @@
 
 <script>
 function refreshThemeCart() {
+  console.log('refreshThemeCart function called!');
+  
   if (typeof updateCartCounters === 'function') {
+    console.log('Calling updateCartCounters...');
     updateCartCounters();
+  } else {
+    console.log('updateCartCounters function not found');
   }
+  
   if (typeof updateFreeShipping === 'function') {
+    console.log('Calling updateFreeShipping...');
     updateFreeShipping();
+  } else {
+    console.log('updateFreeShipping function not found');
   }
   
   const cartDrawer = document.querySelector('cart-drawer');
+  console.log('Cart drawer found:', !!cartDrawer);
+  console.log('Cart drawer is visible:', cartDrawer && cartDrawer.classList.contains('is-visible'));
+  
   if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
     const cartDrawerItems = document.querySelector('cart-drawer-items');
+    console.log('Cart drawer items found:', !!cartDrawerItems);
+    
     if (cartDrawerItems) {
       cartDrawerItems.classList.add('is-loading');
       
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
+          console.log('Cart data fetched:', cart);
           const firstQuantityInput = cartDrawerItems.querySelector('input[name="updates[]"]');
+          console.log('First quantity input found:', !!firstQuantityInput);
+          
           if (firstQuantityInput) {
             const currentQuantity = firstQuantityInput.value;
             const currentIndex = firstQuantityInput.dataset.index;
+            console.log('Current quantity:', currentQuantity, 'Current index:', currentIndex);
             
             const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
+            console.log('Cart items element found:', !!cartItems);
+            console.log('Cart items updateQuantity function exists:', cartItems && typeof cartItems.updateQuantity === 'function');
+            
             if (cartItems && typeof cartItems.updateQuantity === 'function') {
+              console.log('Calling cartItems.updateQuantity...');
               cartItems.updateQuantity(currentIndex, currentQuantity, 'updates[]');
             }
           }
@@ -37,7 +59,10 @@ function refreshThemeCart() {
           
           setTimeout(() => {
             if (typeof loadAppliedDiscounts === 'function') {
+              console.log('Calling loadAppliedDiscounts...');
               loadAppliedDiscounts();
+            } else {
+              console.log('loadAppliedDiscounts function not found');
             }
           }, 500);
         })
@@ -50,13 +75,21 @@ function refreshThemeCart() {
   
   setTimeout(() => {
     if (typeof initDiscountBox === 'function') {
+      console.log('Calling initDiscountBox...');
       initDiscountBox();
+    } else {
+      console.log('initDiscountBox function not found');
     }
     setTimeout(() => {
       if (typeof loadAppliedDiscounts === 'function') {
+        console.log('Calling loadAppliedDiscounts again...');
         loadAppliedDiscounts();
+      } else {
+        console.log('loadAppliedDiscounts function not found (second call)');
       }
     }, 100);
   }, 200);
+  
+  console.log('refreshThemeCart function completed');
 }
 </script> 
