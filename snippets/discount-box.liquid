@@ -216,17 +216,21 @@
         input.value = '';
         
         console.log('Discount applied successfully, calling refreshThemeCart...');
-        if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
-          console.log('refreshThemeCart function found, calling it...');
-          if (typeof refreshThemeCart === 'function') {
-            refreshThemeCart();
+        
+        // Try to find the function with a small delay to handle timing issues
+        setTimeout(() => {
+          if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
+            console.log('refreshThemeCart function found, calling it...');
+            if (typeof refreshThemeCart === 'function') {
+              refreshThemeCart();
+            } else {
+              window.refreshThemeCart();
+            }
           } else {
-            window.refreshThemeCart();
+            console.error('refreshThemeCart function not found after delay!');
+            console.log('Available functions:', Object.keys(window).filter(key => typeof window[key] === 'function'));
           }
-        } else {
-          console.error('refreshThemeCart function not found!');
-          console.log('Available functions:', Object.keys(window).filter(key => typeof window[key] === 'function'));
-        }
+        }, 100);
       } else {
         message.textContent = 'Código de desconto inválido ou não aplicável.';
         message.style.display = 'block';
