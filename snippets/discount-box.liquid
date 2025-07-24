@@ -174,6 +174,88 @@
   cursor: not-allowed;
 }
 
+/* Applied Discounts Styles */
+.discount-box__applied-discounts {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(var(--color-border));
+}
+
+.discount-box__applied-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  color: rgb(var(--color-heading-text));
+}
+
+.discount-box__applied-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.discount-box__applied-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: rgb(var(--color-background-secondary));
+  border: 1px solid rgb(var(--color-border));
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.discount-box__applied-code {
+  font-weight: 500;
+  color: rgb(var(--color-text));
+}
+
+.discount-box__remove-discount {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 2px;
+  font-size: 1rem;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+}
+
+.discount-box__remove-discount:hover {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+/* Cart drawer specific applied discounts styles */
+.cart-drawer__discount-box .discount-box__applied-title {
+  font-size: 0.8rem;
+}
+
+.cart-drawer__discount-box .discount-box__applied-item {
+  padding: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.cart-drawer__discount-box .discount-box__remove-discount {
+  font-size: 0.9rem;
+  padding: 0.2rem;
+}
+
+/* Main cart specific applied discounts styles */
+.cart__discount-box .discount-box__applied-title {
+  font-size: 1rem;
+}
+
+.cart__discount-box .discount-box__applied-item {
+  padding: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.cart__discount-box .discount-box__remove-discount {
+  font-size: 1.1rem;
+  padding: 0.3rem;
+}
+
 /* Cart drawer specific styles */
 .cart-drawer__discount-box {
   margin-bottom: 1rem;
