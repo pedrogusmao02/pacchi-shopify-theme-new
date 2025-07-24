@@ -126,6 +126,16 @@
     
     function loadAppliedDiscounts() {
       console.log('Loading applied discounts...'); // Debug log
+      
+      // Check if the discount box elements exist
+      const appliedDiscounts = document.getElementById('AppliedDiscounts');
+      const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
+      
+      if (!appliedDiscounts || !appliedDiscountsList) {
+        console.log('Applied discounts elements not found, discount box may not be initialized yet'); // Debug log
+        return;
+      }
+      
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
