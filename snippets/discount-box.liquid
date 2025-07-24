@@ -282,16 +282,20 @@
       
       if (discountRemoved) {
         console.log('Discount removed successfully, calling refreshThemeCart...');
-        if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
-          console.log('refreshThemeCart function found, calling it...');
-          if (typeof refreshThemeCart === 'function') {
-            refreshThemeCart();
+        
+        // Try to find the function with a small delay to handle timing issues
+        setTimeout(() => {
+          if (typeof refreshThemeCart === 'function' || typeof window.refreshThemeCart === 'function') {
+            console.log('refreshThemeCart function found, calling it...');
+            if (typeof refreshThemeCart === 'function') {
+              refreshThemeCart();
+            } else {
+              window.refreshThemeCart();
+            }
           } else {
-            window.refreshThemeCart();
+            console.error('refreshThemeCart function not found after delay!');
           }
-        } else {
-          console.error('refreshThemeCart function not found!');
-        }
+        }, 100);
       } else {
         const message = document.getElementById('DiscountMessage');
         if (message) {
