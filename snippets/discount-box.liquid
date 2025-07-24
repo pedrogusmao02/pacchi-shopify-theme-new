@@ -49,9 +49,13 @@
       var code = input.value.trim();
       if (!code) return;
       
+      console.log('Applying discount code:', code); // Debug log
+      
       message.style.display = 'none';
       message.textContent = '';
       form.classList.add('is-loading');
+      
+      console.log('Sending request to /cart/update.js with:', { discount: code }); // Debug log
       
       fetch('/cart/update.js', {
         method: 'POST',
