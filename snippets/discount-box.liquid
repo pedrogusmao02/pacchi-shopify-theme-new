@@ -24,21 +24,32 @@
   function initDiscountBox() {
     var form = document.getElementById('DiscountForm');
     var input = document.getElementById('discount-code');
+    var applyBtn = document.getElementById('apply-discount-btn');
     var message = document.getElementById('DiscountMessage');
     var appliedDiscounts = document.getElementById('AppliedDiscounts');
     var appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
-    if (!form) return;
+    if (!form || !input || !applyBtn) return;
     
-    // Clear any existing event listeners
-    form.removeEventListener('submit', handleSubmit);
-    form.addEventListener('submit', handleSubmit);
+    // Remove existing event listeners
+    applyBtn.removeEventListener('click', handleApplyDiscount);
+    input.removeEventListener('keypress', handleKeyPress);
+    
+    // Add event listeners
+    applyBtn.addEventListener('click', handleApplyDiscount);
+    input.addEventListener('keypress', handleKeyPress);
     
     // Load current applied discounts
     loadAppliedDiscounts();
     
-    function handleSubmit(e) {
-      e.preventDefault();
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleApplyDiscount();
+      }
+    }
+    
+    function handleApplyDiscount() {
       var code = input.value.trim();
       if (!code) return;
       
@@ -86,6 +97,7 @@
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
+          console.log('Cart data:', cart); // Debug log
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
             displayAppliedDiscounts(cart.cart_level_discount_applications);
           } else {
@@ -98,6 +110,7 @@
     }
     
     function displayAppliedDiscounts(discounts) {
+      console.log('Displaying discounts:', discounts); // Debug log
       appliedDiscountsList.innerHTML = '';
       
       discounts.forEach(discount => {
@@ -408,8 +421,9 @@
   font-size: 1.25rem;
 }
 .cart-drawer__discount-box .discount-box__button {
-  padding: 0.6rem 0.8rem;
+  padding: 0.6rem;
   font-size: 0.85rem;
+  min-width: 40px;
 }
 .cart-drawer__discount-box .discount-box__message {
   font-size: 0.8rem;
@@ -433,8 +447,9 @@
   font-size: 1.35rem;
 }
 .cart__discount-box .discount-box__button {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   font-size: 0.95rem;
+  min-width: 44px;
 }
 .cart__discount-box .discount-box__message {
   font-size: 0.9rem;
