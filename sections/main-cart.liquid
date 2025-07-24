@@ -81,6 +81,7 @@
                   {%- render 'shipping-bar', class: 'cart__bar small-hide medium-hide' -%}
                 {%- endif -%}
               {%- endif -%}
+              {%- render 'discount-box', theme_cart_snippet: 'discount-box-theme-functions' -%}
               <h6 class="cart__summary-total h6" data-cart-total-price="{{- cart.total_price -}}">
                 <span>{{- 'customer.order.subtotal' | t -}}</span>
                 <span class="cart__summary-total-price">{{- cart.total_price | money -}}</span>
