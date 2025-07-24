@@ -150,11 +150,7 @@
     }, 200);
   }
   
-  // Global function to remove discount
   function removeDiscount(discountCode) {
-    console.log('Removing discount:', discountCode); // Debug log
-    
-    // Remove discount by setting it to empty string
     fetch('/cart/update.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -167,16 +163,12 @@
       return res.json(); 
     })
     .then(function(data) {
-      console.log('Remove discount response:', data); // Debug log
-      
       if (data.status && data.status !== 200) {
         throw new Error(data.description || data.message || 'Error removing discount');
       }
       
-      // Check if discount was actually removed
       let discountRemoved = true;
       
-      // Check if any discounts are still present
       if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
         discountRemoved = false;
       }
@@ -192,10 +184,8 @@
       }
       
       if (discountRemoved) {
-        // Refresh cart and applied discounts
         refreshCart();
       } else {
-        console.error('Discount was not removed properly');
         const message = document.getElementById('DiscountMessage');
         if (message) {
           message.textContent = 'Erro ao remover desconto.';
@@ -223,15 +213,12 @@
     
     if (!form || !input || !applyBtn) return;
     
-    // Remove existing event listeners
     applyBtn.removeEventListener('click', handleApplyDiscount);
     input.removeEventListener('keypress', handleKeyPress);
     
-    // Add event listeners
     applyBtn.addEventListener('click', handleApplyDiscount);
     input.addEventListener('keypress', handleKeyPress);
     
-    // Load current applied discounts
     loadAppliedDiscounts();
     
     function handleKeyPress(e) {
