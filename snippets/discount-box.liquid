@@ -1,9 +1,9 @@
 <div class="discount-box{% if class %} {{ class }}{% endif %}">
-  <form id="DiscountForm" autocomplete="off" onsubmit="return false;">
+  <form id="DiscountForm" autocomplete="off">
     <label for="discount-code" class="discount-box__label">Aplicar código de desconto</label>
     <div class="discount-box__input-group">
       <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="Código de desconto" required>
-      <button type="button" id="apply-discount-btn" class="discount-box__button">
+      <button type="submit" class="discount-box__button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
         </svg>
