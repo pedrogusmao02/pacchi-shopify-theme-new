@@ -56,13 +56,22 @@
         return res.json(); 
       })
       .then(function(data) {
+        // Check if the response indicates an error
         if (data.status && data.status !== 200) {
-          throw new Error(data.description || 'Error applying discount');
+          throw new Error(data.description || data.message || 'Error applying discount');
         }
         
-        message.textContent = 'Desconto aplicado!';
-        message.style.display = 'block';
-        message.className = 'discount-box__message discount-box__message--success';
+        // Check if discount was actually applied by looking for discount applications
+        if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+          message.textContent = 'Desconto aplicado!';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--success';
+        } else {
+          // No discount applied - might be invalid code
+          message.textContent = 'Código de desconto inválido ou não aplicável.';
+          message.style.display = 'block';
+          message.className = 'discount-box__message discount-box__message--error';
+        }
         
         // Clear input
         input.value = '';
@@ -134,7 +143,7 @@
       .then(response => response.json())
       .then(data => {
         if (data.status && data.status !== 200) {
-          throw new Error(data.description || 'Error removing discount');
+          throw new Error(data.description || data.message || 'Error removing discount');
         }
         
         // Refresh cart and applied discounts
