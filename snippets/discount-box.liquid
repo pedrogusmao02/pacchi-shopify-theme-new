@@ -274,72 +274,32 @@
     function refreshCart() {
       console.log('Refreshing cart...'); // Debug log
       
-      // Use the theme's cart update mechanism
-      const cartDrawer = document.querySelector('cart-drawer');
-      const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
-      
-      if (cartItems && typeof cartItems.getSectionsToRender === 'function') {
-        const sectionsToRender = cartItems.getSectionsToRender();
-        
-        if (sectionsToRender && sectionsToRender.length > 0) {
-          console.log('Using theme cart update mechanism...'); // Debug log
-          
-          // Try to get updated sections by making a request to the cart page
-          const body = JSON.stringify({
-            sections: sectionsToRender.map(section => section.section),
-            sections_url: window.location.pathname
-          });
-          
-          // Use the theme's fetchConfig
-          const config = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json'
-            },
-            body: body
-          };
-          
-          // Try to get updated sections
-          fetch('/?section_id=cart-drawer', config)
-            .then(response => response.text())
-            .then(html => {
-              console.log('Got updated cart drawer HTML'); // Debug log
-              
-              // Parse the HTML and update the cart drawer
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(html, 'text/html');
-              
-              // Find the cart drawer body and update it
-              const newCartDrawerBody = doc.querySelector('#CartDrawer-Body');
-              const currentCartDrawerBody = document.querySelector('#CartDrawer-Body');
-              
-              if (newCartDrawerBody && currentCartDrawerBody) {
-                currentCartDrawerBody.innerHTML = newCartDrawerBody.innerHTML;
-                console.log('Updated cart drawer body'); // Debug log
-              }
-              
-              // Update cart counters and free shipping
-              if (typeof updateCartCounters === 'function') {
-                updateCartCounters();
-              }
-              if (typeof updateFreeShipping === 'function') {
-                updateFreeShipping();
-              }
-              
-              // Re-initialize discount box after cart update
-              setTimeout(initDiscountBox, 100);
-            })
-            .catch(error => {
-              console.error('Error updating cart sections:', error);
-              fallbackCartRefresh();
-            });
-        } else {
-          fallbackCartRefresh();
-        }
-      } else {
-        fallbackCartRefresh();
+      // Update cart counters and free shipping immediately
+      if (typeof updateCartCounters === 'function') {
+        updateCartCounters();
       }
+      if (typeof updateFreeShipping === 'function') {
+        updateFreeShipping();
+      }
+      
+      // For cart drawer, trigger a reload to ensure all prices update
+      const cartDrawer = document.querySelector('cart-drawer');
+      if (cartDrawer && cartDrawer.classList.contains('is-visible')) {
+        console.log('Cart drawer is open, triggering reload...'); // Debug log
+        
+        // Close and reopen the cart drawer to refresh content
+        cartDrawer.close();
+        setTimeout(() => {
+          // Reopen the cart drawer
+          const cartLink = document.querySelector("[data-cart-link]");
+          if (cartLink) {
+            cartLink.click();
+          }
+        }, 100);
+      }
+      
+      // Re-initialize discount box after a short delay
+      setTimeout(initDiscountBox, 200);
     }
     
     function fallbackCartRefresh() {
