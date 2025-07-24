@@ -376,21 +376,16 @@
 
   }
   
-  // Initialize on page load
   initDiscountBox();
   
-  // Re-initialize when cart drawer content is updated
   document.addEventListener('cart:updated', initDiscountBox);
   
-  // Also listen for cart drawer open events to ensure discounts are loaded
   document.addEventListener('cart-drawer:opened', initDiscountBox);
   
-  // Listen for any cart changes to reload applied discounts
   document.addEventListener('cart:change', function() {
-    setTimeout(initDiscountBox, 100); // Small delay to ensure cart data is updated
+    setTimeout(initDiscountBox, 100);
   });
   
-  // Also run on DOMContentLoaded to ensure it loads when the page is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initDiscountBox);
   }
