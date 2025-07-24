@@ -223,6 +223,69 @@
     function refreshCart() {
       console.log('Refreshing cart...'); // Debug log
       
+      // Use the theme's cart update mechanism
+      const cartDrawer = document.querySelector('cart-drawer');
+      const cartItems = document.querySelector('cart-items') || document.querySelector('cart-drawer-items');
+      
+      if (cartItems && typeof cartItems.getSectionsToRender === 'function') {
+        const sectionsToRender = cartItems.getSectionsToRender();
+        
+        if (sectionsToRender && sectionsToRender.length > 0) {
+          console.log('Using theme cart update mechanism...'); // Debug log
+          
+          const body = JSON.stringify({
+            sections: sectionsToRender.map(section => section.section),
+            sections_url: window.location.pathname
+          });
+          
+          fetch(`${window.routes?.cart_change_url || '/cart/change.js'}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: body
+          })
+          .then(response => response.text())
+          .then(state => {
+            const parsedState = JSON.parse(state);
+            console.log('Cart sections update response:', parsedState); // Debug log
+            
+            // Update sections using theme's mechanism
+            sectionsToRender.forEach(section => {
+              const elementToReplace = document.querySelector(section.selector) || document.querySelector(section.id);
+              if (elementToReplace && parsedState.sections && parsedState.sections[section.section]) {
+                elementToReplace.innerHTML = getSectionInnerHTML(
+                  parsedState.sections[section.section],
+                  section.selector
+                );
+              }
+            });
+            
+            // Update cart counters and free shipping
+            if (typeof updateCartCounters === 'function') {
+              updateCartCounters();
+            }
+            if (typeof updateFreeShipping === 'function') {
+              updateFreeShipping();
+            }
+            
+            // Re-initialize discount box after cart update
+            setTimeout(initDiscountBox, 100);
+          })
+          .catch(error => {
+            console.error('Error updating cart sections:', error);
+            // Fallback to simple cart.js fetch
+            fallbackCartRefresh();
+          });
+        } else {
+          fallbackCartRefresh();
+        }
+      } else {
+        fallbackCartRefresh();
+      }
+    }
+    
+    function fallbackCartRefresh() {
+      console.log('Using fallback cart refresh...'); // Debug log
+      
       // Simple approach: just reload the cart data and update the display
       fetch('/cart.js')
         .then(response => response.json())
@@ -293,6 +356,12 @@
         .catch(error => {
           console.error('Error refreshing cart:', error);
         });
+    }
+    
+    function getSectionInnerHTML(html, selector) {
+      return new DOMParser()
+        .parseFromString(html, 'text/html')
+        .querySelector(selector).innerHTML;
     }
     
 
