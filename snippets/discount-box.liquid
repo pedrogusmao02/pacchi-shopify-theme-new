@@ -24,32 +24,23 @@
   function initDiscountBox() {
     var form = document.getElementById('DiscountForm');
     var input = document.getElementById('discount-code');
-    var applyBtn = document.getElementById('apply-discount-btn');
     var message = document.getElementById('DiscountMessage');
     var appliedDiscounts = document.getElementById('AppliedDiscounts');
     var appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
-    if (!form || !input || !applyBtn) return;
+    if (!form || !input) return;
     
     // Remove existing event listeners
-    applyBtn.removeEventListener('click', handleApplyDiscount);
-    input.removeEventListener('keypress', handleKeyPress);
+    form.removeEventListener('submit', handleSubmit);
     
     // Add event listeners
-    applyBtn.addEventListener('click', handleApplyDiscount);
-    input.addEventListener('keypress', handleKeyPress);
+    form.addEventListener('submit', handleSubmit);
     
     // Load current applied discounts
     loadAppliedDiscounts();
     
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleApplyDiscount();
-      }
-    }
-    
-    function handleApplyDiscount() {
+    function handleSubmit(e) {
+      e.preventDefault();
       var code = input.value.trim();
       if (!code) return;
       
