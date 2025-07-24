@@ -1,12 +1,12 @@
 <div class="discount-box{% if class %} {{ class }}{% endif %}">
-  <form id="DiscountForm" autocomplete="off">
+  <div id="DiscountForm">
     <label for="discount-code" class="discount-box__label">Aplicar código de desconto</label>
     <div class="discount-box__input-group">
       <input type="text" id="discount-code" name="discount" class="discount-box__input" placeholder="Código de desconto" required>
-      <button type="submit" class="discount-box__button">Aplicar</button>
+      <button type="button" id="apply-discount-btn" class="discount-box__button">Aplicar</button>
     </div>
     <div id="DiscountMessage" class="discount-box__message" style="display:none;"></div>
-  </form>
+  </div>
   
   <!-- Applied Discounts Display -->
   <div id="AppliedDiscounts" class="discount-box__applied-discounts" style="display:none;">
@@ -20,23 +20,32 @@
   function initDiscountBox() {
     var form = document.getElementById('DiscountForm');
     var input = document.getElementById('discount-code');
+    var applyBtn = document.getElementById('apply-discount-btn');
     var message = document.getElementById('DiscountMessage');
     var appliedDiscounts = document.getElementById('AppliedDiscounts');
     var appliedDiscountsList = document.getElementById('AppliedDiscountsList');
     
-    if (!form || !input) return;
+    if (!form || !input || !applyBtn) return;
     
     // Remove existing event listeners
-    form.removeEventListener('submit', handleSubmit);
+    applyBtn.removeEventListener('click', handleApplyDiscount);
+    input.removeEventListener('keypress', handleKeyPress);
     
     // Add event listeners
-    form.addEventListener('submit', handleSubmit);
+    applyBtn.addEventListener('click', handleApplyDiscount);
+    input.addEventListener('keypress', handleKeyPress);
     
     // Load current applied discounts
     loadAppliedDiscounts();
     
-    function handleSubmit(e) {
-      e.preventDefault();
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleApplyDiscount();
+      }
+    }
+    
+    function handleApplyDiscount() {
       var code = input.value.trim();
       if (!code) return;
       
