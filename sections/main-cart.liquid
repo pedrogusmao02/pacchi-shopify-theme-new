@@ -101,6 +101,8 @@
               </p>
               {%- endif -%}
 
+              {%- render 'discount-box', class: 'cart__discount-box' -%}
+
               {%- if cart.cart_level_discount_applications.size > 0 -%}
                 <ul class="cart__summary-discounts list-unstyled"
                   role="list" aria-label="{{- 'customer.order.discount' | t -}}"
