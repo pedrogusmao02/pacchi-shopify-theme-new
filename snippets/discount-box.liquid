@@ -184,14 +184,14 @@
       
       if (discountRemoved) {
         refreshCart();
-      } else {
-        const message = document.getElementById('DiscountMessage');
-        if (message) {
-          message.textContent = 'Erro ao remover desconto.';
-          message.style.display = 'block';
-          message.className = 'discount-box__message discount-box__message--error';
+              } else {
+          const message = document.getElementById('DiscountMessage');
+          if (message) {
+            message.textContent = 'Erro ao remover desconto.';
+            message.style.display = 'block';
+            message.className = 'discount_box__message discount_box__message--error';
+          }
         }
-      }
     })
     .catch(function(error) {
       console.error('Error removing discount:', error);
@@ -284,7 +284,7 @@
       .catch(function(err) {
         message.textContent = err.message || 'Não foi possível aplicar o desconto.';
         message.style.display = 'block';
-        message.className = 'discount-box__message discount-box__message--error';
+        message.className = 'discount_box__message discount_box__message--error';
       })
       .finally(function() {
         form.classList.remove('is-loading');
