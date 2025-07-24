@@ -40,7 +40,7 @@
     "show_country_drawer_content": true,
     "country_drawer_display_option": "country-name",
     "enable_shipping_notification": true,
-    "shipping_notification_threshold": "150",
+    "shipping_notification_threshold": "600",
     "cart_terms": "<p>Agree to <a href=\"/policies/terms-of-service\" target=\"_blank\" title=\"Terms of Service\">terms</a> of sale as per the merchants terms of service.</p>",
     "enable_dynamic_checkout": true,
     "enable_cart_upsell": true,
