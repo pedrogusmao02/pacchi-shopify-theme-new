@@ -293,39 +293,28 @@
     }
     
     function fallbackCartRefresh() {
-      console.log('Using fallback cart refresh...'); // Debug log
-      
-      // Simple approach: just reload the cart data and update the display
       fetch('/cart.js')
         .then(response => response.json())
         .then(cart => {
-          console.log('Updated cart data:', cart); // Debug log
-          
-          // Update cart counters if function exists
           if (typeof updateCartCounters === 'function') {
             updateCartCounters();
           }
           
-          // Update free shipping if function exists
           if (typeof updateFreeShipping === 'function') {
             updateFreeShipping();
           }
           
-          // Update applied discounts display
           let appliedDiscounts = [];
           
-          // First check cart_level_discount_applications
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
             appliedDiscounts = cart.cart_level_discount_applications;
           }
-          // Then check discount_codes
           else if (cart.discount_codes && cart.discount_codes.length > 0) {
             appliedDiscounts = cart.discount_codes.map(discount => ({
               title: discount.code,
               type: 'discount_code'
             }));
           }
-          // Finally check if any items have discounts
           else if (cart.items && cart.items.length > 0) {
             const itemDiscounts = new Set();
             cart.items.forEach(item => {
@@ -345,19 +334,16 @@
           
           if (appliedDiscounts.length > 0) {
             displayAppliedDiscounts(appliedDiscounts);
-            // Hide success message after showing applied discounts
             setTimeout(() => {
               message.style.display = 'none';
             }, 2000);
           } else {
             hideAppliedDiscounts();
-            // Show error message if no discount was actually applied
             message.textContent = 'Código de desconto inválido ou não aplicável.';
             message.style.display = 'block';
             message.className = 'discount-box__message discount-box__message--error';
           }
           
-          // If we're on cart page, reload the page to show updated totals
           if (window.location.pathname.indexOf('/cart') !== -1) {
             window.location.reload();
           }
