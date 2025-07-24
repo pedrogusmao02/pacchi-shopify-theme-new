@@ -188,8 +188,16 @@
           // Update applied discounts display
           if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
             displayAppliedDiscounts(cart.cart_level_discount_applications);
+            // Hide success message after showing applied discounts
+            setTimeout(() => {
+              message.style.display = 'none';
+            }, 2000);
           } else {
             hideAppliedDiscounts();
+            // Show error message if no discount was actually applied
+            message.textContent = 'Código de desconto inválido ou não aplicável.';
+            message.style.display = 'block';
+            message.className = 'discount-box__message discount-box__message--error';
           }
           
           // If we're on cart page, reload the page to show updated totals
