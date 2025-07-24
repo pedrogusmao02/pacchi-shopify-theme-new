@@ -1,4 +1,4 @@
-<div class="discount-box">
+<div class="discount-box{% if class %} {{ class }}{% endif %}">
   <form id="DiscountForm" autocomplete="off">
     <label for="discount-code" class="discount-box__label">{{ 'cart.discount_code' | t: default: 'Discount code' }}</label>
     <div class="discount-box__input-group">
@@ -35,14 +35,20 @@
       message.textContent = '{{ "cart.discount_success" | t: default: "Discount applied!" }}';
       message.style.display = 'block';
       message.className = 'discount-box__message discount-box__message--success';
-      // Reload cart sections
+      // Update cart sections
       if (window.location.pathname.indexOf('/cart') !== -1) {
         window.location.reload();
-      } else if (window.CartDrawer && window.CartDrawer.prototype.renderContents) {
-        window.CartDrawer.prototype.renderContents();
       } else {
-        // fallback: reload
-        window.location.reload();
+        // Update cart drawer contents
+        const cartDrawer = document.querySelector('cart-drawer');
+        if (cartDrawer && cartDrawer.renderContents) {
+          cartDrawer.renderContents();
+        } else if (window.CartDrawer && window.CartDrawer.prototype.renderContents) {
+          window.CartDrawer.prototype.renderContents();
+        } else {
+          // fallback: reload
+          window.location.reload();
+        }
       }
     })
     .catch(function(err) {
