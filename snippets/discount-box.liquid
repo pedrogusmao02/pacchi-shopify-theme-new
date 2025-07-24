@@ -120,9 +120,13 @@
     
     function displayAppliedDiscounts(discounts) {
       console.log('Displaying discounts:', discounts); // Debug log
+      console.log('Applied discounts container:', appliedDiscounts); // Debug log
+      console.log('Applied discounts list:', appliedDiscountsList); // Debug log
+      
       appliedDiscountsList.innerHTML = '';
       
       discounts.forEach(discount => {
+        console.log('Creating discount item for:', discount.title); // Debug log
         const discountItem = document.createElement('div');
         discountItem.className = 'discount-box__applied-item';
         discountItem.innerHTML = `
@@ -140,6 +144,7 @@
       });
       
       appliedDiscounts.style.display = 'block';
+      console.log('Applied discounts display set to block'); // Debug log
     }
     
     function hideAppliedDiscounts() {
