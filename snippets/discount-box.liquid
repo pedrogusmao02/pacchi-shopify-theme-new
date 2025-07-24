@@ -16,6 +16,31 @@
 
 <script>
 (function() {
+  // ========================================
+  // INITIALIZATION FUNCTIONS (Run on page load)
+  // ========================================
+  
+  function initDiscountBox() {
+    var form = document.getElementById('DiscountForm');
+    var input = document.getElementById('discount-code');
+    var applyBtn = document.getElementById('apply-discount-btn');
+    var message = document.getElementById('DiscountMessage');
+    
+    if (!form || !input || !applyBtn) return;
+    
+    applyBtn.removeEventListener('click', handleApplyDiscount);
+    input.removeEventListener('keypress', handleKeyPress);
+    
+    applyBtn.addEventListener('click', handleApplyDiscount);
+    input.addEventListener('keypress', handleKeyPress);
+    
+    loadAppliedDiscounts();
+  }
+  
+  // ========================================
+  // DISCOUNT-SPECIFIC FUNCTIONS (Reusable across themes)
+  // ========================================
+  
   function loadAppliedDiscounts() {
     const appliedDiscounts = document.getElementById('AppliedDiscounts');
     const appliedDiscountsList = document.getElementById('AppliedDiscountsList');
@@ -102,7 +127,141 @@
     }
   }
   
-  function refreshCart() {
+  function handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleApplyDiscount();
+    }
+  }
+  
+  function handleApplyDiscount() {
+    var input = document.getElementById('discount-code');
+    var form = document.getElementById('DiscountForm');
+    var message = document.getElementById('DiscountMessage');
+    
+    var code = input.value.trim();
+    if (!code) return;
+    
+    message.style.display = 'none';
+    message.textContent = '';
+    form.classList.add('discount_box--is-loading');
+    
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ discount: code })
+    })
+    .then(function(res) { 
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json(); 
+    })
+    .then(function(data) {
+      if (data.status && data.status !== 200) {
+        throw new Error(data.description || data.message || 'Error applying discount');
+      }
+      
+      let discountApplied = false;
+      
+      if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+        discountApplied = true;
+      }
+      else if (data.discount_codes && data.discount_codes.length > 0) {
+        discountApplied = true;
+      }
+      else if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          if (item.discounts && item.discounts.length > 0) {
+            discountApplied = true;
+          }
+        });
+      }
+      
+      if (discountApplied) {
+        message.textContent = 'Desconto aplicado!';
+        message.style.display = 'block';
+        message.className = 'discount_box__message discount_box__message--success';
+        
+        input.value = '';
+        
+        refreshThemeCart();
+      } else {
+        message.textContent = 'Código de desconto inválido ou não aplicável.';
+        message.style.display = 'block';
+        message.className = 'discount_box__message discount_box__message--error';
+      }
+    })
+    .catch(function(err) {
+      message.textContent = err.message || 'Não foi possível aplicar o desconto.';
+      message.style.display = 'block';
+      message.className = 'discount_box__message discount_box__message--error';
+    })
+    .finally(function() {
+      form.classList.remove('discount_box--is-loading');
+    });
+  }
+  
+  function removeDiscount(discountCode) {
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ discount: '' })
+    })
+    .then(function(res) { 
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json(); 
+    })
+    .then(function(data) {
+      if (data.status && data.status !== 200) {
+        throw new Error(data.description || data.message || 'Error removing discount');
+      }
+      
+      let discountRemoved = true;
+      
+      if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
+        discountRemoved = false;
+      }
+      else if (data.discount_codes && data.discount_codes.length > 0) {
+        discountRemoved = false;
+      }
+      else if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          if (item.discounts && item.discounts.length > 0) {
+            discountRemoved = false;
+          }
+        });
+      }
+      
+      if (discountRemoved) {
+        refreshThemeCart();
+      } else {
+        const message = document.getElementById('DiscountMessage');
+        if (message) {
+          message.textContent = 'Erro ao remover desconto.';
+          message.style.display = 'block';
+          message.className = 'discount_box__message discount_box__message--error';
+        }
+      }
+    })
+    .catch(function(error) {
+      console.error('Error removing discount:', error);
+      const message = document.getElementById('DiscountMessage');
+      if (message) {
+        message.textContent = 'Erro ao remover desconto.';
+        message.style.display = 'block';
+        message.className = 'discount_box__message discount_box__message--error';
+      }
+    });
+  }
+  
+  // ========================================
+  // THEME-SPECIFIC FUNCTIONS (Current theme only)
+  // ========================================
+  
+  function refreshThemeCart() {
     if (typeof updateCartCounters === 'function') {
       updateCartCounters();
     }
@@ -149,217 +308,82 @@
     }, 200);
   }
   
-  function removeDiscount(discountCode) {
-    fetch('/cart/update.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ discount: '' })
-    })
-    .then(function(res) { 
-      if (!res.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return res.json(); 
-    })
-    .then(function(data) {
-      if (data.status && data.status !== 200) {
-        throw new Error(data.description || data.message || 'Error removing discount');
-      }
-      
-      let discountRemoved = true;
-      
-      if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
-        discountRemoved = false;
-      }
-      else if (data.discount_codes && data.discount_codes.length > 0) {
-        discountRemoved = false;
-      }
-      else if (data.items && data.items.length > 0) {
-        data.items.forEach(item => {
-          if (item.discounts && item.discounts.length > 0) {
-            discountRemoved = false;
-          }
-        });
-      }
-      
-      if (discountRemoved) {
-        refreshCart();
-              } else {
-          const message = document.getElementById('DiscountMessage');
-          if (message) {
-            message.textContent = 'Erro ao remover desconto.';
-            message.style.display = 'block';
-            message.className = 'discount_box__message discount_box__message--error';
-          }
-        }
-    })
-    .catch(function(error) {
-      console.error('Error removing discount:', error);
-      const message = document.getElementById('DiscountMessage');
-      if (message) {
-        message.textContent = 'Erro ao remover desconto.';
-        message.style.display = 'block';
-        message.className = 'discount_box__message discount_box__message--error';
-      }
-    });
-  }
-  
-  function initDiscountBox() {
-    var form = document.getElementById('DiscountForm');
-    var input = document.getElementById('discount-code');
-    var applyBtn = document.getElementById('apply-discount-btn');
-    var message = document.getElementById('DiscountMessage');
-    
-    if (!form || !input || !applyBtn) return;
-    
-    applyBtn.removeEventListener('click', handleApplyDiscount);
-    input.removeEventListener('keypress', handleKeyPress);
-    
-    applyBtn.addEventListener('click', handleApplyDiscount);
-    input.addEventListener('keypress', handleKeyPress);
-    
-    loadAppliedDiscounts();
-    
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleApplyDiscount();
-      }
-    }
-    
-    function handleApplyDiscount() {
-      var code = input.value.trim();
-      if (!code) return;
-      
-      message.style.display = 'none';
-      message.textContent = '';
-      form.classList.add('discount_box--is-loading');
-      
-      fetch('/cart/update.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ discount: code })
-      })
-      .then(function(res) { 
-        if (!res.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return res.json(); 
-      })
-      .then(function(data) {
-        if (data.status && data.status !== 200) {
-          throw new Error(data.description || data.message || 'Error applying discount');
+  function fallbackCartRefresh() {
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cart => {
+        if (typeof updateCartCounters === 'function') {
+          updateCartCounters();
         }
         
-        let discountApplied = false;
+        if (typeof updateFreeShipping === 'function') {
+          updateFreeShipping();
+        }
         
-        if (data.cart_level_discount_applications && data.cart_level_discount_applications.length > 0) {
-          discountApplied = true;
+        let appliedDiscounts = [];
+        
+        if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+          appliedDiscounts = cart.cart_level_discount_applications;
         }
-        else if (data.discount_codes && data.discount_codes.length > 0) {
-          discountApplied = true;
+        else if (cart.discount_codes && cart.discount_codes.length > 0) {
+          appliedDiscounts = cart.discount_codes.map(discount => ({
+            title: discount.code,
+            type: 'discount_code'
+          }));
         }
-        else if (data.items && data.items.length > 0) {
-          data.items.forEach(item => {
+        else if (cart.items && cart.items.length > 0) {
+          const itemDiscounts = new Set();
+          cart.items.forEach(item => {
             if (item.discounts && item.discounts.length > 0) {
-              discountApplied = true;
+              item.discounts.forEach(discount => {
+                itemDiscounts.add(discount.title);
+              });
             }
           });
-        }
-        
-        if (discountApplied) {
-          message.textContent = 'Desconto aplicado!';
-          message.style.display = 'block';
-          message.className = 'discount_box__message discount_box__message--success';
-          
-          input.value = '';
-          
-          refreshCart();
-        } else {
-          message.textContent = 'Código de desconto inválido ou não aplicável.';
-          message.style.display = 'block';
-          message.className = 'discount_box__message discount_box__message--error';
-        }
-      })
-      .catch(function(err) {
-        message.textContent = err.message || 'Não foi possível aplicar o desconto.';
-        message.style.display = 'block';
-        message.className = 'discount_box__message discount_box__message--error';
-      })
-      .finally(function() {
-        form.classList.remove('discount_box--is-loading');
-      });
-    }
-    
-    function fallbackCartRefresh() {
-      fetch('/cart.js')
-        .then(response => response.json())
-        .then(cart => {
-          if (typeof updateCartCounters === 'function') {
-            updateCartCounters();
-          }
-          
-          if (typeof updateFreeShipping === 'function') {
-            updateFreeShipping();
-          }
-          
-          let appliedDiscounts = [];
-          
-          if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
-            appliedDiscounts = cart.cart_level_discount_applications;
-          }
-          else if (cart.discount_codes && cart.discount_codes.length > 0) {
-            appliedDiscounts = cart.discount_codes.map(discount => ({
-              title: discount.code,
+          if (itemDiscounts.size > 0) {
+            appliedDiscounts = Array.from(itemDiscounts).map(title => ({
+              title: title,
               type: 'discount_code'
             }));
           }
-          else if (cart.items && cart.items.length > 0) {
-            const itemDiscounts = new Set();
-            cart.items.forEach(item => {
-              if (item.discounts && item.discounts.length > 0) {
-                item.discounts.forEach(discount => {
-                  itemDiscounts.add(discount.title);
-                });
-              }
-            });
-            if (itemDiscounts.size > 0) {
-              appliedDiscounts = Array.from(itemDiscounts).map(title => ({
-                title: title,
-                type: 'discount_code'
-              }));
-            }
-          }
-          
-          if (appliedDiscounts.length > 0) {
-            displayAppliedDiscounts(appliedDiscounts);
-            setTimeout(() => {
+        }
+        
+        if (appliedDiscounts.length > 0) {
+          displayAppliedDiscounts(appliedDiscounts);
+          setTimeout(() => {
+            const message = document.getElementById('DiscountMessage');
+            if (message) {
               message.style.display = 'none';
-            }, 2000);
-          } else {
-            hideAppliedDiscounts();
+            }
+          }, 2000);
+        } else {
+          hideAppliedDiscounts();
+          const message = document.getElementById('DiscountMessage');
+          if (message) {
             message.textContent = 'Código de desconto inválido ou não aplicável.';
             message.style.display = 'block';
             message.className = 'discount_box__message discount_box__message--error';
           }
-          
-          if (window.location.pathname.indexOf('/cart') !== -1) {
-            window.location.reload();
-          }
-        })
-        .catch(error => {
-          console.error('Error refreshing cart:', error);
-        });
-    }
-    
-    function getSectionInnerHTML(html, selector) {
-      return new DOMParser()
-        .parseFromString(html, 'text/html')
-        .querySelector(selector).innerHTML;
-    }
-    
-
+        }
+        
+        if (window.location.pathname.indexOf('/cart') !== -1) {
+          window.location.reload();
+        }
+      })
+      .catch(error => {
+        console.error('Error refreshing cart:', error);
+      });
   }
+  
+  function getSectionInnerHTML(html, selector) {
+    return new DOMParser()
+      .parseFromString(html, 'text/html')
+      .querySelector(selector).innerHTML;
+  }
+  
+  // ========================================
+  // INITIALIZATION & EVENT LISTENERS
+  // ========================================
   
   initDiscountBox();
   
