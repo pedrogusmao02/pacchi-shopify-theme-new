@@ -69,6 +69,8 @@
         return res.json(); 
       })
       .then(function(data) {
+        console.log('Cart update response:', data); // Debug log
+        
         // Check if the response indicates an error
         if (data.status && data.status !== 200) {
           throw new Error(data.description || data.message || 'Error applying discount');
@@ -171,86 +173,42 @@
     }
     
     function refreshCart() {
-      // Use the same mechanism as the cart system
-      const sectionsToRender = [];
-      const cartDrawer = document.querySelector('cart-drawer');
+      console.log('Refreshing cart...'); // Debug log
       
-      if (cartDrawer) {
-        const mainCartId = document.getElementById('main-cart-items')?.dataset.id;
-        if (mainCartId) {
-          sectionsToRender.push(
-            { id: `#shopify-section-${mainCartId}`, section: mainCartId, selector: `#shopify-section-${mainCartId} cart-items` },
-            { id: "#cart-counter", section: "cart-counter", selector: "#shopify-section-cart-counter" },
-            { id: "#CartDrawer-Body", section: "cart-drawer", selector: "#shopify-section-cart-drawer #CartDrawer-Body" }
-          );
-        } else {
-          sectionsToRender.push(
-            { id: "#CartDrawer-Body", section: "cart-drawer", selector: "#shopify-section-cart-drawer #CartDrawer-Body" }
-          );
-        }
-      } else {
-        const mainCartId = document.getElementById('main-cart-items')?.dataset.id;
-        if (mainCartId) {
-          sectionsToRender.push(
-            { id: `#shopify-section-${mainCartId}`, section: mainCartId, selector: `#shopify-section-${mainCartId} cart-items` },
-            { id: '#cart-counter', section: 'cart-counter', selector: '#shopify-section-cart-counter' }
-          );
-        }
-      }
-      
-      // Fetch updated sections
-      const body = JSON.stringify({
-        sections: sectionsToRender.map(section => section.section),
-        sections_url: window.location.pathname
-      });
-      
-      fetch(`${window.routes?.cart_change_url || '/cart/change.js'}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: body
-      })
-      .then(response => response.text())
-      .then(state => {
-        const parsedState = JSON.parse(state);
-        
-        // Update sections
-        sectionsToRender.forEach(section => {
-          const elementToReplace = document.querySelector(section.selector) || document.querySelector(section.id);
-          if (elementToReplace && parsedState.sections && parsedState.sections[section.section]) {
-            elementToReplace.innerHTML = getSectionInnerHTML(
-              parsedState.sections[section.section],
-              section.selector
-            );
+      // Simple approach: just reload the cart data and update the display
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(cart => {
+          console.log('Updated cart data:', cart); // Debug log
+          
+          // Update cart counters if function exists
+          if (typeof updateCartCounters === 'function') {
+            updateCartCounters();
           }
+          
+          // Update free shipping if function exists
+          if (typeof updateFreeShipping === 'function') {
+            updateFreeShipping();
+          }
+          
+          // Update applied discounts display
+          if (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) {
+            displayAppliedDiscounts(cart.cart_level_discount_applications);
+          } else {
+            hideAppliedDiscounts();
+          }
+          
+          // If we're on cart page, reload the page to show updated totals
+          if (window.location.pathname.indexOf('/cart') !== -1) {
+            window.location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error refreshing cart:', error);
         });
-        
-        // Update cart counters
-        if (typeof updateCartCounters === 'function') {
-          updateCartCounters();
-        }
-        
-        // Update free shipping
-        if (typeof updateFreeShipping === 'function') {
-          updateFreeShipping();
-        }
-        
-        // Re-initialize discount box after cart update
-        setTimeout(initDiscountBox, 100);
-      })
-      .catch(error => {
-        console.error('Error refreshing cart:', error);
-        // Fallback to page reload
-        if (window.location.pathname.indexOf('/cart') !== -1) {
-          window.location.reload();
-        }
-      });
     }
     
-    function getSectionInnerHTML(html, selector) {
-      return new DOMParser()
-        .parseFromString(html, 'text/html')
-        .querySelector(selector).innerHTML;
-    }
+
   }
   
   // Initialize on page load
